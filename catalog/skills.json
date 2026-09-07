@@ -5,8 +5,8 @@
       "id": "lp-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Liquidity workflows for Uniswap, Aerodrome, Curve and Balancer, with optional Revert and VFAT guidance.",
-      "version": "0.5.0",
-      "revision": "7e3224c0aacd70624f99e34381d9b2a5d8d60cbb",
+      "version": "0.5.1",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "lp-analyze",
         "lp-engineer",
@@ -22,8 +22,8 @@
       "id": "hyperliquid-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Agent skills for Hyperliquid setup, market analysis, trade planning and execution, monitoring, and performance review.",
-      "version": "0.3.1",
-      "revision": "38e58b1c9c345af0f3a61ce1d25fe33095c2003b",
+      "version": "0.3.2",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "hyperliquid-analyze",
         "hyperliquid-engineer",
@@ -52,8 +52,8 @@
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Portable DeFi data skills for CoinGecko, DefiLlama, AIXBT, and source-aware research.",
-      "version": "0.3.1",
-      "revision": "86610c62c52e3f7998dbb8fc4d669188b8c2a4a7",
+      "version": "0.3.2",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "galleon-defi-data"
       ],
@@ -112,8 +112,8 @@
       "id": "defi-routing-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Compare swaps and bridges and track cross-chain settlement.",
-      "version": "0.1.1",
-      "revision": "86610c62c52e3f7998dbb8fc4d669188b8c2a4a7",
+      "version": "0.1.2",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "galleon-defi-routing"
       ],
@@ -136,8 +136,8 @@
       "id": "defi-portfolio-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Reconcile DeFi assets, liabilities, cash flows and exposure.",
-      "version": "0.1.1",
-      "revision": "86610c62c52e3f7998dbb8fc4d669188b8c2a4a7",
+      "version": "0.1.2",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "galleon-defi-portfolio"
       ],
@@ -148,8 +148,8 @@
       "id": "defi-security-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Investigate token risks, compare evidence and review transaction permissions.",
-      "version": "0.2.0",
-      "revision": "c0bfa8437d8340910593cba646f986c692ed32fd",
+      "version": "0.2.1",
+      "revision": "ff81e4fa5e3633a16fc0588325b2f2d79099049f",
       "skills": [
         "galleon-defi-security",
         "galleon-defi-security-token-diligence"

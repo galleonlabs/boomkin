@@ -47,6 +47,8 @@ Onboarding preserves existing SOUL and instruction files. It opens native model 
 
 ## Verified releases
 
+Boomkin 0.6.2 pins Security 0.2.1, Liquidity provision 0.5.1, Routing 0.1.2, Portfolio 0.1.2, Data 0.3.2 and Hyperliquid 0.3.2 after independent npm verification. These carry lessons recorded from a live autonomous trading operator: scanner labels versus verified liquidity custody, an owner address versus its reachable powers, fee tiers and quote assets as measured costs, capital on another chain as deployable through a quoted bridge, idempotent cash-flow journals and explicit candidate sizing, research queues with re-entry triggers, trader attribution rules, and receipt-verified live results for strategy validation. The other eight pins and selected-pack behavior remain unchanged.
+
 Boomkin 0.6.0 adds token diligence through Security 0.2.0, bringing the catalog to 26 skills across 14 packs. Investigate token controls, launch flows, liquidity custody and exit evidence, then compare repeat reviews without treating lost coverage or omitted findings as resolved risks. Security includes an optional read-only snapshot collector and evidence validator; these do not sign, broadcast or establish economic safety. Existing profiles with Security selected receive both Security skills when updated.
 
 Boomkin 0.5.1 pins Infra 0.2.1, Hyperliquid 0.3.1, Derivatives 0.1.1 and Security 0.1.1 after independent npm verification. These add CLI recovery, bot/manual-control handoffs and full-recipient verification. The [source review](https://github.com/galleonlabs/crypto-defi-skills/blob/38e58b1c9c345af0f3a61ce1d25fe33095c2003b/docs/research/minara-review.md) records attribution and validation limits. Other pack pins and selected-pack behavior remain unchanged.
