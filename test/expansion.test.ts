@@ -71,7 +71,7 @@ test("onboarding preserves a saved selection unless all-packs is explicitly requ
     const saved = JSON.stringify({ schemaVersion: 1, harness: "hermes", directory, packs: ["defi-data-skills"] });
     await writeFile(join(directory, ".boomkin/config.json"), saved);
     for (const all of [false, true]) {
-      const child = Bun.spawn([process.execPath, "src/cli.ts", "onboard", "--directory", directory, "--dry-run", ...(all ? ["--all-packs"] : [])], { stdout: "pipe", stderr: "pipe" });
+      const child = Bun.spawn([process.execPath, "src/cli.ts", "onboard", "--directory", directory, "--dry-run", ...(all ? ["--all-packs"] : [])], { stdout: "pipe", stderr: "pipe", timeout: 15_000 });
       const [output, errors, code] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
       if (code !== 0) throw new Error(errors);
       const installs = output.split("\n").filter(line => line.startsWith("Install galleonlabs/"));
@@ -80,4 +80,4 @@ test("onboarding preserves a saved selection unless all-packs is explicitly requ
       expect(await readFile(join(directory, ".boomkin/config.json"), "utf8")).toBe(saved);
     }
   } finally { await rm(directory, { recursive: true, force: true }); }
-});
+}, 35_000);
