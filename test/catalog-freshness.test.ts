@@ -91,16 +91,16 @@ test("version comparison orders patch releases", () => {
 test("catalog freshness verify runs on pull requests that touch catalog pins", async () => {
   const text = await readFile(new URL("../.github/workflows/catalog-freshness.yml", import.meta.url), "utf8");
   const workflow = parseYaml(text) as {
-    on: { pull_request?: { paths?: string[] }; schedule?: unknown; workflow_dispatch?: unknown };
+    on: { pull_request_target?: { paths?: string[] }; schedule?: unknown; workflow_dispatch?: unknown };
     jobs: { verify?: { if?: string; steps?: { run?: string }[] }; report?: { if?: string; steps?: { run?: string }[] } };
   };
-  expect(workflow.on.pull_request?.paths).toContain("catalog/**");
-  expect(workflow.on.pull_request?.paths).toContain("scripts/catalog-freshness.ts");
+  expect(workflow.on.pull_request_target?.paths).toContain("catalog/**");
+  expect(workflow.on.pull_request_target?.paths).toContain("scripts/catalog-freshness.ts");
   expect(workflow.on.schedule).toBeDefined();
   expect(workflow.on.workflow_dispatch).toBeDefined();
   expect(workflow.jobs.report?.if).toContain("github.event.pull_request.head.repo.full_name == github.repository");
   const command = workflow.jobs.report?.steps?.find(step => step.run?.includes("--verify"))?.run;
-  expect(command).toContain('if [[ "$GITHUB_EVENT_NAME" == pull_request ]]');
+  expect(command).toContain('if [[ "$GITHUB_EVENT_NAME" == pull_request_target ]]');
   expect(command).toContain("bun scripts/catalog-freshness.ts --verify");
   expect(command).toContain("else\n  bun scripts/catalog-freshness.ts\nfi");
 });
