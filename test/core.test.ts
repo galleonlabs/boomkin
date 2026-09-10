@@ -134,10 +134,13 @@ test("legacy configurations never opt into future catalog packs", () => {
   expect(selectPacks(future).packs).toHaveLength(current.packs.length + 1);
 });
 
-test("harness compatibility runs on pull requests that touch catalog pins", async () => {
+test("core CI covers catalog installation while native compatibility follows integration changes", async () => {
   const text = await readFile(new URL("../.github/workflows/compatibility.yml", import.meta.url), "utf8");
   const workflow = parseYaml(text) as { on: { pull_request?: { paths?: string[] }; push?: { paths?: string[] } } };
   expect(workflow.on.pull_request?.paths).toEqual(workflow.on.push?.paths);
-  expect(workflow.on.pull_request?.paths).toContain("catalog/**");
-  expect(workflow.on.pull_request?.paths).toContain("scripts/smoke.ts");
+  expect(workflow.on.pull_request?.paths).toContain("src/**");
+  expect(workflow.on.pull_request?.paths).toContain("scripts/hermes-native-smoke.py");
+  const ci = parseYaml(await readFile(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8"));
+  expect(ci.on.pull_request).toBeNull();
+  expect(ci.jobs.check.steps.some((step: { run?: string }) => step.run === "bun run smoke")).toBe(true);
 });

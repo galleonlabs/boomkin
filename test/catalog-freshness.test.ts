@@ -98,8 +98,9 @@ test("catalog freshness verify runs on pull requests that touch catalog pins", a
   expect(workflow.on.pull_request?.paths).toContain("scripts/catalog-freshness.ts");
   expect(workflow.on.schedule).toBeDefined();
   expect(workflow.on.workflow_dispatch).toBeDefined();
-  expect(workflow.jobs.verify?.if).toContain("pull_request");
-  expect(workflow.jobs.verify?.steps?.some(step => step.run === "bun scripts/catalog-freshness.ts --verify")).toBe(true);
-  expect(workflow.jobs.report?.if).toContain("!= 'pull_request'");
-  expect(workflow.jobs.report?.steps?.some(step => step.run === "bun scripts/catalog-freshness.ts")).toBe(true);
+  expect(workflow.jobs.report?.if).toContain("github.event.pull_request.head.repo.full_name == github.repository");
+  const command = workflow.jobs.report?.steps?.find(step => step.run?.includes("--verify"))?.run;
+  expect(command).toContain('if [[ "$GITHUB_EVENT_NAME" == pull_request ]]');
+  expect(command).toContain("bun scripts/catalog-freshness.ts --verify");
+  expect(command).toContain("else\n  bun scripts/catalog-freshness.ts\nfi");
 });
