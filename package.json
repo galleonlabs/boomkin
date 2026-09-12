@@ -15,7 +15,7 @@
     "smoke": "bun scripts/smoke.ts"
   },
   "dependencies": {
-    "skills": "1.5.23",
+    "skills": "1.5.25",
     "yaml": "2.9.0"
   },
   "devDependencies": {
