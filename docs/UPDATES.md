@@ -47,6 +47,8 @@ Onboarding preserves existing SOUL and instruction files. It opens native model 
 
 ## Verified releases
 
+Boomkin 0.6.4 pins [Derivatives 0.1.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-defi-derivatives-skills%400.1.4), repairing Derive references after its official v3 documentation moved to docs.derive.xyz. The other 13 pack pins, all 26 skills, existing selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.
+
 Boomkin 0.6.3 pins all 14 packs to the [September 9 upstream release](https://github.com/galleonlabs/crypto-defi-skills/commit/d5d8439bd5bd1fec88994a6ca0448cde11e31747). These releases add configurable workflow guidance and task examples, including Hyperliquid planning preferences and monitoring stream discipline. The catalog still contains 26 skills; existing pack selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.
 
 Boomkin 0.6.2 pins Security 0.2.1, Liquidity provision 0.5.1, Routing 0.1.2, Portfolio 0.1.2, Data 0.3.2 and Hyperliquid 0.3.2 after independent npm verification. These carry lessons recorded from a live autonomous trading operator: scanner labels versus verified liquidity custody, an owner address versus its reachable powers, fee tiers and quote assets as measured costs, capital on another chain as deployable through a quoted bridge, idempotent cash-flow journals and explicit candidate sizing, research queues with re-entry triggers, trader attribution rules, and receipt-verified live results for strategy validation. The other eight pins and selected-pack behavior remain unchanged.
