@@ -124,8 +124,8 @@
       "id": "defi-derivatives-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan derivatives positions and reconcile venue execution.",
-      "version": "0.1.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.1.4",
+      "revision": "470508005adb1ed3fe3a1e758598170e671b7db3",
       "skills": [
         "galleon-defi-derivatives"
       ],
