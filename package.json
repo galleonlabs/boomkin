@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "skills": "1.5.23",
-    "yaml": "2.9.0"
+    "yaml": "2.9.1"
   },
   "devDependencies": {
     "@types/bun": "1.3.10",
