@@ -6,7 +6,7 @@ Hermes owns authentication, tools and execution. Boomkin prepares an isolated pr
 
 `bun run boomkin onboard` runs the official pinned Hermes installer when needed and opens `hermes setup model` with the selected `HERMES_HOME`. Use `bun run boomkin model` to revisit setup, and `bun run boomkin start` for native chat. Model keys, OAuth and local models use Hermes's facilities. A configured model name or CLI version is not proof of authentication.
 
-Hermes v0.21.0 at [the reviewed source](https://github.com/NousResearch/hermes-agent/tree/2e24e06e5513fa425ccf935d2e41991cb11ff383) was tested. Boomkin pins the official installer and runtime for a fresh install. Existing installations are preserved. Native setup supports optional browser, tools and messaging features; configure those through Hermes rather than a second runtime.
+Hermes v0.21.3 (upstream tag `v2026.9.14`) at [the reviewed source](https://github.com/NousResearch/hermes-agent/tree/345cd2b057a452236de401d3534b8502a7465e8d) was tested. Boomkin pins the official installer and runtime for a fresh install. Existing installations are preserved. Native setup supports optional browser, tools and messaging features; configure those through Hermes rather than a second runtime.
 
 The selected directory holds `config.yaml`, `.env`, `SOUL.md`, `skills/` and native state. Boomkin stores its own records under `.boomkin/`. Commands explicitly select the root profile so a sticky Hermes profile preference cannot redirect them elsewhere. Do not move a configured profile without reviewing saved paths and credentials.
 

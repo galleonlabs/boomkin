@@ -1,6 +1,6 @@
 {
   "name": "boomkin",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "description": "Onboard a Hermes DeFi agent with modular Galleon skill packs across DeFi primitives and official tool connections.",
   "type": "module",
@@ -15,7 +15,7 @@
     "smoke": "bun scripts/smoke.ts"
   },
   "dependencies": {
-    "skills": "1.5.23",
+    "skills": "1.7.0",
     "yaml": "2.9.0"
   },
   "devDependencies": {

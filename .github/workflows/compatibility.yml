@@ -61,7 +61,7 @@ jobs:
           trap 'rm -rf "$native_dir"' EXIT
           git init "$native_dir/upstream"
           git -C "$native_dir/upstream" remote add origin https://github.com/NousResearch/hermes-agent.git
-          git -C "$native_dir/upstream" fetch --depth=1 origin 2e24e06e5513fa425ccf935d2e41991cb11ff383
+          git -C "$native_dir/upstream" fetch --depth=1 origin 345cd2b057a452236de401d3534b8502a7465e8d
           git -C "$native_dir/upstream" checkout --detach FETCH_HEAD
           python3 -m venv "$native_dir/venv"
           "$native_dir/venv/bin/pip" install --disable-pip-version-check -e "$native_dir/upstream[mcp]"

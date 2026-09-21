@@ -24,7 +24,7 @@ bun run boomkin start
 
 `onboard` prepares `~/.boomkin/hermes`, installs the reviewed official Hermes runtime if none is available, installs all packs in the reviewed catalog on a fresh profile, creates Boomkin's SOUL and instructions, configures public CoinGecko MCP, and opens native Hermes model setup. Choose your provider and sign in there. `start` launches the native Hermes chat in that same profile.
 
-Hermes remains the runtime: its tools, sessions, memory, model adapters, MCP support and scheduling are not forked. A new runtime installation uses reviewed Hermes v0.21.0 source; the native installer also manages the user-level `hermes` command and dependencies. Browser/computer-use dependencies are skipped initially and can be added through native Hermes setup. An existing working Hermes installation at 0.21.0 or newer is reused, not downgraded.
+Hermes remains the runtime: its tools, sessions, memory, model adapters, MCP support and scheduling are not forked. A new runtime installation uses reviewed Hermes v0.21.3 source (upstream tag `v2026.9.14`); the native installer also manages the user-level `hermes` command and dependencies. Browser/computer-use dependencies are skipped initially and can be added through native Hermes setup. An existing working Hermes installation at 0.21.0 or newer is reused, not downgraded.
 
 Model authentication requires your account or local model configuration. Optional providers can require subscriptions, OAuth or scoped credentials. Onboarding makes no model call, pays for no data, creates or funds no wallet, and starts no background service.
 
