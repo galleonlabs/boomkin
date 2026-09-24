@@ -22,8 +22,8 @@
       "id": "hyperliquid-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Agent skills for Hyperliquid setup, market analysis, trade planning and execution, monitoring, and performance review.",
-      "version": "0.3.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.3.4",
+      "revision": "b4a020cbc810acabe22a09662cf88137a0907ea6",
       "skills": [
         "hyperliquid-analyze",
         "hyperliquid-engineer",
