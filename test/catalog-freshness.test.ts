@@ -2,7 +2,8 @@ import { expect, test } from "bun:test";
 import { parse as parseYaml } from "yaml";
 import { readFile } from "node:fs/promises";
 import { parseCatalog } from "../src/core";
-import { compareVersions, evaluateCatalog, listUpstreamTags, parseTagListing, reportCatalog, type ReleaseTag } from "../src/catalog-freshness";
+import { compareVersions, evaluateCatalog, listUpstreamTags, parseTagListing, reportCatalog, reportHermesRelease, type ReleaseTag } from "../src/catalog-freshness";
+import { HERMES_COMMIT, HERMES_VERSION } from "../src/hermes";
 import catalogFile from "../catalog/skills.json";
 
 const catalog = parseCatalog(catalogFile);
@@ -86,6 +87,16 @@ test("version comparison orders patch releases", () => {
   expect(compareVersions("0.2.1", "0.2.2")).toBeLessThan(0);
   expect(compareVersions("0.3.1", "0.3.0")).toBeGreaterThan(0);
   expect(compareVersions("0.5.0", "0.5.0")).toBe(0);
+});
+
+test("Hermes freshness reports current, behind, and unavailable without changing catalog status", async () => {
+  const release = (version: string, tag: string) =>
+    async () => Response.json({ name: `Hermes Agent v${version} (${tag})`, tag_name: tag });
+  expect(await reportHermesRelease(release(HERMES_VERSION, "v2026.9.24"))).toBe(`hermes: pinned ${HERMES_VERSION} ${HERMES_COMMIT}; latest ${HERMES_VERSION} v2026.9.24; current`);
+  expect(await reportHermesRelease(release("0.21.6", "v2026.9.28"))).toContain("latest 0.21.6 v2026.9.28; behind");
+  expect(await reportHermesRelease(async () => { throw new Error("network unavailable"); })).toContain("latest unavailable; unknown");
+  expect(await reportHermesRelease(async () => Response.json({ name: "broken", tag_name: "latest" }))).toContain("latest unavailable; unknown");
+  expect(reportCatalog(catalog, matching, "freshness").exitCode).toBe(0);
 });
 
 test("catalog freshness verify runs on pull requests that touch catalog pins", async () => {
