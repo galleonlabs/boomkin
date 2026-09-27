@@ -47,6 +47,8 @@ Onboarding preserves existing SOUL and instruction files. It opens native model 
 
 ## Verified releases
 
+Boomkin 0.6.8 pins fresh installs to [Hermes 0.21.5](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.24) at the reviewed commit and installer checksum. The daily catalog report now also shows whether that runtime pin lags the latest upstream release; runtime lag is advisory. Existing Hermes installations at 0.21.0 or newer remain in place, and the 14 skill pack pins are unchanged.
+
 Boomkin 0.6.7 pins [Hyperliquid skills 0.3.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-hyperliquid-skills%400.3.4). The published pack adds dated guidance for account-mode action limits, builder approvals, nonce handling and asset IDs. Existing profile and pack selections are preserved; update a profile with Hyperliquid selected to load the new guidance. The other 13 catalog pins remain unchanged. This release changes instructions, not live exchange access or trading authority.
 
 Boomkin 0.6.4 pins [Derivatives 0.1.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-defi-derivatives-skills%400.1.4), repairing Derive references after its official v3 documentation moved to docs.derive.xyz. The other 13 pack pins, all 26 skills, existing selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.

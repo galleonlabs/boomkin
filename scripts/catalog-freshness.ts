@@ -1,6 +1,6 @@
 import catalogFile from "../catalog/skills.json";
 import { parseCatalog } from "../src/core.ts";
-import { listUpstreamTags, reportCatalog } from "../src/catalog-freshness.ts";
+import { listUpstreamTags, reportCatalog, reportHermesRelease } from "../src/catalog-freshness.ts";
 
 const args = process.argv.slice(2);
 try {
@@ -8,6 +8,7 @@ try {
   const mode = args[0] === "--verify" ? "verify" : "freshness";
   const result = reportCatalog(parseCatalog(catalogFile), await listUpstreamTags(), mode);
   console.log(result.text);
+  console.log(await reportHermesRelease());
   process.exit(result.exitCode);
 } catch (error) {
   console.error(error instanceof Error ? error.message : error);
