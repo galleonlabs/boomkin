@@ -1,5 +1,6 @@
 import { parse } from "yaml";
 import { resolve } from "node:path";
+import workflowRegistry from "../catalog/workflows.json";
 
 export const harnesses = {
   hermes: { agent: "hermes-agent", skillsPath: "skills", global: true, docs: "https://hermes-agent.nousresearch.com/docs/", setup: "Install Hermes from https://hermes-agent.nousresearch.com/ then run HERMES_HOME=<directory> hermes setup. Launch with the same HERMES_HOME." },
@@ -31,7 +32,9 @@ export function parseCatalog(value: unknown): Catalog {
     if (typeof p.version !== "string" || !/^\d+\.\d+\.\d+$/.test(p.version) || typeof p.revision !== "string" || !/^[0-9a-f]{40}$/.test(p.revision)) throw new Error("Catalog pack must pin a release version and full Git revision");
     if (!Array.isArray(p.skills) || !p.skills.length) throw new Error("Catalog pack must name its installed skills");
     for (const skill of p.skills) {
-      if (typeof skill !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(skill) || names.has(skill) || !(namespaced ? skill === `galleon-${namespace}` || skill.startsWith(`galleon-${namespace}-`) : skill.startsWith(namespace + "-"))) throw new Error("Invalid or duplicate skill name");
+      // Protocol names belong to explicitly reviewed packs, not arbitrary catalog entries.
+      const reviewedProtocol = workflowRegistry.workflows.some(workflow => workflow.pack === p.id && workflow.skill === skill);
+      if (typeof skill !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(skill) || names.has(skill) || !(reviewedProtocol || (namespaced ? skill === `galleon-${namespace}` || skill.startsWith(`galleon-${namespace}-`) : skill.startsWith(namespace + "-")))) throw new Error("Invalid or duplicate skill name");
       names.add(skill);
     }
     ids.add(p.id);
@@ -79,22 +82,23 @@ Use Hermes's native tools, memory, skills and credential facilities. Load only t
 skill and provider references needed for the current task. Prefer official tools
 already available over adding a service or writing another adapter.
 
-Start with galleon-defi-infra for RPC, wallets and tool readiness; use
-galleon-defi-data for source identity, market evidence and research including AIXBT.
-Select only the installed workflow needed for the user's task:
-- lp-* and hyperliquid-* for their venue-specific setup, analysis, unsigned plans,
-  approved execution, monitoring and review.
-- galleon-defi-lending, galleon-defi-staking and galleon-defi-yield for borrowing,
-  collateral, staking/restaking and vault/yield workflows.
-- galleon-defi-routing and galleon-defi-derivatives for swap/bridge routes and
-  derivative exposure, pricing and venue constraints.
-- galleon-defi-portfolio for holdings, debt, flows and performance reconciliation;
-  galleon-defi-security for transaction effects, signatures and continuing authority.
-  galleon-defi-security-token-diligence for exact token controls, launch flows,
-  liquidity custody, exits and evidence changes between reviews.
-- galleon-defi-payments for payment/account protocols and settlement evidence;
-  galleon-defi-governance for proposal, voting and delegation workflows;
-  galleon-defi-tokenized-assets for claims, eligibility and redemption constraints.
+Choose the installed protocol skill that directly fits the requested task:
+- galleon-aave-position, galleon-morpho-market and galleon-compound-borrow for
+  protocol-specific lending reads, risk calculations and unsigned action plans.
+- uniswap-v3-liquidity and aerodrome-slipstream for LP positions and gauge custody;
+  uniswap-swap and lifi-cross-chain for quote review and settlement tracking.
+- galleon-lido-withdrawals for withdrawal requests and claimability;
+  galleon-pendle-maturity and galleon-vault-exit for maturity and redeemable assets.
+- galleon-coingecko-token-research and galleon-defillama-yield-screen for token
+  identity, prices and reproducible yield shortlists.
+- galleon-coinbase-agentkit-readiness for CDP wallet capabilities and policies;
+  galleon-defi-infra for other tool-readiness gaps.
+- hyperliquid-* for venue-specific setup, analysis, plans, monitoring and review.
+Keep the galleon-defi-* primitive skills for cross-protocol tasks and unsupported
+venues, including portfolio, security, payments, governance and tokenized assets.
+Protocol skills contain concrete reads and local helpers: use those before
+inventing an adapter or relying on a generic checklist. Do not require a setup
+workflow before a public read when suitable tools already exist.
 Do not load every skill or provider reference for a simple task. A missing pack is
 a capability gap; use available tools and describe the gap accurately.
 

@@ -11,6 +11,7 @@ import { checkoutPack, packageDirectory } from "./source.ts";
 import { defaultProfile, prepareHermes, connectProvider, providers, doctor } from "./onboarding.ts";
 import { runHermes } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
+import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const help = `Boomkin — your Hermes DeFi agent.
@@ -19,6 +20,9 @@ bun run boomkin onboard
 bun run boomkin doctor --live
 bun run boomkin start
 bun run boomkin providers
+bun run boomkin workflows
+bun run boomkin workflows --workflow aave-health
+bun run boomkin onboard --workflow yield-screen
 bun run boomkin connect --provider alchemy
 bun run boomkin connect --provider tenderly
 bun run boomkin model
@@ -31,6 +35,8 @@ installs the selected Galleon skill packs and public CoinGecko MCP, then runs na
 --skip-model-setup prepares files without an interactive model login.
 --no-install uses an existing Hermes executable. --dry-run previews without writes.
 --all-packs opts an existing onboarding profile into every pack in the current catalog.
+--workflow chooses one task's pack for onboarding; updates keep that selection.
+workflows lists inputs, concrete results and access requirements; --json emits structured data.
 doctor distinguishes configuration from verified reads; --live probes public MCP only.
 connect uses native Hermes OAuth, AIXBT environment-backed authentication, or the official local Coinbase MCP.
 Wallet/account setup stays in its official CLI; see docs/CONNECTIONS.md.
@@ -53,17 +59,27 @@ async function canonicalPath(path: string): Promise<string> {
 
 async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
+    workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
   } });
   const command = positionals[0] ?? "help";
   if (values.help || command === "help") return console.log(help);
   if (positionals.length > 1) throw new Error("Unexpected positional arguments");
+  if (values.workflow !== undefined && !["workflows", "onboard"].includes(command)) throw new Error("--workflow is available for workflows and onboard");
+  if ((values.protocol !== undefined || values.json) && command !== "workflows") throw new Error("--protocol and --json are available for workflows");
+  if (values.workflow !== undefined && (values.pack || values["all-packs"] || values.protocol !== undefined)) throw new Error("Choose --workflow, --protocol, --pack or --all-packs separately");
   if (values["key-file"] && (command !== "connect" || values.provider !== "coinbase")) throw new Error("--key-file is only available for connect --provider coinbase");
   if (values.provider && command !== "connect") throw new Error("--provider is only available for connect");
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
   if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
 
+  if (command === "workflows") {
+    if (values.pack || values.harness || values.directory) throw new Error("workflows accepts --workflow, --protocol and --json");
+    const selected = values.workflow !== undefined ? [selectWorkflow(values.workflow)] : workflows.filter(item => values.protocol === undefined || item.protocol.toLowerCase() === values.protocol.toLowerCase());
+    if (!selected.length) throw new Error("No matching protocol. Run workflows to list supported protocols.");
+    return console.log(values.json ? JSON.stringify({ schemaVersion: 1, workflows: selected }, null, 2) : selected.map(renderWorkflow).join("\n\n"));
+  }
   if (command === "providers") {
     for (const [name, provider] of Object.entries(providers)) console.log(`${name}: ${provider.access}`);
     console.log("coinbase: official local MCP with a scoped account CLI environment and read tools. Agentic Wallet is separate; see docs/CONNECTIONS.md.");
@@ -74,7 +90,7 @@ async function main() {
     const directory = await canonicalPath(resolve(values.directory ?? defaultProfile()));
     if (command === "onboard") {
       if (values.pack && values["all-packs"]) throw new Error("Choose --pack or --all-packs, not both");
-      const selected = values["all-packs"] ? parseCatalog(catalogFile).packs.map(pack => pack.id) : values.pack;
+      const selected = values.workflow !== undefined ? workflowPacks(values.workflow, parseCatalog(catalogFile)) : values["all-packs"] ? parseCatalog(catalogFile).packs.map(pack => pack.id) : values.pack;
       const args = [process.execPath, fileURLToPath(import.meta.url), "setup", "--harness", "hermes", "--directory", directory,
         ...(selected?.flatMap(id => ["--pack", id]) ?? []), ...(values["dry-run"] ? ["--dry-run"] : [])];
       const child = Bun.spawn(args, { stdin: "inherit", stdout: "inherit", stderr: "inherit" });

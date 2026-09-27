@@ -1,8 +1,8 @@
 {
   "name": "boomkin",
-  "version": "0.6.8",
+  "version": "0.7.0",
   "private": true,
-  "description": "Onboard a Hermes DeFi agent with modular Galleon skill packs across DeFi primitives and official tool connections.",
+  "description": "Protocol-specific DeFi workflows for a native Hermes agent: inspect positions, screen yields and prepare verifiable plans.",
   "type": "module",
   "license": "MIT",
   "packageManager": "bun@1.3.12",

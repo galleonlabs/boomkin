@@ -4,16 +4,18 @@
     {
       "id": "lp-skills",
       "source": "galleonlabs/crypto-defi-skills",
-      "description": "Liquidity workflows for Uniswap, Aerodrome, Curve and Balancer, with optional Revert and VFAT guidance.",
-      "version": "0.5.2",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "description": "Agent skills and deterministic tools for Uniswap and Aerodrome liquidity provision.",
+      "version": "0.6.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
+        "aerodrome-slipstream",
         "lp-analyze",
         "lp-engineer",
         "lp-execute",
         "lp-monitor",
         "lp-plan",
-        "lp-setup"
+        "lp-setup",
+        "uniswap-v3-liquidity"
       ],
       "path": "packages/lp",
       "package": "galleon-lp-skills"
@@ -40,9 +42,10 @@
       "id": "defi-infra-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "RPC, wallet and Hermes infrastructure skills with read-only readiness diagnostics.",
-      "version": "0.2.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.3.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
+        "galleon-coinbase-agentkit-readiness",
         "galleon-defi-infra"
       ],
       "path": "packages/infra",
@@ -52,10 +55,12 @@
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Portable DeFi data skills for CoinGecko, DefiLlama, AIXBT, and source-aware research.",
-      "version": "0.3.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.4.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
-        "galleon-defi-data"
+        "galleon-coingecko-token-research",
+        "galleon-defi-data",
+        "galleon-defillama-yield-screen"
       ],
       "path": "packages/data",
       "package": "galleon-defi-data-skills"
@@ -64,10 +69,13 @@
       "id": "defi-lending-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Research lending markets, plan borrowing and monitor liquidation exposure.",
-      "version": "0.1.2",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.2.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
-        "galleon-defi-lending"
+        "galleon-aave-position",
+        "galleon-compound-borrow",
+        "galleon-defi-lending",
+        "galleon-morpho-market"
       ],
       "path": "packages/lending",
       "package": "galleon-defi-lending-skills"
@@ -76,10 +84,11 @@
       "id": "defi-staking-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan liquid staking, restaking and queued withdrawals.",
-      "version": "0.1.2",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.2.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
-        "galleon-defi-staking"
+        "galleon-defi-staking",
+        "galleon-lido-withdrawals"
       ],
       "path": "packages/staking",
       "package": "galleon-defi-staking-skills"
@@ -88,10 +97,12 @@
       "id": "defi-yield-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Evaluate vaults and yield tokens, including liquidity and maturity.",
-      "version": "0.1.2",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.2.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
-        "galleon-defi-yield"
+        "galleon-defi-yield",
+        "galleon-pendle-maturity",
+        "galleon-vault-exit"
       ],
       "path": "packages/yield",
       "package": "galleon-defi-yield-skills"
@@ -112,10 +123,12 @@
       "id": "defi-routing-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Compare swaps and bridges and track cross-chain settlement.",
-      "version": "0.1.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.2.0",
+      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
       "skills": [
-        "galleon-defi-routing"
+        "galleon-defi-routing",
+        "lifi-cross-chain",
+        "uniswap-swap"
       ],
       "path": "packages/routing",
       "package": "galleon-defi-routing-skills"

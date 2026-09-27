@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdtemp, mkdir, writeFile, rm, cp, symlink, realpath } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { skillFiles, verifyCopiedSkill, verifyIntegrity } from "../src/integrity.ts";
+import { skillFiles, verifyCopiedSkill, verifyIntegrity, type SkillIntegrity } from "../src/integrity.ts";
 import { parseCatalog, selectPacks } from "../src/core.ts";
 import catalogFile from "../catalog/skills.json";
 
@@ -15,9 +15,14 @@ test("resources are checked before sync, and later edits or missing files are di
     await mkdir(join(source, "references"), { recursive: true });
     await writeFile(join(source, "SKILL.md"), "source metadata");
     await writeFile(join(source, "references/guide.md"), "required workflow");
-    await cp(source, installed, { recursive: true });
+    const integrity: SkillIntegrity = {};
+    for (const name of catalog.packs[0]!.skills) {
+      const target = join(root, "skills", name);
+      await cp(source, target, { recursive: true });
+      integrity[name] = await verifyCopiedSkill(source, target);
+    }
     await writeFile(join(installed, "SKILL.md"), "Eve-normalized metadata");
-    const integrity = { [skill]: await verifyCopiedSkill(source, installed) };
+    integrity[skill] = await verifyCopiedSkill(source, installed);
     expect(await verifyIntegrity(join(root, "skills"), catalog, integrity)).toEqual([]);
     await writeFile(join(installed, "references/guide.md"), "local change");
     expect((await verifyIntegrity(join(root, "skills"), catalog, integrity))[0]).toContain("preserve local edits");
@@ -45,14 +50,18 @@ test("check reports changed installed files whether or not a catalog update is p
     return { code, stdout, stderr };
   };
   const record = async (recorded: typeof catalog) => {
-    const integrity = { [skill]: await skillFiles(installed) };
+    const integrity: SkillIntegrity = {};
+    for (const name of pack.skills) integrity[name] = await skillFiles(join(directory, "skills", name));
     await writeFile(join(state, "last-sync.json"), JSON.stringify({ syncedAt: "recorded", catalog: recorded, integrity }));
   };
   try {
-    await mkdir(join(installed, "references"), { recursive: true });
     await mkdir(state, { recursive: true });
-    await writeFile(join(installed, "SKILL.md"), `---\nname: ${skill}\nmetadata:\n  version: "${pack.version}"\n---\n`);
-    await writeFile(reference, "required workflow");
+    for (const name of pack.skills) {
+      const target = join(directory, "skills", name);
+      await mkdir(join(target, "references"), { recursive: true });
+      await writeFile(join(target, "SKILL.md"), `---\nname: ${name}\nmetadata:\n  version: "${pack.version}"\n---\n`);
+      await writeFile(join(target, "references/guide.md"), "required workflow");
+    }
     await writeFile(join(state, "config.json"), JSON.stringify({ schemaVersion: 1, harness: "hermes", directory, packs: [pack.id] }));
     await record(catalog);
 

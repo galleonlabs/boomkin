@@ -30,6 +30,8 @@ Replace the directory above if you use another profile, and pass it to `doctor` 
 
 ## Select your packs
 
+New protocol skills arrive through the existing pack selection. Updating a selected lending pack now installs its Aave, Morpho and Compound skills; there is no separate all-packs dependency. Run `bun run boomkin workflows` to see the task names. For a dedicated profile, `bun run boomkin onboard --workflow aave-health --directory "$HOME/aave-agent"` selects only the lending pack. On an existing profile, `--workflow` replaces the saved pack selection while preserving already copied files.
+
 Fresh onboarding includes every pack in the checked-out catalog. Updates preserve the saved selection, and new catalog packs are opt-in for existing profiles. Use repeated `--pack` options to set the full desired selection:
 
 ```bash

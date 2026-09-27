@@ -1,51 +1,147 @@
-# Choose a DeFi workflow
+# Protocol workflows
 
-Boomkin's packs are independently installed and loaded as needed. Run `bun run boomkin catalog` for the exact reviewed versions and available skill names. A workflow can use an existing official provider tool; no all-provider connection step is required.
+Find a task with `bun run boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `bun run boomkin onboard --workflow <id>`. Discovery is local and does not connect wallets or send transactions.
 
-[Onboarding](../README.md#get-started) · [Connections](CONNECTIONS.md) · [Pack selection](UPDATES.md#select-your-packs)
+## Stress-test an Aave V3 position
 
-| Task | Start with | Expected output |
-| --- | --- | --- |
-| Establish available RPC, data and wallet tools | `galleon-defi-infra`, `galleon-defi-data` | Observed capabilities, identity, freshness and missing access |
-| Assess a liquidity position | `lp-setup`, `lp-analyze` | Position and pool evidence, constraints and an unsigned plan when requested |
-| Review a Hyperliquid account | `hyperliquid-setup`, `hyperliquid-monitor` | Reconciled account state and venue-specific risk |
-| Compare lending markets or repay debt | `galleon-defi-lending` | Collateral/debt evidence, rates, liquidation constraints and plan |
-| Understand staking or restaking exits | `galleon-defi-staking` | Receipt ownership, slash/withdrawal conditions and queue state |
-| Assess a vault or tokenized yield product | `galleon-defi-yield`, `galleon-defi-tokenized-assets` as relevant | Yield source, claim structure, eligibility and redemption constraints |
-| Move capital across venues/chains | `galleon-defi-routing` | Fresh quote, total costs, dependencies and settlement checks |
-| Assess derivative exposure | `galleon-defi-derivatives` | Margin, notional, liquidation/funding and venue constraints |
-| Explain holdings and performance | `galleon-defi-portfolio` | Gross assets, debt, net equity, flows and coverage gaps |
-| Investigate an EVM token or changes since a prior review | `galleon-defi-security-token-diligence` | Pinned identity, control and launch evidence, liquidity/exit constraints and coverage changes |
-| Review a transaction or typed signature | `galleon-defi-security` | Exact asset/authority changes, simulation evidence and unknowns |
-| Evaluate a paid agent service | `galleon-defi-payments` | Payment challenge, spending limits and settlement/delivery evidence |
-| Review a governance proposal | `galleon-defi-governance` | Proposal content, voting/delegation rights and execution stage |
+Skill: `galleon-aave-position`. Task ID: `aave-health`.
 
-## First report
+Inputs: Chain ID, Aave V3 market and wallet; Collateral/debt and oracle state at one block; Your proposed borrow, repayment or withdrawal.
 
-> Use galleon-defi-portfolio to report the holdings and debt for these accounts and chains: [scope]. Use existing read tools and identify missing coverage. Separate external deposits from investment performance. Keep all proposed changes unsigned.
+Output: Current and stressed health factor, debt capacity, reserve restrictions and an unsigned action plan.
 
-A portfolio total should not count a receipt token and its underlying claim twice. A price mark does not establish an executable exit. Missing prices, private-account access and unsupported protocols remain visible gaps.
+Access: Read-only chain RPC or the official Aave client; no wallet connection needed for public address reads.
 
-## A focused lending setup
+## Inspect a Morpho market or vault
 
-```bash
-bun run boomkin onboard --directory "$HOME/boomkin-lending" \
-  --pack defi-infra-skills --pack defi-data-skills \
-  --pack defi-lending-skills --pack defi-security-skills
-```
+Skill: `galleon-morpho-market`. Task ID: `morpho-market`.
 
-> Use galleon-defi-lending to compare the specified markets for [asset and chain]. Show collateral rules, current debt costs, withdrawal constraints and source times. Use galleon-defi-security to review any proposed approval or transaction before I decide whether to authorize it.
+Inputs: Chain and market ID or vault address; Asset amount and intended supply or borrow.
 
-## From plan to execution
+Output: Market identity, oracle/IRM/LLTV, liquidity and vault allocation or exit constraints.
 
-Research, reports, quotes and unsigned plans do not authorize trades or payments. A separately authorized execution workflow must bind the exact account, chain, assets, counterparties, limits and current payload to that authority. Re-quote and review changed proposals; reconcile actual receipts afterward. A simulation, source-chain receipt or collected Safe signatures alone do not prove the intended outcome.
+Access: Official Morpho API and chain reads; market IDs are not token tickers.
 
-For recurring work, ask Boomkin to use native Hermes scheduling with your chosen scope and delivery destination. Pack installation itself starts no monitor or background service.
+## Check Compound III borrowing capacity
 
-## Token diligence and repeat reviews
+Skill: `galleon-compound-borrow`. Task ID: `compound-borrow`.
 
-> Use galleon-defi-security-token-diligence to investigate [token address] on chain [ID]. Assess control rights, launch concentration, removable liquidity, a sell of [amount], and treasury claims. Use the existing provider connections and state what remains unknown.
+Inputs: Chain and Comet deployment; Wallet and desired base-asset borrow.
 
-For a follow-up, supply the previous structured report and ask what changed. The skill includes optional Bun helpers for a bounded RPC identity snapshot, evidence consistency checks and semantic comparison. Lost coverage or an omitted prior finding is not a resolved risk. Helpers do not sign or broadcast, and a validated report is not a safety certificate.
+Output: Base debt, collateral limits, interest exposure and an unsigned borrow or repay plan.
 
-The Security pack installs both token diligence and transaction review. Token diligence can also be installed independently through the monorepo's skills installer; the full pack is not required.
+Access: Read-only RPC against the selected Comet deployment.
+
+## Track a Lido withdrawal to claimability
+
+Skill: `galleon-lido-withdrawals`. Task ID: `lido-exit`.
+
+Inputs: Ethereum wallet or withdrawal request IDs; stETH or wstETH amount if planning a new request.
+
+Output: Request ownership, finalized/claimed status, claimable ETH and the next supported step.
+
+Access: Ethereum RPC and official Lido deployment registry; queue timing is not a guarantee.
+
+## Compare holding PT to maturity with exiting
+
+Skill: `galleon-pendle-maturity`. Task ID: `pendle-maturity`.
+
+Inputs: Chain and Pendle market address; PT/YT holdings, valuation time and proposed exit size.
+
+Output: Maturity terms, underlying accounting unit, executable exit comparison and post-expiry route.
+
+Access: Official Pendle market/API data and chain state.
+
+## Check what a vault withdrawal can return now
+
+Skill: `galleon-vault-exit`. Task ID: `vault-exit`.
+
+Inputs: Chain, vault address and share owner; Shares or assets to exit.
+
+Output: Preview versus owner limits, rounding, liquidity and asynchronous exit constraints.
+
+Access: Read-only RPC; a share conversion alone does not prove withdrawable assets.
+
+## Inspect a Uniswap V3 liquidity position
+
+Skill: `uniswap-v3-liquidity`. Task ID: `uniswap-position`.
+
+Inputs: Chain and position NFT ID; Token amounts or position sizing budget; Range intent or monitoring question.
+
+Output: Position composition, tick bounds, fee state and a bounded liquidity plan.
+
+Access: Official deployments and read-only RPC; explicitly V3, not V4 hooks.
+
+## Inspect Slipstream liquidity and gauge rewards
+
+Skill: `aerodrome-slipstream`. Task ID: `aerodrome-position`.
+
+Inputs: Base pool and position NFT ID; Wallet and gauge if staked.
+
+Output: Range status, gauge custody, fees versus emissions, and exit constraints.
+
+Access: Base RPC and current Aerodrome/Slipstream deployment records.
+
+## Prepare a Uniswap quote for review
+
+Skill: `uniswap-swap`. Task ID: `uniswap-quote`.
+
+Inputs: Input/output chain and token addresses; Exact input or output amount and wallet; Slippage limit and recipient.
+
+Output: Quote identity, route type, approval/Permit2 requirements and unsigned transaction review.
+
+Access: Official Uniswap Trading API access; quotes and permit requests never authorize signing.
+
+## Compare a bridge route and reconcile arrival
+
+Skill: `lifi-cross-chain`. Task ID: `bridge-status`.
+
+Inputs: Source/destination chains and token addresses; Amount, sender and recipient or existing transaction hash.
+
+Output: Net destination amount, gas needs, route limits and destination settlement evidence.
+
+Access: Official LI.FI quote/status API; source confirmation alone is not arrival.
+
+## Resolve a token before trusting its price
+
+Skill: `galleon-coingecko-token-research`. Task ID: `token-research`.
+
+Inputs: Chain and contract address, or explicit CoinGecko ID; Quote currency and freshness requirement.
+
+Output: Resolved token identity, timestamped market evidence and unsupported or stale fields.
+
+Access: Official CoinGecko MCP or REST; API tier affects access and freshness.
+
+## Screen yields without mistaking emissions for income
+
+Skill: `galleon-defillama-yield-screen`. Task ID: `yield-screen`.
+
+Inputs: Chain, asset and minimum TVL; Base/reward APY preferences and result limit.
+
+Output: A reproducible shortlist separating base yield, rewards, missing fields and exit diligence.
+
+Access: Public DefiLlama yield data or existing official connection; listed APY is not a guaranteed return.
+
+## Check AgentKit wallet capabilities
+
+Skill: `galleon-coinbase-agentkit-readiness`. Task ID: `coinbase-readiness`.
+
+Inputs: Intended network and wallet custody model; Existing CDP/AgentKit configuration without secrets.
+
+Output: Capability and policy gaps, tested read access and the next required setup step.
+
+Access: Official CDP/AgentKit tools; Coinbase account MCP and Agentic Wallet are separate products.
+
+## Review a Hyperliquid account before trading
+
+Skill: `hyperliquid-analyze`. Task ID: `hyperliquid-risk`.
+
+Inputs: Public account address and venue/market; Exposure or funding question.
+
+Output: Account mode, margin exposure, funding and market evidence for a trade decision.
+
+Access: Official Hyperliquid public info API; no trading key required for public reads.
+
+## Cross-protocol tasks
+
+The primitive packs remain useful for multi-venue portfolio, governance, payments, security and tokenized-asset work. Load only the relevant references, and use the protocol-specific skill when a task reaches its venue.

@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "workflows": [
+    {
+      "id": "aave-health",
+      "protocol": "Aave",
+      "title": "Stress-test an Aave V3 position",
+      "skill": "galleon-aave-position",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain ID, Aave V3 market and wallet",
+        "Collateral/debt and oracle state at one block",
+        "Your proposed borrow, repayment or withdrawal"
+      ],
+      "output": "Current and stressed health factor, debt capacity, reserve restrictions and an unsigned action plan.",
+      "access": "Read-only chain RPC or the official Aave client; no wallet connection needed for public address reads."
+    },
+    {
+      "id": "morpho-market",
+      "protocol": "Morpho",
+      "title": "Inspect a Morpho market or vault",
+      "skill": "galleon-morpho-market",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain and market ID or vault address",
+        "Asset amount and intended supply or borrow"
+      ],
+      "output": "Market identity, oracle/IRM/LLTV, liquidity and vault allocation or exit constraints.",
+      "access": "Official Morpho API and chain reads; market IDs are not token tickers."
+    },
+    {
+      "id": "compound-borrow",
+      "protocol": "Compound",
+      "title": "Check Compound III borrowing capacity",
+      "skill": "galleon-compound-borrow",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain and Comet deployment",
+        "Wallet and desired base-asset borrow"
+      ],
+      "output": "Base debt, collateral limits, interest exposure and an unsigned borrow or repay plan.",
+      "access": "Read-only RPC against the selected Comet deployment."
+    },
+    {
+      "id": "lido-exit",
+      "protocol": "Lido",
+      "title": "Track a Lido withdrawal to claimability",
+      "skill": "galleon-lido-withdrawals",
+      "pack": "defi-staking-skills",
+      "inputs": [
+        "Ethereum wallet or withdrawal request IDs",
+        "stETH or wstETH amount if planning a new request"
+      ],
+      "output": "Request ownership, finalized/claimed status, claimable ETH and the next supported step.",
+      "access": "Ethereum RPC and official Lido deployment registry; queue timing is not a guarantee."
+    },
+    {
+      "id": "pendle-maturity",
+      "protocol": "Pendle",
+      "title": "Compare holding PT to maturity with exiting",
+      "skill": "galleon-pendle-maturity",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain and Pendle market address",
+        "PT/YT holdings, valuation time and proposed exit size"
+      ],
+      "output": "Maturity terms, underlying accounting unit, executable exit comparison and post-expiry route.",
+      "access": "Official Pendle market/API data and chain state."
+    },
+    {
+      "id": "vault-exit",
+      "protocol": "ERC-4626",
+      "title": "Check what a vault withdrawal can return now",
+      "skill": "galleon-vault-exit",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain, vault address and share owner",
+        "Shares or assets to exit"
+      ],
+      "output": "Preview versus owner limits, rounding, liquidity and asynchronous exit constraints.",
+      "access": "Read-only RPC; a share conversion alone does not prove withdrawable assets."
+    },
+    {
+      "id": "uniswap-position",
+      "protocol": "Uniswap",
+      "title": "Inspect a Uniswap V3 liquidity position",
+      "skill": "uniswap-v3-liquidity",
+      "pack": "lp-skills",
+      "inputs": [
+        "Chain and position NFT ID",
+        "Token amounts or position sizing budget",
+        "Range intent or monitoring question"
+      ],
+      "output": "Position composition, tick bounds, fee state and a bounded liquidity plan.",
+      "access": "Official deployments and read-only RPC; explicitly V3, not V4 hooks."
+    },
+    {
+      "id": "aerodrome-position",
+      "protocol": "Aerodrome",
+      "title": "Inspect Slipstream liquidity and gauge rewards",
+      "skill": "aerodrome-slipstream",
+      "pack": "lp-skills",
+      "inputs": [
+        "Base pool and position NFT ID",
+        "Wallet and gauge if staked"
+      ],
+      "output": "Range status, gauge custody, fees versus emissions, and exit constraints.",
+      "access": "Base RPC and current Aerodrome/Slipstream deployment records."
+    },
+    {
+      "id": "uniswap-quote",
+      "protocol": "Uniswap",
+      "title": "Prepare a Uniswap quote for review",
+      "skill": "uniswap-swap",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Input/output chain and token addresses",
+        "Exact input or output amount and wallet",
+        "Slippage limit and recipient"
+      ],
+      "output": "Quote identity, route type, approval/Permit2 requirements and unsigned transaction review.",
+      "access": "Official Uniswap Trading API access; quotes and permit requests never authorize signing."
+    },
+    {
+      "id": "bridge-status",
+      "protocol": "LI.FI",
+      "title": "Compare a bridge route and reconcile arrival",
+      "skill": "lifi-cross-chain",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Source/destination chains and token addresses",
+        "Amount, sender and recipient or existing transaction hash"
+      ],
+      "output": "Net destination amount, gas needs, route limits and destination settlement evidence.",
+      "access": "Official LI.FI quote/status API; source confirmation alone is not arrival."
+    },
+    {
+      "id": "token-research",
+      "protocol": "CoinGecko",
+      "title": "Resolve a token before trusting its price",
+      "skill": "galleon-coingecko-token-research",
+      "pack": "defi-data-skills",
+      "inputs": [
+        "Chain and contract address, or explicit CoinGecko ID",
+        "Quote currency and freshness requirement"
+      ],
+      "output": "Resolved token identity, timestamped market evidence and unsupported or stale fields.",
+      "access": "Official CoinGecko MCP or REST; API tier affects access and freshness."
+    },
+    {
+      "id": "yield-screen",
+      "protocol": "DefiLlama",
+      "title": "Screen yields without mistaking emissions for income",
+      "skill": "galleon-defillama-yield-screen",
+      "pack": "defi-data-skills",
+      "inputs": [
+        "Chain, asset and minimum TVL",
+        "Base/reward APY preferences and result limit"
+      ],
+      "output": "A reproducible shortlist separating base yield, rewards, missing fields and exit diligence.",
+      "access": "Public DefiLlama yield data or existing official connection; listed APY is not a guaranteed return."
+    },
+    {
+      "id": "coinbase-readiness",
+      "protocol": "Coinbase CDP",
+      "title": "Check AgentKit wallet capabilities",
+      "skill": "galleon-coinbase-agentkit-readiness",
+      "pack": "defi-infra-skills",
+      "inputs": [
+        "Intended network and wallet custody model",
+        "Existing CDP/AgentKit configuration without secrets"
+      ],
+      "output": "Capability and policy gaps, tested read access and the next required setup step.",
+      "access": "Official CDP/AgentKit tools; Coinbase account MCP and Agentic Wallet are separate products."
+    },
+    {
+      "id": "hyperliquid-risk",
+      "protocol": "Hyperliquid",
+      "title": "Review a Hyperliquid account before trading",
+      "skill": "hyperliquid-analyze",
+      "pack": "hyperliquid-skills",
+      "inputs": [
+        "Public account address and venue/market",
+        "Exposure or funding question"
+      ],
+      "output": "Account mode, margin exposure, funding and market evidence for a trade decision.",
+      "access": "Official Hyperliquid public info API; no trading key required for public reads."
+    }
+  ]
+}
