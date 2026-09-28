@@ -49,6 +49,8 @@ Onboarding preserves existing SOUL and instruction files. It opens native model 
 
 ## Verified releases
 
+Boomkin 0.7.2 updates its development-only Bun type definitions to 1.4.2. Type checking, the CLI build and isolated setup tests pass; runtime dependencies, setup behavior and catalog pins are unchanged.
+
 Boomkin 0.7.1 updates its direct YAML parser to 2.9.1. Configuration editing still preserves comments and unknown fields, rejects aliases and malformed input without partial writes, and leaves existing profile selections and catalog pins unchanged. The upstream skills installer retains its independently locked YAML dependency.
 
 Boomkin 0.6.8 pins fresh installs to [Hermes 0.21.5](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.24) at the reviewed commit and installer checksum. The daily catalog report now also shows whether that runtime pin lags the latest upstream release; runtime lag is advisory. Existing Hermes installations at 0.21.0 or newer remain in place, and the 14 skill pack pins are unchanged.
