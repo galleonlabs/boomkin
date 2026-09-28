@@ -30,6 +30,8 @@ Replace the directory above if you use another profile, and pass it to `doctor` 
 
 ## Select your packs
 
+New protocol skills arrive through the existing pack selection. Updating a selected lending pack now installs its Aave, Morpho and Compound skills; there is no separate all-packs dependency. Run `bun run boomkin workflows` to see the task names. For a dedicated profile, `bun run boomkin onboard --workflow aave-health --directory "$HOME/aave-agent"` selects only the lending pack. On an existing profile, `--workflow` replaces the saved pack selection while preserving already copied files.
+
 Fresh onboarding includes every pack in the checked-out catalog. Updates preserve the saved selection, and new catalog packs are opt-in for existing profiles. Use repeated `--pack` options to set the full desired selection:
 
 ```bash
@@ -46,6 +48,10 @@ bun run boomkin onboard --directory "$HOME/.boomkin/hermes" --all-packs
 Onboarding preserves existing SOUL and instruction files. It opens native model setup unless you pass `--skip-model-setup`. Configurations written before pack selection was recorded retain LP and Hyperliquid until you explicitly expand them.
 
 ## Verified releases
+
+Boomkin 0.6.8 pins fresh installs to [Hermes 0.21.5](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.24) at the reviewed commit and installer checksum. The daily catalog report now also shows whether that runtime pin lags the latest upstream release; runtime lag is advisory. Existing Hermes installations at 0.21.0 or newer remain in place, and the 14 skill pack pins are unchanged.
+
+Boomkin 0.6.7 pins [Hyperliquid skills 0.3.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-hyperliquid-skills%400.3.4). The published pack adds dated guidance for account-mode action limits, builder approvals, nonce handling and asset IDs. Existing profile and pack selections are preserved; update a profile with Hyperliquid selected to load the new guidance. The other 13 catalog pins remain unchanged. This release changes instructions, not live exchange access or trading authority.
 
 Boomkin 0.6.4 pins [Derivatives 0.1.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-defi-derivatives-skills%400.1.4), repairing Derive references after its official v3 documentation moved to docs.derive.xyz. The other 13 pack pins, all 26 skills, existing selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.
 

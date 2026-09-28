@@ -1,4 +1,25 @@
 import { type Catalog } from "./core.ts";
+import { HERMES_COMMIT, HERMES_VERSION } from "./hermes.ts";
+
+type HermesRelease = { name?: unknown; tag_name?: unknown };
+const HERMES_RELEASE_URL = "https://api.github.com/repos/NousResearch/hermes-agent/releases/latest";
+
+export async function reportHermesRelease(get: (url: string, init: RequestInit) => Promise<Response> = fetch): Promise<string> {
+  const pinned = `hermes: pinned ${HERMES_VERSION} ${HERMES_COMMIT}`;
+  try {
+    const response = await get(HERMES_RELEASE_URL, {
+      headers: { Accept: "application/vnd.github+json" }, signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) throw new Error("release lookup failed");
+    const release = await response.json() as HermesRelease;
+    const version = typeof release.name === "string" ? release.name.match(/^Hermes Agent v(\d+\.\d+\.\d+)\b/)?.[1] : undefined;
+    const tag = typeof release.tag_name === "string" && /^v\d{4}\.\d{1,2}\.\d{1,2}$/.test(release.tag_name) ? release.tag_name : undefined;
+    if (!version || !tag) throw new Error("invalid release metadata");
+    return `${pinned}; latest ${version} ${tag}; ${compareVersions(version, HERMES_VERSION) > 0 ? "behind" : "current"}`;
+  } catch {
+    return `${pinned}; latest unavailable; unknown`;
+  }
+}
 
 export type ReleaseTag = { package: string; version: string; revision: string };
 export type PackReport = {

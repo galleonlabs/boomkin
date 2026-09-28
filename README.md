@@ -1,8 +1,10 @@
 # Boomkin
 
-**A Hermes agent wired for DeFi.**
+**Give your agent a DeFi job it can actually finish.**
 
-Boomkin brings the native [Hermes Agent](https://github.com/NousResearch/hermes-agent) runtime together with independently published Galleon skill packs across DeFi primitives, public market data and optional infrastructure and wallet connections. It gives you a dedicated DeFi profile, then hands model login, tool authentication and the agent loop to Hermes.
+Inspect an Aave position, track a Lido withdrawal, size a Uniswap range, check Aerodrome gauge custody or screen DefiLlama yields. Boomkin installs protocol-specific procedures and local helpers into the native [Hermes Agent](https://github.com/NousResearch/hermes-agent), with reviewed source pins and file-integrity checks.
+
+Each workflow names the reads to make, the accounting that matters and the evidence needed to finish. Official provider tools do the protocol work; Hermes handles the agent loop.
 
 [Get started](#get-started) · [Skill packs](#skill-packs) · [Connections](docs/CONNECTIONS.md) · [Contribute](CONTRIBUTING.md)
 
@@ -24,7 +26,7 @@ bun run boomkin start
 
 `onboard` prepares `~/.boomkin/hermes`, installs the reviewed official Hermes runtime if none is available, installs all packs in the reviewed catalog on a fresh profile, creates Boomkin's SOUL and instructions, configures public CoinGecko MCP, and opens native Hermes model setup. Choose your provider and sign in there. `start` launches the native Hermes chat in that same profile.
 
-Hermes remains the runtime: its tools, sessions, memory, model adapters, MCP support and scheduling are not forked. A new runtime installation uses reviewed Hermes v0.21.3 source (upstream tag `v2026.9.14`); the native installer also manages the user-level `hermes` command and dependencies. Browser/computer-use dependencies are skipped initially and can be added through native Hermes setup. An existing working Hermes installation at 0.21.0 or newer is reused, not downgraded.
+Hermes remains the runtime: its tools, sessions, memory, model adapters, MCP support and scheduling are not forked. A new runtime installation uses reviewed Hermes v0.21.5 source (upstream tag `v2026.9.24`); the native installer also manages the user-level `hermes` command and dependencies. Browser/computer-use dependencies are skipped initially and can be added through native Hermes setup. An existing working Hermes installation at 0.21.0 or newer is reused, not downgraded.
 
 Model authentication requires your account or local model configuration. Optional providers can require subscriptions, OAuth or scoped credentials. Onboarding makes no model call, pays for no data, creates or funds no wallet, and starts no background service.
 
@@ -39,9 +41,32 @@ bun run boomkin model --directory "$HOME/defi-agent"
 
 Use the same `--directory` for subsequent commands. `--skip-model-setup` is for preparing a profile before interactive login; it does not mark the model authenticated. Existing SOUL, instructions and unrelated settings are preserved. A conflicting named MCP configuration is reported for review instead of overwritten.
 
+## Pick a job
+
+```bash
+bun run boomkin workflows
+bun run boomkin workflows --protocol Uniswap
+bun run boomkin workflows --workflow aave-health --json
+bun run boomkin onboard --workflow aave-health
+```
+
+`workflows` works before setup and makes no network calls. It shows the required inputs, deliverable and provider access. `--workflow` installs that task's independent pack. On an existing profile it selects that pack for future updates, just like `--pack`; already copied files and custom instructions are preserved. Use a separate `--directory` for a dedicated task profile.
+
+| Task | What you get |
+| --- | --- |
+| `aave-health` | V3 position reads, stressed health factor and reserve constraints |
+| `morpho-market` / `compound-borrow` | Protocol-specific collateral, debt and liquidity analysis |
+| `uniswap-position` / `aerodrome-position` | Position accounting, range checks and gauge/exit requirements |
+| `uniswap-quote` / `bridge-status` | Route review, permissions and settlement evidence |
+| `lido-exit` | Withdrawal NFT ownership, finalization and claimability |
+| `pendle-maturity` / `vault-exit` | Maturity accounting and what can actually be redeemed |
+| `token-research` / `yield-screen` | Contract-based identity and reproducible yield screening |
+| `coinbase-readiness` | CDP/AgentKit capabilities and policy gaps |
+| `hyperliquid-risk` | Venue/account-mode, margin and funding analysis |
+
 ## Skill packs
 
-The reviewed catalog contains **14 independent packs and 26 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
+The reviewed catalog contains **14 independent packs and 39 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
 
 | Pack | What it covers |
 | --- | --- |
@@ -60,7 +85,7 @@ The reviewed catalog contains **14 independent packs and 26 skills**. Install al
 | [Payments](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/payments) | Agent payments, x402 challenges and settlement evidence |
 | [Governance](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/governance) | Proposals, voting, delegation and execution stages |
 
-Start with `galleon-defi-infra` for tools and `galleon-defi-data` for evidence. Then select the workflow matching the task. The broader primitive skills use the `galleon-defi-` prefix to avoid upstream name collisions. Read [workflow examples](docs/WORKFLOWS.md) for useful combinations.
+Start with the protocol workflow matching your task. Use infrastructure and cross-protocol skills when the task needs them. The broader primitive skills use the `galleon-defi-` prefix to avoid upstream name collisions. Read [workflow examples](docs/WORKFLOWS.md) for useful combinations.
 
 Each pack is independently versioned and published from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills). Boomkin's [catalog](catalog/skills.json) records the npm identity, version, immutable source commit, package directory and expected skills. Downloads, installed metadata and every copied supporting file are checked before a successful sync is recorded. Local file digests let `check` and `doctor` detect missing references and changed scripts afterward.
 
@@ -111,7 +136,7 @@ Read [the connection guide](docs/CONNECTIONS.md) for exact prerequisites, diagno
 
 ## First useful task
 
-> Use galleon-defi-infra to report my available RPC and wallet tools without changing permissions. Use galleon-defi-data to read a public ETH price with its source, timestamp and limitations. Then use lp-analyze to assess this pool: [chain and pool address]. Keep any proposed transaction unsigned.
+> Use galleon-aave-position to inspect my wallet on this Aave V3 market: [chain, market and address]. Show current health factor and the effect of a 20% collateral-price fall. Identify missing reads and keep any repayment or borrow plan unsigned.
 
 Boomkin loads only the relevant skills and provider references. It separates infrastructure readiness, data evidence, protocol workflows, portfolio reporting and transaction review from execution. It uses Hermes's native memory and scheduling when appropriate; a scheduled task retains the same authorization and freshness requirements as an interactive task.
 
