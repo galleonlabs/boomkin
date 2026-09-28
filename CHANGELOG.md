@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.1 - 2026-09-28
+
+- Update the direct YAML parser to 2.9.1 while preserving configuration editing and fail-closed alias handling.
+- Keep catalog pins, profile selections and the upstream skills installer dependency tree unchanged.
+
 ## 0.7.0 - 2026-09-27
 
 - Add task discovery with `workflows`, protocol filtering and JSON output, including inputs, deliverables and access requirements for fourteen tasks.
