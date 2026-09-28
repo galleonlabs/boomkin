@@ -163,3 +163,12 @@ test("native MCP trust tightening preserves tool choices, OAuth and user configu
     expect(await readFile(join(root, "config.yaml"), "utf8")).toBe(after);
   });
 });
+
+test("YAML alias rejection preserves the entire configuration without partial MCP writes", async () => {
+  await fixture(async root => {
+    const before = "# Preserve this file\ndefaults: &defaults\n  model: user-model\ncopy: *defaults\n";
+    await writeFile(join(root, "config.yaml"), before);
+    await expect(configureMcpServers(root, { prices: server })).rejects.toThrow("aliases are unsupported");
+    expect(await readFile(join(root, "config.yaml"), "utf8")).toBe(before);
+  });
+});
