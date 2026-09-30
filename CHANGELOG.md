@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.3
+
+- Add scoped native Hermes ChatGPT login, status, refresh and model commands with interactive guards.
+- Document official partner plan consent and usage verification separately from existing native Codex OAuth. Keep the reviewed Hermes runtime pin and native token ownership.
+
+
 ## 0.7.1 - 2026-09-28
 
 - Update the direct YAML parser to 2.9.1 while preserving configuration editing and fail-closed alias handling.

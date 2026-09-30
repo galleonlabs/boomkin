@@ -208,3 +208,30 @@ export async function localProfileStatus(directory: string) {
     })),
   };
 }
+
+export type ChatGptAction = "login" | "status" | "refresh" | "model";
+export function chatGptArgs(action: ChatGptAction): string[] {
+  switch (action) {
+    case "login": return ["auth", "add", "openai-codex", "--type", "oauth", "--no-browser"];
+    case "status": return ["auth", "status", "openai-codex"];
+    case "refresh": return ["auth", "refresh", "openai-codex"];
+    case "model": return ["model"];
+    default: throw new Error("Choose login, status, refresh or model");
+  }
+}
+export async function runChatGpt(directory: string, action: ChatGptAction, dryRun = false): Promise<void> {
+  const args = chatGptArgs(action);
+  if (dryRun) { console.log(`Hermes ${args.join(" ")} in ${resolve(directory)}`); return; }
+  if (action !== "status" && !process.stdin.isTTY) throw new Error("ChatGPT authentication and model selection require an interactive terminal; no credentials were read or copied");
+  // Native auth pools own storage, account selection, refresh and revocation.
+  // Never read Codex tokens or write an independent Boomkin OAuth store.
+  console.log("Hermes owns this ChatGPT session. Select a fresh login; do not import another app's tokens. Signing in, permitting plan usage and attributed requests are separate checks. See docs/CHATGPT.md.");
+  if (action === "model") console.log("Select the authenticated provider and GPT-6.1 Sol only when its native model catalog offers it. Keep the current model if it is unavailable.");
+  const root = await profilePath(directory);
+  const executable = await findRuntime(root);
+  if (!executable) throw new Error("Hermes runtime is missing; complete onboarding first");
+  const probe = Bun.spawn([executable, "--profile", "default", "auth", action === "model" ? "status" : action === "login" ? "add" : action, "--help"], { cwd: root, env: nativeEnvironment(root), stdout: "pipe", stderr: "ignore", timeout: 15_000 });
+  const help = await new Response(probe.stdout).text();
+  if (await probe.exited !== 0 || !help.includes("provider") || action === "login" && (!help.includes("--type") || !help.includes("--no-browser"))) throw new Error("Existing Hermes lacks the reviewed native ChatGPT auth contract; preserve it and review an upstream update before continuing");
+  await runHermes(root, args, { executable });
+}

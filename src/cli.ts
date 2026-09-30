@@ -9,7 +9,7 @@ import { harnesses, parseCatalog, parseHarness, parseConfig, installArgs, identi
 import { tmpdir } from "node:os";
 import { checkoutPack, packageDirectory } from "./source.ts";
 import { defaultProfile, prepareHermes, connectProvider, providers, doctor } from "./onboarding.ts";
-import { runHermes } from "./hermes.ts";
+import { runHermes, runChatGpt, type ChatGptAction } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
 import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
 
@@ -26,6 +26,8 @@ bun run boomkin onboard --workflow yield-screen
 bun run boomkin connect --provider alchemy
 bun run boomkin connect --provider tenderly
 bun run boomkin model
+bun run boomkin chatgpt --action login
+bun run boomkin chatgpt --action status
 bun run boomkin check --directory ~/.boomkin/hermes
 bun run boomkin update --directory ~/.boomkin/hermes
 
@@ -59,11 +61,12 @@ async function canonicalPath(path: string): Promise<string> {
 
 async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
-    workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
+    action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
   } });
   const command = positionals[0] ?? "help";
   if (values.help || command === "help") return console.log(help);
+  if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
   if (positionals.length > 1) throw new Error("Unexpected positional arguments");
   if (values.workflow !== undefined && !["workflows", "onboard"].includes(command)) throw new Error("--workflow is available for workflows and onboard");
   if ((values.protocol !== undefined || values.json) && command !== "workflows") throw new Error("--protocol and --json are available for workflows");
@@ -72,7 +75,7 @@ async function main() {
   if (values.provider && command !== "connect") throw new Error("--provider is only available for connect");
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
-  if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+  if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model", "chatgpt"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
 
   if (command === "workflows") {
     if (values.pack || values.harness || values.directory) throw new Error("workflows accepts --workflow, --protocol and --json");
@@ -85,7 +88,7 @@ async function main() {
     console.log("coinbase: official local MCP with a scoped account CLI environment and read tools. Agentic Wallet is separate; see docs/CONNECTIONS.md.");
     return;
   }
-  if (["onboard", "doctor", "start", "connect", "model"].includes(command)) {
+  if (["onboard", "doctor", "start", "connect", "model", "chatgpt"].includes(command)) {
     if (values.harness && values.harness !== "hermes") throw new Error("Boomkin onboarding uses Hermes. Use setup for skill-only compatibility with another harness.");
     const directory = await canonicalPath(resolve(values.directory ?? defaultProfile()));
     if (command === "onboard") {
@@ -103,6 +106,7 @@ async function main() {
       return;
     }
     if (values.pack || values["all-packs"] || values["skip-model-setup"] || values["no-install"]) throw new Error("Pack and installer options are only available for onboard here");
+    if (command === "chatgpt") return runChatGpt(directory, (values.action ?? "status") as ChatGptAction, values["dry-run"]);
     if (command === "doctor") return console.log(JSON.stringify(await doctor(directory, parseCatalog(catalogFile), values.live), null, 2));
     if (command === "connect") return connectProvider(directory, values.provider ?? "", values["dry-run"], values["key-file"] ? resolve(values["key-file"]) : undefined);
     if (values["dry-run"]) return console.log(`Hermes ${command === "model" ? "setup model" : "chat"} in ${directory}`);

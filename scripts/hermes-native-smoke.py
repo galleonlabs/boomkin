@@ -31,7 +31,7 @@ with tempfile.TemporaryDirectory(prefix="boomkin-native-smoke-") as temporary:
     env.update(HERMES_HOME=str(root), HERMES_CONFIG=str(root / "config.yaml"), HERMES_ENV=str(root / ".env"), NO_COLOR="1", BOOMKIN_SMOKE_ROOT=str(root))
 
     def run(command, cwd=root):
-        result = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, timeout=90)
+        result = subprocess.run(command, cwd=cwd, env=env, capture_output=True, text=True, errors="replace", timeout=90)
         if result.returncode:
             raise AssertionError(f"Smoke command failed: {command[0]} (exit {result.returncode})")
         return result.stdout
@@ -40,6 +40,13 @@ with tempfile.TemporaryDirectory(prefix="boomkin-native-smoke-") as temporary:
 import { coinGeckoConfig, aixbtConfig } from "./src/onboarding.ts";
 await initializeProfile(process.env.BOOMKIN_SMOKE_ROOT!, "# Boomkin smoke identity\\n");
 await configureMcpServers(process.env.BOOMKIN_SMOKE_ROOT!, { coingecko: { ...coinGeckoConfig, enabled: false }, aixbt: { ...aixbtConfig, enabled: false } });'''], cwd=repo)
+    # Verify the reviewed native auth surface without reading credentials or starting OAuth.
+    add_help = run([str(hermes), "auth", "add", "--help"])
+    assert "--type" in add_help and "--no-browser" in add_help
+    refresh_help = run([str(hermes), "auth", "refresh", "--help"])
+    assert "provider" in refresh_help and "target" in refresh_help
+    status_help = run([str(hermes), "auth", "status", "--help"])
+    assert "provider" in status_help
     # Exercise the real published corpus through native progressive disclosure.
     run([bun, "src/cli.ts", "setup", "--harness", "hermes", "--directory", str(root)], cwd=repo)
     expected = [skill for pack in json.loads((repo / "catalog/skills.json").read_text())["packs"] for skill in pack["skills"]]

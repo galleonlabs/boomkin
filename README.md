@@ -177,3 +177,7 @@ The compatibility smoke checks fresh setup/update and independent pack selection
 [MIT licensed](LICENSE), with the copyright and permission notice retained when reusing copies or substantial portions. Created by [Andrew Wilkinson](https://andrewwilkinson.io) and [Galleon Labs](https://github.com/galleonlabs).
 
 See [reuse and attribution](ATTRIBUTION.md) for a ready-to-copy credit line. If Boomkin helps your work, [a star on the original repository](https://github.com/galleonlabs/boomkin) is appreciated and entirely optional.
+
+## ChatGPT authentication
+
+Use `bun run boomkin chatgpt --action login` for native Hermes ChatGPT OAuth, `--action status` to inspect it, and `--action model` for catalog-supported selection including GPT-6.1 Sol when available. [ChatGPT onboarding and verification](docs/CHATGPT.md) distinguishes native OAuth from partner plan consent and attributed usage. No tokens are copied into Boomkin and the runtime pin is unchanged.
