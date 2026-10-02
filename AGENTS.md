@@ -3,6 +3,21 @@
 Boomkin is a Hermes-first DeFi agent onboarding product with independently published Galleon skill packs across DeFi primitives. Other harness adapters preserve existing skill-only installations.
 Use TypeScript and Bun. Run `bun run check` and `bun run build` before shipping.
 
+## Find the implementation
+
+| Task | Start here |
+| --- | --- |
+| CLI arguments and command dispatch | `src/cli.ts`; focused regressions in `test/` |
+| Profiles, model setup and provider connections | `src/onboarding.ts`, `src/hermes.ts`; `docs/CONNECTIONS.md` and `docs/CHATGPT.md` |
+| Pack selection, source pins and copied-file integrity | `catalog/skills.json`, `src/core.ts`, `src/source.ts`, `src/integrity.ts`; `docs/UPDATES.md` |
+| Workflow definitions and saved research runs | `src/workflows.ts`, `src/projects.ts`; `docs/WORKFLOWS.md` and `docs/PROJECTS.md` |
+| Website, browser lab and static delivery | `site/`, `scripts/build-site.ts`, `scripts/check-site.ts`; `docs/WEBSITE.md` |
+| Change-specific checks | `CONTRIBUTING.md#work-locally`; `package.json` owns commands and `.github/workflows/` owns CI |
+
+`dist/` and `site-dist/` are generated outputs. Protocol skill procedures live in the separate `crypto-defi-skills` repository; the website's vendored strategy engine is pinned by `site/vendor/provenance.json`.
+
+## Constraints
+
 - Never copy or fork a harness runtime or skill corpus here. Use upstream installers.
 - Keep the catalog explicit, source-controlled, and restricted to reviewed Galleon repositories.
 - Never add signing, custody, transaction submission, hidden fees, or telemetry to setup.
