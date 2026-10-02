@@ -6,6 +6,7 @@ import {marked} from 'marked';
 import catalogFile from '../catalog/skills.json';
 import workflowFile from '../catalog/workflows.json';
 import {parseCatalog} from '../src/core.ts';
+import {createDocsCodeRenderer} from './docs-code.ts';
 
 const root=resolve(import.meta.dir,'..'),out=join(root,'site-dist');
 const base=process.env.SITE_BASE??'/boomkin/';
@@ -41,6 +42,7 @@ const sourceRoutes=new Map(docs.map(doc=>[resolve(root,doc.source),`${base}docs/
 for(const doc of docs){
   const source=await readFile(join(root,doc.source),'utf8');
   const renderer=new marked.Renderer();
+  renderer.code=createDocsCodeRenderer();
   renderer.link=({href,title,tokens})=>{
     let destination=href;
     if(href&&!/^(?:[a-z]+:|\/|#)/i.test(href)){

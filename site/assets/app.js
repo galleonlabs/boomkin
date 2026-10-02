@@ -10,12 +10,24 @@ export function toast(message) {
   clearTimeout(toastTimer); toastTimer = setTimeout(() => node.classList.remove('show'), 2500);
 }
 document.addEventListener('click', async event => {
-  const button = event.target.closest('.copy');
-  if (!button) return;
+  const button = event.target instanceof Element ? event.target.closest('.copy') : null;
+  if (!button || button.disabled) return;
   const target = byId(button.dataset.copyTarget);
   if (!target) return;
-  try { await navigator.clipboard.writeText(target.textContent.trim()); toast('Copied to clipboard'); }
-  catch { toast('Select the command and copy it from the page.'); }
+  const exact = button.hasAttribute('data-copy-exact');
+  const label = button.querySelector('[data-copy-label]');
+  button.disabled = true;
+  if (label) label.textContent = 'Copying';
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error('clipboard_unavailable');
+    await navigator.clipboard.writeText(exact ? target.textContent : target.textContent.trim());
+    toast('Copied to clipboard');
+  } catch {
+    toast(`Could not copy. Select the ${exact ? 'code' : 'command'} and copy it from the page.`);
+  } finally {
+    button.disabled = false;
+    if (label) label.textContent = 'Copy';
+  }
 });
 document.querySelectorAll('.docs-mobile-nav select').forEach(select => select.addEventListener('change', () => { location.href = select.value; }));
 const demos = {
