@@ -1,0 +1,14 @@
+{
+  "parameters": {
+    "id": "bitcoin",
+    "days": 180,
+    "vsCurrency": "usd",
+    "interval": "automatic-daily"
+  },
+  "excludedTrailingObservation": true,
+  "limitations": [
+    "Daily UTC aggregate observations, not venue candle closes or executable prices.",
+    "The current trailing observation is excluded when it is not at UTC midnight; daily gaps fail rather than interpolate.",
+    "Public keyless availability is diagnostic; no Demo/Pro account entitlement or future provider availability is established."
+  ]
+}

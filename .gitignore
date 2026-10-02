@@ -16,3 +16,6 @@ output/
 *.tsbuildinfo
 .DS_Store
 .boomkin/
+site-dist/
+!site/assets/
+!site/assets/**

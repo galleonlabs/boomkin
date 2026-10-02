@@ -2,6 +2,48 @@
   "schemaVersion": 1,
   "workflows": [
     {
+      "id": "market-snapshot",
+      "protocol": "Market data",
+      "title": "Capture a bounded market snapshot with source evidence",
+      "skill": "galleon-defi-market-snapshot",
+      "pack": "defi-data-skills",
+      "inputs": [
+        "Resolved CoinGecko IDs and quote currency",
+        "Snapshot or daily-history request, with explicit observation limit",
+        "Maximum acceptable age and any comparison provider"
+      ],
+      "output": "Timestamped source observations and raw response hashes, stale/partial coverage, aligned discrepancies and a daily-history envelope when requested.",
+      "access": "Bounded public CoinGecko and documented public comparison reads; limits and outages remain explicit. Contract identities need the contract-aware token workflow."
+    },
+    {
+      "id": "strategy-backtest",
+      "protocol": "Strategy research",
+      "title": "Test a strategy against a reproducible daily price history",
+      "skill": "galleon-defi-strategy-backtest",
+      "pack": "defi-strategy-skills",
+      "inputs": [
+        "Sourced, ordered daily price dataset with asset identity and units",
+        "Buy-and-hold, funded DCA or moving-average rule",
+        "Funding schedule, fees, slippage and comparison period"
+      ],
+      "output": "A deterministic next-observation backtest, same-cash-flow benchmark, costs, time-weighted return, drawdown, source hash and explicit model limitations.",
+      "access": "Local Node.js helper and a supplied evidence dataset; no exchange, wallet or trading account needed. Daily observations do not prove executable fills."
+    },
+    {
+      "id": "thesis-review",
+      "protocol": "Research",
+      "title": "Review an investment thesis against explicit invalidation conditions",
+      "skill": "galleon-defi-data",
+      "pack": "defi-data-skills",
+      "inputs": [
+        "Exact asset identity and a written thesis",
+        "Invalidation conditions and evidence standard",
+        "Review frequency and meaningful notification rule"
+      ],
+      "output": "A cited baseline or comparison, verdict for each invalidation condition and unresolved evidence; native scheduling handoff when requested.",
+      "access": "Existing public or explicitly connected official data sources; a saved review frequency does not create a running monitor."
+    },
+    {
       "id": "aave-health",
       "protocol": "Aave",
       "title": "Stress-test an Aave V3 position",

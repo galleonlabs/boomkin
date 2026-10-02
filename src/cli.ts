@@ -4,6 +4,7 @@ import { resolve, join, dirname, basename } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
 import catalogFile from "../catalog/skills.json";
+import packageFile from "../package.json";
 import { harnesses, parseCatalog, parseHarness, parseConfig, installArgs, identity, fetchCatalog, catalogChanges, installedVersion, selectPacks, compatibilitySetupMessage, type Catalog, type Config } from "./core.ts";
 
 import { tmpdir } from "node:os";
@@ -12,24 +13,29 @@ import { defaultProfile, prepareHermes, connectProvider, providers, doctor } fro
 import { runHermes, runChatGpt, type ChatGptAction } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
 import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
+import { createProject, listProjects, readProject, projectRuns, runProject, checkProjectRun } from "./projects.ts";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const help = `Boomkin — your Hermes DeFi agent.
 
-bun run boomkin onboard
-bun run boomkin doctor --live
-bun run boomkin start
-bun run boomkin providers
-bun run boomkin workflows
-bun run boomkin workflows --workflow aave-health
-bun run boomkin onboard --workflow yield-screen
-bun run boomkin connect --provider alchemy
-bun run boomkin connect --provider tenderly
-bun run boomkin model
-bun run boomkin chatgpt --action login
-bun run boomkin chatgpt --action status
-bun run boomkin check --directory ~/.boomkin/hermes
-bun run boomkin update --directory ~/.boomkin/hermes
+boomkin onboard
+boomkin doctor --live
+boomkin start
+boomkin providers
+boomkin workflows
+boomkin workflows --workflow aave-health
+boomkin project create --name my-research --workflow yield-screen --input-file ./inputs.json
+boomkin project run --name my-research --dry-run
+boomkin project run --name my-research
+boomkin project check --name my-research
+boomkin project list
+boomkin onboard --workflow yield-screen
+boomkin connect --provider alchemy
+boomkin connect --provider tenderly
+boomkin model
+boomkin chatgpt --action login
+boomkin chatgpt --action status
+boomkin check --directory ~/.boomkin/hermes
+boomkin update --directory ~/.boomkin/hermes
 
 onboard installs the official Hermes runtime if needed, prepares an isolated profile,
 installs the selected Galleon skill packs and public CoinGecko MCP, then runs native model setup.
@@ -39,14 +45,17 @@ installs the selected Galleon skill packs and public CoinGecko MCP, then runs na
 --all-packs opts an existing onboarding profile into every pack in the current catalog.
 --workflow chooses one task's pack for onboarding; updates keep that selection.
 workflows lists inputs, concrete results and access requirements; --json emits structured data.
+project saves workflow inputs and keeps separate native Hermes runs, evidence and unsigned plans.
+create and run --dry-run make no model or data call; run uses your configured model.
+--max-turns bounds a project run (default 30, maximum 100); see docs/PROJECTS.md.
 doctor distinguishes configuration from verified reads; --live probes public MCP only.
 connect uses native Hermes OAuth, AIXBT environment-backed authentication, or the official local Coinbase MCP.
 Wallet/account setup stays in its official CLI; see docs/CONNECTIONS.md.
 
 Advanced skill-only compatibility:
-bun run boomkin setup --harness codex --directory ./agent --pack lp-skills
-bun run boomkin harnesses
-bun run boomkin catalog
+boomkin setup --harness codex --directory ./agent --pack lp-skills
+boomkin harnesses
+boomkin catalog
 --pack selects a pack (repeat for several); updates preserve your saved selection.
 --offline-catalog uses this checkout's catalog. Runtime updates use native Hermes.
 No model call, wallet funding, trading, paid data request or service starts in onboarding.`;
@@ -61,21 +70,58 @@ async function canonicalPath(path: string): Promise<string> {
 
 async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
-    action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
+    name: { type: "string" }, "input-file": { type: "string" }, objective: { type: "string" }, "max-turns": { type: "string" }, "run-id": { type: "string" },
+    version: { type: "boolean", short: "v" }, action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
   } });
   const command = positionals[0] ?? "help";
+  if (values.version || command === "version") return console.log(`Boomkin ${packageFile.version}`);
   if (values.help || command === "help") return console.log(help);
   if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
-  if (positionals.length > 1) throw new Error("Unexpected positional arguments");
-  if (values.workflow !== undefined && !["workflows", "onboard"].includes(command)) throw new Error("--workflow is available for workflows and onboard");
-  if ((values.protocol !== undefined || values.json) && command !== "workflows") throw new Error("--protocol and --json are available for workflows");
+  if (positionals.length > (command === "project" ? 2 : 1)) throw new Error("Unexpected positional arguments");
+  if (values.workflow !== undefined && !["workflows", "onboard", "project"].includes(command)) throw new Error("--workflow is available for workflows, onboard and project create");
+  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows and project");
+  if ([values.name, values["input-file"], values.objective, values["max-turns"], values["run-id"]].some(value => value !== undefined) && command !== "project") throw new Error("Project options are only available for project");
   if (values.workflow !== undefined && (values.pack || values["all-packs"] || values.protocol !== undefined)) throw new Error("Choose --workflow, --protocol, --pack or --all-packs separately");
   if (values["key-file"] && (command !== "connect" || values.provider !== "coinbase")) throw new Error("--key-file is only available for connect --provider coinbase");
   if (values.provider && command !== "connect") throw new Error("--provider is only available for connect");
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
-  if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model", "chatgpt"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+  if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model", "chatgpt", "project"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+
+  if (command === "project") {
+    const action = positionals[1];
+    if (!action || !["create", "list", "show", "run", "check"].includes(action)) throw new Error("Choose project create, list, show, run or check");
+    if (values.pack || values.harness || values["offline-catalog"]) throw new Error("Project commands use the selected Hermes profile; pack options belong to onboard");
+    if (action !== "create" && [values.workflow, values["input-file"], values.objective].some(value => value !== undefined)) throw new Error("--workflow, --input-file and --objective are only available for project create");
+    if (action !== "run" && values["max-turns"] !== undefined) throw new Error("--max-turns is only available for project run");
+    if (action !== "check" && values["run-id"] !== undefined) throw new Error("--run-id is only available for project check");
+    if (values["dry-run"] && !["create", "run"].includes(action)) throw new Error("--dry-run is available for project create and run");
+    if (action === "run" && values.json && !values["dry-run"]) throw new Error("Live project run streams native Hermes output. Use --dry-run --json to preview, or project show/project check for saved JSON results");
+    const directory = await canonicalPath(resolve(values.directory ?? defaultProfile()));
+    if (action === "list") {
+      if (values.name !== undefined) throw new Error("project list does not accept --name");
+      const projects = await listProjects(directory);
+      return console.log(values.json ? JSON.stringify({ schemaVersion: 1, projects }, null, 2) : projects.length ? projects.map(project => `${project.name}: ${project.workflow.title}`).join("\n") : "No saved projects. Use project create with a workflow and input file.");
+    }
+    if (!values.name) throw new Error("Pass --name with the saved project name");
+    if (action === "create") {
+      if (!values.workflow || !values["input-file"]) throw new Error("project create requires --workflow and --input-file (a JSON object)");
+      const file = Bun.file(resolve(values["input-file"]));
+      if (file.size > 65_536) throw new Error("Project input file exceeds 64 KiB");
+      const project = await createProject(directory, { name: values.name, workflow: values.workflow, inputs: await file.json(), objective: values.objective, dryRun: values["dry-run"] }, parseCatalog(catalogFile));
+      return console.log(values.json ? JSON.stringify(project, null, 2) : `${values["dry-run"] ? "Would create" : "Saved"} ${project.name} in ${directory}. Preview with project run --name ${project.name} --dry-run.`);
+    }
+    if (action === "show") return console.log(JSON.stringify({ project: await readProject(directory, values.name), runs: await projectRuns(directory, values.name) }, null, 2));
+    if (action === "run") {
+      const result = await runProject(directory, values.name, { dryRun: values["dry-run"], maxTurns: values["max-turns"] === undefined ? undefined : Number(values["max-turns"]) });
+      return console.log(values.json ? JSON.stringify(result, null, 2) : values["dry-run"] ? result.prompt : `${result.run!.state}: ${result.path}${result.run!.issues?.length ? `\n${result.run!.issues.join("\n")}` : "\nCaptured files passed structural and hash checks. Review the findings and unsigned plan."}`);
+    }
+    const result = await checkProjectRun(directory, values.name, values["run-id"]);
+    console.log(JSON.stringify(result, null, 2));
+    if (result.issues.length) process.exitCode = 1;
+    return;
+  }
 
   if (command === "workflows") {
     if (values.pack || values.harness || values.directory) throw new Error("workflows accepts --workflow, --protocol and --json");
@@ -137,7 +183,7 @@ async function main() {
   if (values.pack) config.packs = values.pack;
   const adapter = harnesses[config.harness];
   const env = { ...process.env, DISABLE_TELEMETRY: "1", XDG_STATE_HOME: join(stateDir, "state"), ...(config.harness === "hermes" ? { HERMES_HOME: directory } : {}) };
-  const skillsBin = join(root, "node_modules/skills/bin/cli.mjs");
+  const skillsBin = fileURLToPath(import.meta.resolve("skills/bin/cli.mjs"));
   async function run(args: string[]) {
     const child = Bun.spawn([process.execPath, skillsBin, ...args], { cwd: directory, env, stdin: "inherit", stdout: "inherit", stderr: "inherit" });
     if (await child.exited !== 0) throw new Error("Upstream skills command failed. Completed packs remain installed; rerun after resolving the error.");

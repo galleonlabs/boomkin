@@ -54,12 +54,13 @@
     {
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
-      "description": "Portable DeFi data skills for CoinGecko, DefiLlama, AIXBT, and source-aware research.",
-      "version": "0.4.0",
-      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
+      "description": "Capture timestamped market evidence, compare public sources, retrieve daily history and screen DeFi yields.",
+      "version": "0.5.0",
+      "revision": "72b0d85df41c2c2a6e0525d94b245faa6d11e5d4",
       "skills": [
         "galleon-coingecko-token-research",
         "galleon-defi-data",
+        "galleon-defi-market-snapshot",
         "galleon-defillama-yield-screen"
       ],
       "path": "packages/data",
@@ -193,6 +194,18 @@
       ],
       "path": "packages/governance",
       "package": "galleon-defi-governance-skills"
+    },
+    {
+      "id": "defi-strategy-skills",
+      "source": "galleonlabs/crypto-defi-skills",
+      "description": "Test daily spot rules with costs, cash flows, drawdown and a reproducible buy-and-hold benchmark.",
+      "version": "0.1.0",
+      "revision": "72b0d85df41c2c2a6e0525d94b245faa6d11e5d4",
+      "skills": [
+        "galleon-defi-strategy-backtest"
+      ],
+      "path": "packages/strategy",
+      "package": "galleon-defi-strategy-skills"
     }
   ]
 }

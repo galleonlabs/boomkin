@@ -1,6 +1,38 @@
 # Protocol workflows
 
-Find a task with `bun run boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `bun run boomkin onboard --workflow <id>`. Discovery is local and does not connect wallets or send transactions.
+Find a task with `boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `boomkin onboard --workflow <id>`. From a source checkout, use `bun run boomkin` in place of `boomkin`. Discovery is local and does not connect wallets or send transactions.
+
+Use [saved projects](PROJECTS.md) to keep task inputs, source evidence, successive reports and unsigned plans. Creating a project makes no model call; running it explicitly launches native Hermes.
+
+## Capture a bounded market snapshot with source evidence
+
+Skill: `galleon-defi-market-snapshot`. Task ID: `market-snapshot`.
+
+Inputs: Resolved CoinGecko IDs and quote currency; snapshot or daily-history request with an explicit observation limit; maximum acceptable age and comparison provider.
+
+Output: Timestamped source observations and raw response hashes, stale/partial coverage, aligned discrepancies and a daily-history envelope when requested.
+
+Access: Bounded public CoinGecko and documented public comparison reads; limits and outages remain explicit. Use the contract-aware token workflow when resolving chain/contract identities.
+
+## Test a strategy against a reproducible daily price history
+
+Skill: `galleon-defi-strategy-backtest`. Task ID: `strategy-backtest`.
+
+Inputs: Sourced, ordered daily prices with asset identity and units; buy-and-hold, funded DCA or moving-average rule; funding schedule, fees, slippage and comparison period.
+
+Output: A deterministic next-observation backtest, same-cash-flow benchmark, costs, time-weighted return, drawdown, source hash and explicit model limitations.
+
+Access: Local Node.js helper and a supplied evidence dataset. No exchange, wallet or trading account needed. Daily observations do not prove executable fills.
+
+## Review an investment thesis against explicit invalidation conditions
+
+Skill: `galleon-defi-data`. Task ID: `thesis-review`.
+
+Inputs: Exact asset identity, written thesis, invalidation conditions, evidence standard, review frequency and meaningful notification rule.
+
+Output: A cited baseline or comparison, verdict for each condition and unresolved evidence. [Thesis projects](PROJECTS.md#keep-a-thesis-explicit) validate the saved fields and carry prior reports into later runs.
+
+Access: Existing public or explicitly connected official data sources. A saved review frequency does not create a running monitor; native Hermes owns any separately configured recurrence.
 
 ## Stress-test an Aave V3 position
 

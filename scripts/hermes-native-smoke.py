@@ -47,6 +47,17 @@ await configureMcpServers(process.env.BOOMKIN_SMOKE_ROOT!, { coingecko: { ...coi
     assert "provider" in refresh_help and "target" in refresh_help
     status_help = run([str(hermes), "auth", "status", "--help"])
     assert "provider" in status_help
+    chat_help = run([str(hermes), "--profile", "default", "chat", "--help"])
+    for flag in ("--query-file", "--skills", "--max-turns", "--oneshot", "--cli"):
+        assert flag in chat_help, f"Missing native project launch flag: {flag}"
+    # Saved projects and launch previews must work without model credentials.
+    run([bun, "-e", '''import catalog from "./catalog/skills.json";
+import { parseCatalog } from "./src/core.ts";
+import { createProject, runProject } from "./src/projects.ts";
+const root = process.env.BOOMKIN_SMOKE_ROOT!;
+await createProject(root, { name: "native-review", workflow: "aave-health", inputs: { chainId: 1, market: "synthetic fixture only" } }, parseCatalog(catalog));
+const preview = await runProject(root, "native-review", { dryRun: true });
+if (!preview.prompt.includes("Use galleon-aave-position") || preview.run) throw new Error("Project dry run contract failed");'''], cwd=repo)
     # Exercise the real published corpus through native progressive disclosure.
     run([bun, "src/cli.ts", "setup", "--harness", "hermes", "--directory", str(root)], cwd=repo)
     expected = [skill for pack in json.loads((repo / "catalog/skills.json").read_text())["packs"] for skill in pack["skills"]]
@@ -132,4 +143,4 @@ await configureMcpServers(process.env.BOOMKIN_SMOKE_ROOT!, { local_smoke: { comm
         output = run([str(hermes), "--profile", "default", "mcp", "test", "coingecko"])
         assert "Connected" in output and "Tools discovered: 2" in output and "execute" in output and "search_docs" in output, "Public native MCP contract did not positively verify"
         public_verified = True
-    print(json.dumps({"runtime": version.splitlines()[0], "installed_skills": len(expected), "native_skill_discovery": "passed", "reference_loading": "passed", "references_loaded": len(list((root / "skills").glob("*/references/**/*.md"))), "profile_isolation": "passed", "soul": "passed", "config": "passed", "native_tool_filters": "passed", "aixbt_environment_and_filters": "passed", "local_mcp_discovery": "passed", "public_coingecko_discovery": "passed" if public_verified else "not-requested", "model_auth_wallet_calls": "none"}))
+    print(json.dumps({"runtime": version.splitlines()[0], "installed_skills": len(expected), "native_skill_discovery": "passed", "reference_loading": "passed", "references_loaded": len(list((root / "skills").glob("*/references/**/*.md"))), "profile_isolation": "passed", "soul": "passed", "config": "passed", "native_project_launch_flags": "passed", "project_preview_without_model": "passed", "native_tool_filters": "passed", "aixbt_environment_and_filters": "passed", "local_mcp_discovery": "passed", "public_coingecko_discovery": "passed" if public_verified else "not-requested", "model_auth_wallet_calls": "none"}))

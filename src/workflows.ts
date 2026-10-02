@@ -34,6 +34,6 @@ export function renderWorkflow(workflow: Workflow): string {
   Inputs: ${workflow.inputs.join("; ")}
   Result: ${workflow.output}
   Access: ${workflow.access}
-  Install: bun run boomkin onboard --workflow ${workflow.id}
+  Install: boomkin onboard --workflow ${workflow.id}
   Start with: Use ${workflow.skill}. ${workflow.title}. Ask for missing inputs and return the supported evidence before proposing any wallet action.`;
 }

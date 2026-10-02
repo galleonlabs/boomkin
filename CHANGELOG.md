@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.8.0 · 2026-10-02
+
+- Publish the Bun-based `boomkin` CLI to npm, including correct dependency discovery from hoisted consumer installs.
+- Preserve research projects and successive native Hermes runs with saved briefs, source/resource hashes, citations, declared freshness checks and unsigned-plan review.
+- Add market-snapshot, strategy-backtest and thesis-review workflows; review data 0.5.0 and strategy 0.1.0 source releases.
+- Ship the public website, source-backed documentation, searchable workflow catalog and browser strategy lab using the same released simulation engine.
+- Document Minara's real architecture, transferable product patterns and the limits of current open-source coverage from primary-source research.
+
+
 ## 0.7.3
 
 - Add scoped native Hermes ChatGPT login, status, refresh and model commands with interactive guards.

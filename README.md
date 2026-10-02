@@ -1,12 +1,12 @@
 # Boomkin
 
-**Give your agent a DeFi job it can actually finish.**
+**Your open-source DeFi desk.**
 
 Inspect an Aave position, track a Lido withdrawal, size a Uniswap range, check Aerodrome gauge custody or screen DefiLlama yields. Boomkin installs protocol-specific procedures and local helpers into the native [Hermes Agent](https://github.com/NousResearch/hermes-agent), with reviewed source pins and file-integrity checks.
 
 Each workflow names the reads to make, the accounting that matters and the evidence needed to finish. Official provider tools do the protocol work; Hermes handles the agent loop.
 
-[Get started](#get-started) · [Skill packs](#skill-packs) · [Connections](docs/CONNECTIONS.md) · [Contribute](CONTRIBUTING.md)
+[Website](https://galleonlabs.github.io/boomkin/) · [Strategy lab](https://galleonlabs.github.io/boomkin/lab/) · [Documentation](https://galleonlabs.github.io/boomkin/docs/) · [Contribute](CONTRIBUTING.md)
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
@@ -14,6 +14,15 @@ Each workflow names the reads to make, the accounting that matters and the evide
 ## Get started
 
 Use macOS or Linux, [Bun](https://bun.sh), Git and a terminal. For Windows, use WSL2 or install Hermes with its official Windows flow first. Optional Coinbase tooling requires Node.js 22+; Agentic Wallet's current guide requires Node.js 24+.
+
+```bash
+bun install -g boomkin@0.8.0
+boomkin onboard
+boomkin doctor --live
+boomkin start
+```
+
+Bun and Git are prerequisites. Keep Bun's global bin directory on your path. For a source checkout:
 
 ```bash
 git clone https://github.com/galleonlabs/boomkin.git
@@ -40,6 +49,20 @@ bun run boomkin model --directory "$HOME/defi-agent"
 ```
 
 Use the same `--directory` for subsequent commands. `--skip-model-setup` is for preparing a profile before interactive login; it does not mark the model authenticated. Existing SOUL, instructions and unrelated settings are preserved. A conflicting named MCP configuration is reported for review instead of overwritten.
+
+## Keep the question and the evidence
+
+Save a research question as a project, preview its brief and run it through native Hermes. Each run keeps its own report, raw sources, observation hashes and reviewable unsigned plan. A model response stays in review until its artifact checks pass. [Project commands and output contract](docs/PROJECTS.md).
+
+```bash
+boomkin project create --name stablecoin-yields \
+  --workflow yield-screen --input-file ./inputs.json
+boomkin project run --name stablecoin-yields --dry-run
+boomkin project run --name stablecoin-yields
+boomkin project check --name stablecoin-yields
+```
+
+Public market snapshots compare fresh CoinGecko and DefiLlama observations while keeping unavailable, stale and disagreeing sources visible. The strategy pack runs local daily spot simulations with next-observation decisions, fixed fees and adverse slippage, flow-neutral returns, drawdown and a same-flow buy-and-hold benchmark. [Try the same engine in the browser](https://galleonlabs.github.io/boomkin/lab/) with a dated Bitcoin capture, synthetic fixtures or your own dataset.
 
 ## Pick a job
 
