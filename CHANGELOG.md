@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.1 · 2026-10-02
+
+- Correct the published README catalog count and list the strategy pack and three new workflows. Keep npm and website installation commands aligned with this patch release.
+
 ## 0.8.0 · 2026-10-02
 
 - Publish the Bun-based `boomkin` CLI to npm, including correct dependency discovery from hoisted consumer installs.

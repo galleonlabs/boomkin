@@ -16,7 +16,7 @@ Each workflow names the reads to make, the accounting that matters and the evide
 Use macOS or Linux, [Bun](https://bun.sh), Git and a terminal. For Windows, use WSL2 or install Hermes with its official Windows flow first. Optional Coinbase tooling requires Node.js 22+; Agentic Wallet's current guide requires Node.js 24+.
 
 ```bash
-bun install -g boomkin@0.8.0
+bun install -g boomkin@0.8.1
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -77,6 +77,9 @@ bun run boomkin onboard --workflow aave-health
 
 | Task | What you get |
 | --- | --- |
+| `market-snapshot` | Source timestamps, raw-response hashes and public price comparison |
+| `strategy-backtest` | Reproducible daily spot tests, costs and a same-flow benchmark |
+| `thesis-review` | Saved thesis, invalidation conditions and fresh evidence for review |
 | `aave-health` | V3 position reads, stressed health factor and reserve constraints |
 | `morpho-market` / `compound-borrow` | Protocol-specific collateral, debt and liquidity analysis |
 | `uniswap-position` / `aerodrome-position` | Position accounting, range checks and gauge/exit requirements |
@@ -89,12 +92,13 @@ bun run boomkin onboard --workflow aave-health
 
 ## Skill packs
 
-The reviewed catalog contains **14 independent packs and 39 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
+The reviewed catalog contains **15 independent packs and 41 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
 
 | Pack | What it covers |
 | --- | --- |
 | [Infrastructure](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/infra) | RPC, Alchemy, Coinbase, wallet policies and readiness |
-| [Data](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/data) | CoinGecko, DefiLlama and AIXBT research, identity and freshness |
+| [Data](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/data) | CoinGecko, DefiLlama and AIXBT research, identity, freshness and source-hashed market captures |
+| [Strategy](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/strategy) | Daily spot simulations, cash flows, costs, drawdown and reproducible benchmarks |
 | [Liquidity provision](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lp) | Uniswap, Aerodrome, Revert and VFAT position workflows |
 | [Hyperliquid](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/hyperliquid) | Venue-specific analysis, planning, execution, monitoring and review |
 | [Lending](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lending) | Collateral, borrowing, interest, repayment and liquidation risk |
