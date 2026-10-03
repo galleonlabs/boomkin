@@ -22,7 +22,7 @@ jobs:
       - run: bun run check
       - run: bun run build:site
       - run: bun run check:site
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site-dist
   deploy:
