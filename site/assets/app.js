@@ -56,7 +56,7 @@ tabs.forEach((tab,index) => {
     if(target){event.preventDefault();chooseDemo(target);target.focus();}
   });
 });
-const packNames = {'lp-skills':'Liquidity','hyperliquid-skills':'Hyperliquid','defi-data-skills':'Market data','defi-infra-skills':'Infrastructure','defi-lending-skills':'Lending','defi-staking-skills':'Staking','defi-yield-skills':'Yield','defi-tokenized-assets-skills':'Tokenized assets','defi-routing-skills':'Swaps & bridges','defi-derivatives-skills':'Derivatives','defi-portfolio-skills':'Portfolio','defi-security-skills':'Security','defi-payments-skills':'Payments','defi-governance-skills':'Governance','defi-strategy-skills':'Strategy testing'};
+const packNames = {'defi-agent-skills':'Agent plans','defi-prediction-skills':'Prediction markets','lp-skills':'Liquidity','hyperliquid-skills':'Hyperliquid','defi-data-skills':'Market data','defi-infra-skills':'Infrastructure','defi-lending-skills':'Lending','defi-staking-skills':'Staking','defi-yield-skills':'Yield','defi-tokenized-assets-skills':'Tokenized assets','defi-routing-skills':'Swaps & bridges','defi-derivatives-skills':'Derivatives','defi-portfolio-skills':'Portfolio','defi-security-skills':'Security','defi-payments-skills':'Payments','defi-governance-skills':'Governance','defi-strategy-skills':'Strategy testing'};
 async function initCatalog() {
   if (!byId('workflow-list') && !byId('pack-grid')) return;
   try {
