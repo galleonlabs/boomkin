@@ -17,6 +17,7 @@ function invalidateResults(message){
   report=undefined;$('download-report').disabled=true;$('download-inputs').disabled=true;
   $('lab-error').textContent=message;$('lab-error').hidden=false;
   ['metric-return','metric-drawdown','metric-equity','metric-benchmark'].forEach(id=>$(id).textContent='—');
+  $('trades-heading').textContent='Simulated trades';
   $('equity-chart').replaceChildren();$('trade-rows').replaceChildren();$('lab-evidence').textContent='No result for the current inputs. Correct them and rerun the test.';
 }
 $('dataset-file').addEventListener('change',async()=>{
