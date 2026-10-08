@@ -16,7 +16,7 @@ Each workflow names the reads to make, the accounting that matters and the evide
 Use macOS or Linux, [Bun](https://bun.sh), Git and a terminal. For Windows, use WSL2 or install Hermes with its official Windows flow first. Optional Coinbase tooling requires Node.js 22+; Agentic Wallet's current guide requires Node.js 24+.
 
 ```bash
-bun install -g boomkin@0.8.1
+bun install -g boomkin@0.9.0
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -89,13 +89,32 @@ bun run boomkin onboard --workflow aave-health
 | `token-research` / `yield-screen` | Contract-based identity and reproducible yield screening |
 | `coinbase-readiness` | CDP/AgentKit capabilities and policy gaps |
 | `hyperliquid-risk` | Venue/account-mode, margin and funding analysis |
+| `agent-capabilities` | Exact access, cost and permission boundaries for a tool |
+| `unsigned-plan` / `transaction-simulation` | Ordered signer-free payload construction and exact-state simulation evidence |
+| `aave-v4-health` | Verified V4 hub/spoke accounting and deployment maturity |
+| `sablier-stream` / `superfluid-stream` | Vesting rights, claimable amounts, flow deposits and runway |
+| `across-route` / `explorer-diligence` | Cross-chain quote/arrival and code/control/transaction evidence |
+| `prediction-research` / `prediction-resolution` | Public Polymarket research, resolution and payout constraints |
+
+## Discover the right provider
+
+```bash
+boomkin providers --search simulation --json
+boomkin providers --capability Data --access keyless
+boomkin providers --provider blockscout
+boomkin connect --provider blockscout
+```
+
+Discovery covers all 58 studied [skills.eth.sh](https://skills.eth.sh/) entries and two existing connections with dated primary sources, authorship, access, cost and authority metadata. It runs locally and installs no third-party skills. Keyless access and free access are distinct; wallet tools and paid x402 services remain explicit choices. CoinGecko remains the sole onboarding default; Blockscout is an optional keyless explorer with reviewed named reads. [Provider guide](docs/PROVIDERS.md).
 
 ## Skill packs
 
-The reviewed catalog contains **15 independent packs and 41 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
+The reviewed catalog contains **17 independent packs and 48 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
 
 | Pack | What it covers |
 | --- | --- |
+| [Agent plans](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/agent) | Unsigned builder/playbook plans and exact simulation evidence |
+| [Prediction markets](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/prediction) | Rules, order-book depth, versioned ledgers and payout evidence |
 | [Infrastructure](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/infra) | RPC, Alchemy, Coinbase, wallet policies and readiness |
 | [Data](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/data) | CoinGecko, DefiLlama and AIXBT research, identity, freshness and source-hashed market captures |
 | [Strategy](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/strategy) | Daily spot simulations, cash flows, costs, drawdown and reproducible benchmarks |

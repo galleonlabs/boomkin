@@ -37,9 +37,9 @@ with tempfile.TemporaryDirectory(prefix="boomkin-native-smoke-") as temporary:
         return result.stdout
 
     run([bun, "-e", '''import { initializeProfile, configureMcpServers } from "./src/hermes.ts";
-import { coinGeckoConfig, aixbtConfig } from "./src/onboarding.ts";
+import { coinGeckoConfig, aixbtConfig, blockscoutConfig } from "./src/onboarding.ts";
 await initializeProfile(process.env.BOOMKIN_SMOKE_ROOT!, "# Boomkin smoke identity\\n");
-await configureMcpServers(process.env.BOOMKIN_SMOKE_ROOT!, { coingecko: { ...coinGeckoConfig, enabled: false }, aixbt: { ...aixbtConfig, enabled: false } });'''], cwd=repo)
+await configureMcpServers(process.env.BOOMKIN_SMOKE_ROOT!, { coingecko: { ...coinGeckoConfig, enabled: false }, aixbt: { ...aixbtConfig, enabled: false }, blockscout: { ...blockscoutConfig, enabled: false } });'''], cwd=repo)
     # Verify the reviewed native auth surface without reading credentials or starting OAuth.
     add_help = run([str(hermes), "auth", "add", "--help"])
     assert "--type" in add_help and "--no-browser" in add_help
@@ -112,6 +112,14 @@ assert _interpolate_env_vars(cfg)['headers']['Authorization'] == 'Bearer isolate
 aixbt_filter = _make_tool_filter('aixbt', cfg)
 assert aixbt_filter('list_topics') and aixbt_filter('me')
 assert not aixbt_filter('unreviewed_future_tool') and not aixbt_filter('send_transaction')
+cfg = load_config()['mcp_servers']['blockscout']
+assert cfg['enabled'] is False
+assert cfg['url'] == 'https://mcp.blockscout.com/mcp'
+assert cfg['trust'] == 'untrusted' and 'headers' not in cfg
+assert cfg['tools']['resources'] is False and cfg['tools']['prompts'] is False
+blockscout_filter = _make_tool_filter('blockscout', cfg)
+assert blockscout_filter('__unlock_blockchain_analysis__') and blockscout_filter('read_contract')
+assert not blockscout_filter('direct_api_call') and not blockscout_filter('unreviewed_future_tool')
 '''])
     # Minimal stdio MCP: schema discovery only; a tools/call request fails this smoke.
     mock = root / "mock_mcp.py"

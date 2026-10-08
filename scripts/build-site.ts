@@ -6,6 +6,7 @@ import {marked} from 'marked';
 import catalogFile from '../catalog/skills.json';
 import workflowFile from '../catalog/workflows.json';
 import {parseCatalog} from '../src/core.ts';
+import {providerCatalog} from '../src/provider-catalog.ts';
 import {createDocsCodeRenderer} from './docs-code.ts';
 
 const root=resolve(import.meta.dir,'..'),out=join(root,'site-dist');
@@ -26,6 +27,7 @@ for(const [path,expected] of Object.entries(provenance.files)){
 }
 const catalog=parseCatalog(catalogFile);
 await writeFile(join(out,'assets/catalog.json'),JSON.stringify({schemaVersion:1,release:manifest.version,revision,packs:catalog.packs,workflows:workflowFile.workflows},null,2)+'\n');
+await writeFile(join(out,'assets/providers.json'),JSON.stringify({...providerCatalog,release:manifest.version,revision},null,2)+'\n');
 const header=`<header class="header"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><nav aria-label="Main navigation"><a href="${base}#workflows">Workflows</a><a href="${base}lab/">Strategy lab</a><a href="${base}docs/" aria-current="page">Docs</a><a class="nav-source" href="https://github.com/galleonlabs/boomkin">GitHub <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8"/></svg></a></nav></header>`;
 const footer=`<footer class="footer wrap"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><p>Open-source tools for a desk you control.</p><div><a href="${base}docs/">Documentation</a><a href="https://github.com/galleonlabs/boomkin">GitHub</a><a href="https://github.com/galleonlabs/crypto-defi-skills">Skill library</a></div><span class="footer-credit">Built by <a href="https://github.com/galleonlabs">Galleon Labs</a> · MIT</span></footer>`;
 const docs=[
@@ -33,6 +35,7 @@ const docs=[
  {slug:'projects',title:'Research projects',source:'docs/PROJECTS.md'},
  {slug:'workflows',title:'Protocol workflows',source:'docs/WORKFLOWS.md'},
  {slug:'connections',title:'Connections',source:'docs/CONNECTIONS.md'},
+ {slug:'providers',title:'Provider discovery',source:'docs/PROVIDERS.md'},
  {slug:'strategy',title:'Strategy testing',source:'site/docs/strategy.md'},
  {slug:'evidence',title:'Evidence and control',source:'site/docs/evidence.md'},
  {slug:'harnesses',title:'Other harnesses',source:'docs/HARNESSES.md'},
@@ -69,5 +72,5 @@ await writeFile(join(out,'.nojekyll'),'');
 await writeFile(join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
 const routes=['','lab/',...docs.map(doc=>`docs/${doc.slug?doc.slug+'/':''}`)];
 await writeFile(join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(path=>`<url><loc>${origin}/${path}</loc></url>`).join('')}</urlset>\n`);
-await writeFile(join(out,'llms.txt'),`# Boomkin\n\nOpen-source DeFi agent on native Hermes. Version ${manifest.version}.\n\n${docs.map(doc=>`- [${doc.title}](${origin}/docs/${doc.slug?doc.slug+'/':''})`).join('\n')}\n- [Skill catalog](${origin}/assets/catalog.json)\n- [Source](https://github.com/galleonlabs/boomkin)\n- [Independent skills](https://github.com/galleonlabs/crypto-defi-skills)\n`);
+await writeFile(join(out,'llms.txt'),`# Boomkin\n\nOpen-source DeFi agent on native Hermes. Version ${manifest.version}.\n\n${docs.map(doc=>`- [${doc.title}](${origin}/docs/${doc.slug?doc.slug+'/':''})`).join('\n')}\n- [Skill catalog](${origin}/assets/catalog.json)\n- [Provider discovery catalog](${origin}/assets/providers.json)\n- [Source](https://github.com/galleonlabs/boomkin)\n- [Independent skills](https://github.com/galleonlabs/crypto-defi-skills)\n`);
 console.log(`Built ${routes.length} routes: ${out}; ${catalog.packs.length} packs; ${workflowFile.workflows.length} workflows; ${revision}`);

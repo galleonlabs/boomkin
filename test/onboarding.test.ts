@@ -2,7 +2,7 @@ import { expect, test } from "bun:test";
 import { mkdtemp, mkdir, chmod, readFile, writeFile, rm, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { aixbtConfig, coinbaseSettings, connectProvider, publicDataProbe, doctor } from "../src/onboarding";
+import { aixbtConfig, blockscoutConfig, coinbaseSettings, connectProvider, publicDataProbe, doctor } from "../src/onboarding";
 import catalog from "../catalog/skills.json";
 import { harnesses, parseCatalog } from "../src/core";
 import { HERMES_VERSION } from "../src/hermes";
@@ -178,4 +178,45 @@ test("Tenderly opt-in setup previews paid access without creating a profile or c
     await connectProvider(path, "tenderly", true);
     await expect(readFile(join(path, "config.yaml"))).rejects.toThrow();
   });
+});
+
+test("Blockscout opt-in installs only reviewed named reads and keeps keyless access explicit", async () => {
+  await temporary(async root => {
+    const bin = join(root, ".boomkin/runtime/venv/bin");
+    await mkdir(bin, { recursive: true });
+    await writeFile(join(bin, "hermes"), '#!/bin/sh\necho "Hermes Agent v0.21.0"\n');
+    await chmod(join(bin, "hermes"), 0o700);
+    await writeFile(join(root, "config.yaml"), "# Preserve my model\nmodel:\n  default: existing-model\n");
+    await connectProvider(root, "blockscout");
+    const config = await readFile(join(root, "config.yaml"), "utf8");
+    expect(config).toContain("https://mcp.blockscout.com/mcp");
+    expect(config).toContain("trust: untrusted");
+    expect(config).toContain("__unlock_blockchain_analysis__");
+    expect(config).not.toContain("direct_api_call");
+    expect(config).not.toContain("headers:");
+    expect(config).toContain("default: existing-model");
+    expect(blockscoutConfig.tools.include).toHaveLength(15);
+    const dryPath = join(root, "dry-profile");
+    await connectProvider(dryPath, "blockscout", true);
+    await expect(readFile(join(dryPath, "config.yaml"))).rejects.toThrow();
+    const result = await doctor(root, parseCatalog(catalog));
+    expect(result.optionalData).toEqual([]);
+    expect(result.mcpServers.find(server => server.name === "blockscout")?.missingEnvironment).toEqual([]);
+  });
+});
+
+test("Blockscout public discovery checks all reviewed reads without a PRO key or tool calls", async () => {
+  const methods: string[] = [];
+  const result = await publicDataProbe(async (url, options) => {
+    expect(url).toBe("https://mcp.blockscout.com/mcp");
+    expect(Object.keys(options.headers as Record<string, string>).some(key => /authorization|api.key/i.test(key))).toBe(false);
+    const body = JSON.parse(options.body as string); methods.push(body.method);
+    if (body.method === "initialize") return Response.json({ result: { protocolVersion: "2025-03-26", serverInfo: { name: "blockscout" } } });
+    if (body.method === "notifications/initialized") return new Response(null, { status: 202 });
+    return Response.json({ result: { tools: [...blockscoutConfig.tools.include, "direct_api_call", "future_tool"].map(name => ({ name })) } });
+  }, "blockscout");
+  expect(result.status).toBe("verified");
+  expect(result.tools).toEqual(blockscoutConfig.tools.include);
+  expect(result.marketRead).toBe("not-tested");
+  expect(methods).toEqual(["initialize", "notifications/initialized", "tools/list"]);
 });

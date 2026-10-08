@@ -177,3 +177,105 @@ Access: Official Hyperliquid public info API; no trading key required for public
 ## Cross-protocol tasks
 
 The primitive packs remain useful for multi-venue portfolio, governance, payments, security and tokenized-asset work. Load only the relevant references, and use the protocol-specific skill when a task reaches its venue.
+
+## Agent tools and unsigned transactions
+
+### Choose a tool without granting excess authority
+
+Skill: `galleon-defi-infra`. Task ID: `agent-capabilities`.
+
+Inputs: Research question, chain and available official tools; Required reads or unsigned outputs; Existing account/cost limits without secrets.
+
+Output: A dated capability/access matrix separating public reads, unsigned preparation, simulation, account writes, signing and paid requests; a concrete unsupported-capability result.
+
+Access: Existing official tools and primary docs; discovery does not create wallets, accept delegated permissions or purchase data.
+
+### Build a deterministic unsigned transaction plan
+
+Skill: `galleon-defi-agent-plan`. Task ID: `unsigned-plan`.
+
+Inputs: Chain, protocol/version and verified deployment; Sender, recipient, token identities and raw-unit amounts; Action parameters, finite approval limits and current state block.
+
+Output: Ordered unsigned prerequisites and payloads, target/value/calldata identity, capability evidence, exact units, continuing permission review and construction limits.
+
+Access: Official protocol builders or version-matched Nethermind playbooks; local construction has no signer and makes no broadcast.
+
+### Simulate the exact unsigned payload before review
+
+Skill: `galleon-defi-agent-simulate`. Task ID: `transaction-simulation`.
+
+Inputs: Chain, sender, target, value and unsigned calldata; State block and preceding approval/action sequence; Expected balance/allowance changes and permitted provider costs.
+
+Output: Exact payload/state identity, simulated balance/allowance changes, decoded errors and trace evidence, artificial overrides and unresolved coverage; no execution guarantee.
+
+Access: Existing official simulation provider or disposable local fork; Tenderly project access, Alchemy quotas or Portals x402 cost remain explicit opt-ins.
+
+### Inspect hub and spoke risk at a verified Aave V4 deployment
+
+Skill: `galleon-aave-v4`. Task ID: `aave-v4-health`.
+
+Inputs: Chain, verified V4 hub/spoke and deployment maturity; Wallet, position/reserve state and oracle block; Proposed supply, borrow, repay or withdrawal.
+
+Output: Hub/spoke identity, collateral/debt and liquidity, health/capacity and configuration constraints with an unsigned plan; unsupported or preview deployments remain explicit.
+
+Access: Official Aave docs/MCP and read-only chain RPC; no V3 assumptions transferred to V4 and no wallet approval.
+
+### Review a vesting or payment stream and its exit rights
+
+Skill: `galleon-sablier-streams`. Task ID: `sablier-stream`.
+
+Inputs: Chain, deployment/module and stream ID or proposed terms; Token, sender, recipient, funding and schedule; Cancellation/transfer rights and the current observation time.
+
+Output: Module-specific funding, vested/withdrawable amounts, ownership and cancellation rights, schedule/rounding checks and an unsigned plan or existing-stream reconciliation.
+
+Access: Official Sablier deployments, SDK/indexer and public chain reads; setup and analysis neither fund nor create a stream.
+
+### Review streaming obligations and Super Token liquidity
+
+Skill: `galleon-superfluid-streams`. Task ID: `superfluid-stream`.
+
+Inputs: Chain, verified Super Token and stream/agreement identity; Sender, recipient, signed flow rate and funding horizon; Current balance, deposit and operator permissions.
+
+Output: Current flow, claimable/liquid balance, deposit/runway and operator authority; wrapping, cancellation and liquidation constraints with an unsigned plan.
+
+Access: Official Superfluid contracts/SDK and public reads; no wrapping, stream creation or delegated operator grant.
+
+### Review a cross-chain quote and reconcile deposit delivery
+
+Skill: `galleon-defi-routing`. Task ID: `across-route`.
+
+Inputs: Source/destination chains and exact token contracts; Amount, sender, recipient and slippage/fee ceiling; Quote intent or existing Across deposit/transaction identity.
+
+Output: Dated route/quote, fees and destination minimum, exact unsigned target/calldata, deposit identity and separate fill/refund reconciliation with unresolved outcomes.
+
+Access: Official Across API/MCP reads; embedded actions, quote expiry and destination execution need separate review; no source approval or bridge submission.
+
+### Inspect token controls and transaction evidence through a read-only explorer
+
+Skill: `galleon-defi-security-token-diligence`. Task ID: `explorer-diligence`.
+
+Inputs: Chain ID and exact contract/wallet/transaction identity; Pinned state block and the economic claim to examine; Required code, proxy, balance/flow and exit evidence.
+
+Output: Verified source/implementation correspondence, visible controls and transaction/balance evidence with coverage and freshness limits; no unconditional safety score.
+
+Access: Optional keyless Blockscout named reads or existing explorer/RPC; shared gateway limits and indexer lag remain explicit.
+
+### Research prediction markets with bounded public evidence
+
+Skill: `galleon-prediction-market-research`. Task ID: `prediction-research`.
+
+Inputs: Exact event/market/condition identity and outcome; Observation window, source limit and liquidity question; Resolution terms and comparison requirements.
+
+Output: Cited event/market identity, outcome order, bounded orderbook/activity evidence, pricing/liquidity limitations and explicit resolution uncertainty.
+
+Access: Official Polymarket public APIs or official CLI read commands; no private key, order placement, funding or redemption.
+
+### Reconcile prediction market resolution and payout evidence
+
+Skill: `galleon-prediction-market-resolution`. Task ID: `prediction-resolution`.
+
+Inputs: Exact market/condition and outcome token identities; Resolution rules, disputed outcome or observed status; Optional public holder/transaction identity.
+
+Output: Current resolution state, oracle/dispute/finality evidence and payout/redemption constraints; data evidence is distinct from any actual redemption.
+
+Access: Official public Polymarket data and onchain reads; no claim/redeem transaction, approval or signing.

@@ -9,6 +9,7 @@ Use TypeScript and Bun. Run `bun run check` and `bun run build` before shipping.
 | --- | --- |
 | CLI arguments and command dispatch | `src/cli.ts`; focused regressions in `test/` |
 | Profiles, model setup and provider connections | `src/onboarding.ts`, `src/hermes.ts`; `docs/CONNECTIONS.md` and `docs/CHATGPT.md` |
+| Provider discovery, cost/authority metadata and public MCP probes | `catalog/providers.json`, `src/provider-catalog.ts`, `src/mcp-discovery.ts`; `docs/PROVIDERS.md` |
 | Pack selection, source pins and copied-file integrity | `catalog/skills.json`, `src/core.ts`, `src/source.ts`, `src/integrity.ts`; `docs/UPDATES.md` |
 | Workflow definitions and saved research runs | `src/workflows.ts`, `src/projects.ts`; `docs/WORKFLOWS.md` and `docs/PROJECTS.md` |
 | Website, browser lab and static delivery | `site/`, `scripts/build-site.ts`, `scripts/check-site.ts`; `docs/WEBSITE.md` |

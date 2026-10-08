@@ -7,7 +7,7 @@ Boomkin gives a native Hermes agent a dedicated financial workspace. Choose a mo
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.8.1
+bun install -g boomkin@0.9.0
 boomkin onboard
 boomkin doctor --live
 boomkin start

@@ -227,6 +227,146 @@
       ],
       "output": "Account mode, margin exposure, funding and market evidence for a trade decision.",
       "access": "Official Hyperliquid public info API; no trading key required for public reads."
+    },
+    {
+      "id": "agent-capabilities",
+      "protocol": "Agent tools",
+      "title": "Choose a tool without granting excess authority",
+      "skill": "galleon-defi-infra",
+      "pack": "defi-infra-skills",
+      "inputs": [
+        "Research question, chain and available official tools",
+        "Required reads or unsigned outputs",
+        "Existing account/cost limits without secrets"
+      ],
+      "output": "A dated capability/access matrix separating public reads, unsigned preparation, simulation, account writes, signing and paid requests; a concrete unsupported-capability result.",
+      "access": "Existing official tools and primary docs; discovery does not create wallets, accept delegated permissions or purchase data."
+    },
+    {
+      "id": "unsigned-plan",
+      "protocol": "Agent transactions",
+      "title": "Build a deterministic unsigned transaction plan",
+      "skill": "galleon-defi-agent-plan",
+      "pack": "defi-agent-skills",
+      "inputs": [
+        "Chain, protocol/version and verified deployment",
+        "Sender, recipient, token identities and raw-unit amounts",
+        "Action parameters, finite approval limits and current state block"
+      ],
+      "output": "Ordered unsigned prerequisites and payloads, target/value/calldata identity, capability evidence, exact units, continuing permission review and construction limits.",
+      "access": "Official protocol builders or version-matched Nethermind playbooks; local construction has no signer and makes no broadcast."
+    },
+    {
+      "id": "transaction-simulation",
+      "protocol": "Simulation",
+      "title": "Simulate the exact unsigned payload before review",
+      "skill": "galleon-defi-agent-simulate",
+      "pack": "defi-agent-skills",
+      "inputs": [
+        "Chain, sender, target, value and unsigned calldata",
+        "State block and preceding approval/action sequence",
+        "Expected balance/allowance changes and permitted provider costs"
+      ],
+      "output": "Exact payload/state identity, simulated balance/allowance changes, decoded errors and trace evidence, artificial overrides and unresolved coverage; no execution guarantee.",
+      "access": "Existing official simulation provider or disposable local fork; Tenderly project access, Alchemy quotas or Portals x402 cost remain explicit opt-ins."
+    },
+    {
+      "id": "aave-v4-health",
+      "protocol": "Aave V4",
+      "title": "Inspect hub and spoke risk at a verified Aave V4 deployment",
+      "skill": "galleon-aave-v4",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain, verified V4 hub/spoke and deployment maturity",
+        "Wallet, position/reserve state and oracle block",
+        "Proposed supply, borrow, repay or withdrawal"
+      ],
+      "output": "Hub/spoke identity, collateral/debt and liquidity, health/capacity and configuration constraints with an unsigned plan; unsupported or preview deployments remain explicit.",
+      "access": "Official Aave docs/MCP and read-only chain RPC; no V3 assumptions transferred to V4 and no wallet approval."
+    },
+    {
+      "id": "sablier-stream",
+      "protocol": "Sablier",
+      "title": "Review a vesting or payment stream and its exit rights",
+      "skill": "galleon-sablier-streams",
+      "pack": "defi-payments-skills",
+      "inputs": [
+        "Chain, deployment/module and stream ID or proposed terms",
+        "Token, sender, recipient, funding and schedule",
+        "Cancellation/transfer rights and the current observation time"
+      ],
+      "output": "Module-specific funding, vested/withdrawable amounts, ownership and cancellation rights, schedule/rounding checks and an unsigned plan or existing-stream reconciliation.",
+      "access": "Official Sablier deployments, SDK/indexer and public chain reads; setup and analysis neither fund nor create a stream."
+    },
+    {
+      "id": "superfluid-stream",
+      "protocol": "Superfluid",
+      "title": "Review streaming obligations and Super Token liquidity",
+      "skill": "galleon-superfluid-streams",
+      "pack": "defi-payments-skills",
+      "inputs": [
+        "Chain, verified Super Token and stream/agreement identity",
+        "Sender, recipient, signed flow rate and funding horizon",
+        "Current balance, deposit and operator permissions"
+      ],
+      "output": "Current flow, claimable/liquid balance, deposit/runway and operator authority; wrapping, cancellation and liquidation constraints with an unsigned plan.",
+      "access": "Official Superfluid contracts/SDK and public reads; no wrapping, stream creation or delegated operator grant."
+    },
+    {
+      "id": "across-route",
+      "protocol": "Across",
+      "title": "Review a cross-chain quote and reconcile deposit delivery",
+      "skill": "galleon-defi-routing",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Source/destination chains and exact token contracts",
+        "Amount, sender, recipient and slippage/fee ceiling",
+        "Quote intent or existing Across deposit/transaction identity"
+      ],
+      "output": "Dated route/quote, fees and destination minimum, exact unsigned target/calldata, deposit identity and separate fill/refund reconciliation with unresolved outcomes.",
+      "access": "Official Across API/MCP reads; embedded actions, quote expiry and destination execution need separate review; no source approval or bridge submission."
+    },
+    {
+      "id": "explorer-diligence",
+      "protocol": "Blockscout",
+      "title": "Inspect token controls and transaction evidence through a read-only explorer",
+      "skill": "galleon-defi-security-token-diligence",
+      "pack": "defi-security-skills",
+      "inputs": [
+        "Chain ID and exact contract/wallet/transaction identity",
+        "Pinned state block and the economic claim to examine",
+        "Required code, proxy, balance/flow and exit evidence"
+      ],
+      "output": "Verified source/implementation correspondence, visible controls and transaction/balance evidence with coverage and freshness limits; no unconditional safety score.",
+      "access": "Optional keyless Blockscout named reads or existing explorer/RPC; shared gateway limits and indexer lag remain explicit."
+    },
+    {
+      "id": "prediction-research",
+      "protocol": "Polymarket",
+      "title": "Research prediction markets with bounded public evidence",
+      "skill": "galleon-prediction-market-research",
+      "pack": "defi-prediction-skills",
+      "inputs": [
+        "Exact event/market/condition identity and outcome",
+        "Observation window, source limit and liquidity question",
+        "Resolution terms and comparison requirements"
+      ],
+      "output": "Cited event/market identity, outcome order, bounded orderbook/activity evidence, pricing/liquidity limitations and explicit resolution uncertainty.",
+      "access": "Official Polymarket public APIs or official CLI read commands; no private key, order placement, funding or redemption."
+    },
+    {
+      "id": "prediction-resolution",
+      "protocol": "Polymarket",
+      "title": "Reconcile prediction market resolution and payout evidence",
+      "skill": "galleon-prediction-market-resolution",
+      "pack": "defi-prediction-skills",
+      "inputs": [
+        "Exact market/condition and outcome token identities",
+        "Resolution rules, disputed outcome or observed status",
+        "Optional public holder/transaction identity"
+      ],
+      "output": "Current resolution state, oracle/dispute/finality evidence and payout/redemption constraints; data evidence is distinct from any actual redemption.",
+      "access": "Official public Polymarket data and onchain reads; no claim/redeem transaction, approval or signing."
     }
   ]
 }

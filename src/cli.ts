@@ -9,7 +9,8 @@ import { harnesses, parseCatalog, parseHarness, parseConfig, installArgs, identi
 
 import { tmpdir } from "node:os";
 import { checkoutPack, packageDirectory } from "./source.ts";
-import { defaultProfile, prepareHermes, connectProvider, providers, doctor } from "./onboarding.ts";
+import { defaultProfile, prepareHermes, connectProvider, doctor } from "./onboarding.ts";
+import { providerCatalog, selectProvider, filterProviders, renderProvider } from "./provider-catalog.ts";
 import { runHermes, runChatGpt, type ChatGptAction } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
 import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
@@ -21,6 +22,9 @@ boomkin onboard
 boomkin doctor --live
 boomkin start
 boomkin providers
+boomkin providers --search simulation --json
+boomkin providers --access keyless
+boomkin providers --provider blockscout
 boomkin workflows
 boomkin workflows --workflow aave-health
 boomkin project create --name my-research --workflow yield-screen --input-file ./inputs.json
@@ -31,6 +35,7 @@ boomkin project list
 boomkin onboard --workflow yield-screen
 boomkin connect --provider alchemy
 boomkin connect --provider tenderly
+boomkin connect --provider blockscout
 boomkin model
 boomkin chatgpt --action login
 boomkin chatgpt --action status
@@ -45,6 +50,8 @@ installs the selected Galleon skill packs and public CoinGecko MCP, then runs na
 --all-packs opts an existing onboarding profile into every pack in the current catalog.
 --workflow chooses one task's pack for onboarding; updates keep that selection.
 workflows lists inputs, concrete results and access requirements; --json emits structured data.
+providers discovers sourced provider tools locally; --search, --capability and --access narrow results.
+--provider inspects one entry. Discovery does not install third-party skills or connect a service.
 project saves workflow inputs and keeps separate native Hermes runs, evidence and unsigned plans.
 create and run --dry-run make no model or data call; run uses your configured model.
 --max-turns bounds a project run (default 30, maximum 100); see docs/PROJECTS.md.
@@ -72,6 +79,7 @@ async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
     name: { type: "string" }, "input-file": { type: "string" }, objective: { type: "string" }, "max-turns": { type: "string" }, "run-id": { type: "string" },
     version: { type: "boolean", short: "v" }, action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
+    search: { type: "string" }, capability: { type: "string" }, access: { type: "string" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
   } });
   const command = positionals[0] ?? "help";
@@ -80,11 +88,12 @@ async function main() {
   if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
   if (positionals.length > (command === "project" ? 2 : 1)) throw new Error("Unexpected positional arguments");
   if (values.workflow !== undefined && !["workflows", "onboard", "project"].includes(command)) throw new Error("--workflow is available for workflows, onboard and project create");
-  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows and project");
+  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project", "providers"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows, providers and project");
+  if ([values.search, values.capability, values.access].some(value => value !== undefined) && command !== "providers") throw new Error("--search, --capability and --access are only available for providers");
   if ([values.name, values["input-file"], values.objective, values["max-turns"], values["run-id"]].some(value => value !== undefined) && command !== "project") throw new Error("Project options are only available for project");
   if (values.workflow !== undefined && (values.pack || values["all-packs"] || values.protocol !== undefined)) throw new Error("Choose --workflow, --protocol, --pack or --all-packs separately");
   if (values["key-file"] && (command !== "connect" || values.provider !== "coinbase")) throw new Error("--key-file is only available for connect --provider coinbase");
-  if (values.provider && command !== "connect") throw new Error("--provider is only available for connect");
+  if (values.provider !== undefined && !["connect", "providers"].includes(command)) throw new Error("--provider is only available for connect and providers");
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
   if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model", "chatgpt", "project"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
@@ -130,9 +139,10 @@ async function main() {
     return console.log(values.json ? JSON.stringify({ schemaVersion: 1, workflows: selected }, null, 2) : selected.map(renderWorkflow).join("\n\n"));
   }
   if (command === "providers") {
-    for (const [name, provider] of Object.entries(providers)) console.log(`${name}: ${provider.access}`);
-    console.log("coinbase: official local MCP with a scoped account CLI environment and read tools. Agentic Wallet is separate; see docs/CONNECTIONS.md.");
-    return;
+    if (values.pack || values.harness || values.directory || values["offline-catalog"]) throw new Error("providers accepts --provider, --search, --capability, --access and --json");
+    if (values.provider !== undefined && [values.search, values.capability, values.access].some(value => value !== undefined)) throw new Error("Choose one --provider or discovery filters separately");
+    const selected = values.provider !== undefined ? [selectProvider(values.provider)] : filterProviders({ search: values.search, capability: values.capability, access: values.access });
+    return console.log(values.json ? JSON.stringify({ schemaVersion: providerCatalog.schemaVersion, directory: providerCatalog.directory, checkedOn: providerCatalog.checkedOn, providers: selected }, null, 2) : selected.length ? selected.map(provider => renderProvider(provider, values.provider !== undefined)).join("\n") : "No matching providers. Broaden the filters or run providers without filters.");
   }
   if (["onboard", "doctor", "start", "connect", "model", "chatgpt"].includes(command)) {
     if (values.harness && values.harness !== "hermes") throw new Error("Boomkin onboarding uses Hermes. Use setup for skill-only compatibility with another harness.");

@@ -1,5 +1,6 @@
 import {readFile,readdir,stat} from 'node:fs/promises';
 import {join,resolve,extname} from 'node:path';
+import {parseProviderCatalog} from '../src/provider-catalog.ts';
 const root=resolve(import.meta.dir,'../site-dist'),base=process.env.SITE_BASE??'/boomkin/';
 async function files(directory:string):Promise<string[]>{const items=await readdir(directory,{withFileTypes:true});return(await Promise.all(items.map(item=>item.isDirectory()?files(join(directory,item.name)):[join(directory,item.name)]))).flat();}
 const pages=(await files(root)).filter(path=>path.endsWith('.html'));
@@ -31,4 +32,6 @@ if(!/^[a-f0-9]{40}$/.test(release.strategy.revision))throw new Error('Strategy v
 const data=JSON.parse(await readFile(join(root,'assets/catalog.json'),'utf8'));
 const ids=new Set(data.packs.map((pack:{id:string})=>pack.id));
 for(const workflow of data.workflows)if(!ids.has(workflow.pack))throw new Error(`Workflow has no reviewed pack: ${workflow.id}`);
+const providers=parseProviderCatalog(JSON.parse(await readFile(join(root,'assets/providers.json'),'utf8')));
+if(providers.providers.filter(provider=>provider.listedInDirectory).length!==58)throw new Error('Provider catalog must retain all studied directory entries');
 console.log(`${pages.length} pages; ${links} local links/assets; reviewed workflow packs and strategy provenance valid`);
