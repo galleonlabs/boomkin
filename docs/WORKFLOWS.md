@@ -1,5 +1,7 @@
 # Protocol workflows
 
+**27 jobs with explicit inputs, results and access requirements.** Choose by the question you need answered, then inspect its evidence contract before installing or running it.
+
 Find a task with `boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `boomkin onboard --workflow <id>`. From a source checkout, use `bun run boomkin` in place of `boomkin`. Discovery is local and does not connect wallets or send transactions.
 
 Use [saved projects](PROJECTS.md) to keep task inputs, source evidence, successive reports and unsigned plans. Creating a project makes no model call; running it explicitly launches native Hermes.
@@ -166,7 +168,7 @@ Access: Official CDP/AgentKit tools; Coinbase account MCP and Agentic Wallet are
 
 ## Review a Hyperliquid account before trading
 
-Skill: `hyperliquid-analyze`. Task ID: `hyperliquid-risk`.
+Skill: `hyperliquid-monitor`. Task ID: `hyperliquid-risk`.
 
 Inputs: Public account address and venue/market; Exposure or funding question.
 

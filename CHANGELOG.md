@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.1 · 2026-10-08
+
+- Refresh the GitHub and npm introduction with a browser demo, clear installation steps and a public-data first task.
+- Add human and agent documentation indexes, accessible README artwork and current discovery metadata.
+- Update the reviewed catalog to independently published documentation patches for all 17 skill packs.
+- Route Hyperliquid account inspection to its account-monitoring skill.
+- Keep npm commands and the website setup guide aligned; fix the strategy lab heading after an invalid run.
+
 ## 0.9.0 · 2026-10-08
 
 - Add local discovery of 60 providers with primary-source provenance, capability, access, cost and transaction authority metadata.

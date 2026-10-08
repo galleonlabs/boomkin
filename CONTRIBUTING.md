@@ -2,11 +2,11 @@
 
 Bug reports, documentation improvements, provider fixes and focused pull requests are welcome. You do not need a funded wallet or a paid model account to work on Boomkin.
 
-[Get started](README.md#get-started) · [Report a bug](https://github.com/galleonlabs/boomkin/issues) · [Security policy](SECURITY.md)
+[Try Boomkin](https://galleonlabs.github.io/boomkin/lab/) · [Get started](docs/GETTING-STARTED.md) · [Report a bug](https://github.com/galleonlabs/boomkin/issues) · [Security policy](SECURITY.md)
 
 ## Find the right home
 
-Boomkin handles onboarding, profiles and verified skill installation. Protocol knowledge belongs in [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills); Hermes owns the agent loop, model adapters, memory and scheduling.
+Boomkin owns onboarding, profiles, provider discovery, research projects and verified skill installation. Protocol procedures belong in [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills); Hermes owns the agent loop, model adapters, memory and scheduling. Agents can use [the documentation index](docs/AGENT-INDEX.md) and [repository routing](AGENTS.md) to find the owning files.
 
 For a larger addition, open an issue describing the user need and proposed scope. Small fixes and clearer documentation can go straight to a pull request.
 
@@ -26,8 +26,9 @@ bun run build
 | --- | --- |
 | Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates and independent pack selection. Pull requests that touch those paths run the same Harness compatibility job |
 | Catalog pin authenticity | `bun scripts/catalog-freshness.ts --verify` checks each pin against upstream `galleon-*-skills@*` release tags. Pull requests that touch `catalog/**` run this job |
-| Native Hermes integration | Run `scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes` with Python; CI exercises the reviewed runtime |
-| Documentation | Check commands against CLI help, relative links and the rendered Markdown |
+| Native Hermes integration | `python3 scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes`; CI exercises the reviewed runtime |
+| Documentation or website | Check commands against `bun run boomkin --help`; run `bun run build:site` and `bun run check:site` for rendered guides and links |
+| Public website interaction | Inspect affected desktop/mobile views, search or lab controls, browser errors and exact public serving revision; see [WEBSITE.md](docs/WEBSITE.md) |
 
 The native smoke uses a temporary profile and local mock MCP. Its optional `--public` flag adds keyless CoinGecko discovery. Validation must not authenticate paid services, call a model, create a wallet or submit a financial action.
 
@@ -40,6 +41,8 @@ A catalog pin change is verified by two pull-request checks. Harness compatibili
 ## Add a provider or harness
 
 Reuse official tools and native authentication. Document the primary source, supported versions, configuration location and permission scope. For a harness adapter, include its upstream installer agent ID and verified discovery directory.
+
+Provider discovery can describe a sourced tool without making it a native connection. Keep [catalog/providers.json](catalog/providers.json), [provider guidance](docs/PROVIDERS.md) and [connection scope](docs/CONNECTIONS.md) aligned. Record authorship, review date, cost and authority independently; a keyless endpoint can still be paid.
 
 Use fixtures or temporary profiles to exercise failures without real credentials. Preserve user instructions and unrelated settings. File installation, tool discovery, authenticated access and transaction execution are different outcomes; report only what the checks establish.
 

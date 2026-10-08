@@ -10,7 +10,7 @@ bun run serve:site
 
 The local preview serves `http://127.0.0.1:4177/boomkin/`. Override `SITE_PORT` if needed. `SITE_BASE` and `SITE_ORIGIN` support a different static host; use them consistently for build, check and serve.
 
-Source files live in `site/`. The build generates `site-dist/`, which stays out of Git. The workflow catalog comes from the same reviewed catalog as the CLI. Documentation renders repository Markdown; the website's setup, strategy and evidence guides live under `site/docs/`.
+Source files live in `site/`. The build generates `site-dist/`, which stays out of Git. The workflow catalog comes from the same reviewed catalog as the CLI. Documentation renders repository Markdown, including the setup reference and agent index; the website's setup, strategy and evidence guides live under `site/docs/`.
 
 The browser lab uses the strategy pack's pure ESM engine with its MIT notice. `site/vendor/provenance.json` pins the package version, reviewed source commit and every copied resource hash. Update it only after a tested strategy source release. The build rejects resource drift.
 

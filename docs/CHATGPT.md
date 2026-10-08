@@ -1,13 +1,17 @@
 # ChatGPT in native Hermes
 
+Use the selected Hermes profile for native sign-in and model selection. [Getting started](GETTING-STARTED.md) · [Model and runtime setup](CONNECTIONS.md#model-and-runtime)
+
+Examples use the installed `boomkin` command; from source, use `bun run boomkin`.
+
 [OpenAI lists Hermes Agent as a ChatGPT plan-usage partner](https://learn.chatgpt.com/docs/sign-in-with-chatgpt). Account sign-in, permission to consume plan usage, a successful inference and usage attributed to Hermes are separate milestones. Boomkin is an onboarding layer, not a separately registered OpenAI partner.
 
 Boomkin retains reviewed Hermes 0.21.5 at `f97608f178d1ffeca59860195ab7da295f7c8e5f`. Its native `auth add openai-codex --type oauth` supports a fresh ChatGPT device login, profile-native credential pools and refresh; `auth status` reports authentication. Its source uses the Codex OAuth client and Codex inference route. This proves native ChatGPT OAuth capability; it does **not** prove the new Hermes partner plan-consent or per-app attribution path. Use the [official Nous portal](https://portal.nousresearch.com/) for the partner connection and review its actual permission screen. Do not replace the pinned runtime or invent partner client IDs/endpoints to bridge that gap.
 
 ```sh
-bun run boomkin chatgpt --action login --directory /absolute/path/to/boomkin-profile
-bun run boomkin chatgpt --action status --directory /absolute/path/to/boomkin-profile
-bun run boomkin chatgpt --action model --directory /absolute/path/to/boomkin-profile
+boomkin chatgpt --action login --directory /absolute/path/to/boomkin-profile
+boomkin chatgpt --action status --directory /absolute/path/to/boomkin-profile
+boomkin chatgpt --action model --directory /absolute/path/to/boomkin-profile
 ```
 
 Login uses native Hermes authentication with automatic browser opening disabled. Complete the displayed device flow with the intended personal ChatGPT account. Choose fresh login if Hermes offers credentials from other apps. Boomkin never reads or copies Codex credentials and maintains no token store; native Hermes owns credentials in the selected profile. Model setup remains native: choose GPT-6.1 Sol only if the provider's catalog offers it. Availability and supported reasoning levels vary; never force an unavailable slug or route silently through a paid API fallback.

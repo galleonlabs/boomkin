@@ -2,99 +2,92 @@
 
 **Your open-source DeFi desk.**
 
-Inspect an Aave position, track a Lido withdrawal, size a Uniswap range, check Aerodrome gauge custody or screen DefiLlama yields. Boomkin installs protocol-specific procedures and local helpers into the native [Hermes Agent](https://github.com/NousResearch/hermes-agent), with reviewed source pins and file-integrity checks.
+Research markets, inspect positions and test a thesis with a native [Hermes agent](https://github.com/NousResearch/hermes-agent). Keep the sources, assumptions and run history in your own profile.
 
-Each workflow names the reads to make, the accounting that matters and the evidence needed to finish. Official provider tools do the protocol work; Hermes handles the agent loop.
+[![Boomkin: research, inspect and test your DeFi thesis](https://raw.githubusercontent.com/galleonlabs/boomkin/main/docs/assets/boomkin-hero.svg)](https://galleonlabs.github.io/boomkin/lab/)
 
-[Website](https://galleonlabs.github.io/boomkin/) · [Strategy lab](https://galleonlabs.github.io/boomkin/lab/) · [Documentation](https://galleonlabs.github.io/boomkin/docs/) · [Contribute](CONTRIBUTING.md)
+**[Try the strategy lab →](https://galleonlabs.github.io/boomkin/lab/)** · [Explore workflows](https://galleonlabs.github.io/boomkin/#workflows) · [Read the docs](https://galleonlabs.github.io/boomkin/docs/)
+
+The browser demo needs no installation. Compare daily spot rules, change fees and slippage, and inspect simulated trades using a dated Bitcoin capture, synthetic prices or your own dataset. Uploaded data stays in your browser.
+
+**27 workflows · 60 providers in discovery · 17 independent packs · 48 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
 [![MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ## Get started
 
-Use macOS or Linux, [Bun](https://bun.sh), Git and a terminal. For Windows, use WSL2 or install Hermes with its official Windows flow first. Optional Coinbase tooling requires Node.js 22+; Agentic Wallet's current guide requires Node.js 24+.
+Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.9.0
+bun install -g boomkin@0.9.1
 boomkin onboard
 boomkin doctor --live
 boomkin start
 ```
 
-Bun and Git are prerequisites. Keep Bun's global bin directory on your path. For a source checkout:
+Onboarding prepares `~/.boomkin/hermes`, installs the reviewed packs, configures public CoinGecko data and opens native Hermes model setup. Choose your model provider and sign in there. `start` opens chat in that profile.
+
+CoinGecko is the sole default connection. Model access uses your account or local configuration; optional providers can require credentials, subscriptions or paid requests. Setup creates no wallet, makes no model call and starts no background service.
+
+[Profiles, install options and source setup](docs/GETTING-STARTED.md) · [Model connections](docs/CONNECTIONS.md)
+
+## First useful task
+
+Paste this into your new Hermes chat:
+
+> Use galleon-coingecko-token-research. Resolve CoinGecko ID ethereum and capture a public ETH/USD market observation. Show the asset identity, source URL, observation time and freshness limits. Mark missing data clearly and keep this task read-only.
+
+The result should separate supported observations from unknowns. `doctor --live` establishes public tool discovery; this first task checks whether your configured model can retrieve and explain market evidence.
+
+## Pick a job
 
 ```bash
-git clone https://github.com/galleonlabs/boomkin.git
-cd boomkin
-bun install --frozen-lockfile
-bun run boomkin onboard
-bun run boomkin doctor --live
-bun run boomkin start
+boomkin workflows
+boomkin workflows --protocol Aave
+boomkin workflows --workflow transaction-simulation --json
+boomkin onboard --workflow aave-health
 ```
 
-`onboard` prepares `~/.boomkin/hermes`, installs the reviewed official Hermes runtime if none is available, installs all packs in the reviewed catalog on a fresh profile, creates Boomkin's SOUL and instructions, configures public CoinGecko MCP, and opens native Hermes model setup. Choose your provider and sign in there. `start` launches the native Hermes chat in that same profile.
+Workflow discovery runs locally. Each job names its inputs, expected result and provider requirements. Selecting a workflow installs its pack and saves that selection for updates. Already copied skills remain; choose a separate `--directory` for a dedicated profile.
 
-Hermes remains the runtime: its tools, sessions, memory, model adapters, MCP support and scheduling are not forked. A new runtime installation uses reviewed Hermes v0.21.5 source (upstream tag `v2026.9.24`); the native installer also manages the user-level `hermes` command and dependencies. Browser/computer-use dependencies are skipped initially and can be added through native Hermes setup. An existing working Hermes installation at 0.21.0 or newer is reused, not downgraded.
+| You want to… | Start with |
+| --- | --- |
+| Capture market evidence or test a rule | `market-snapshot`, `strategy-backtest` |
+| Inspect lending or an exit | `aave-health`, `aave-v4-health`, `morpho-market`, `lido-exit` |
+| Review liquidity and routes | `uniswap-position`, `aerodrome-position`, `across-route` |
+| Screen income or streaming obligations | `yield-screen`, `sablier-stream`, `superfluid-stream` |
+| Review an exact unsigned payload | `unsigned-plan`, `transaction-simulation` |
+| Research prediction markets | `prediction-research`, `prediction-resolution` |
 
-Model authentication requires your account or local model configuration. Optional providers can require subscriptions, OAuth or scoped credentials. Onboarding makes no model call, pays for no data, creates or funds no wallet, and starts no background service.
-
-Useful options:
-
-```bash
-bun run boomkin onboard --directory "$HOME/defi-agent" --dry-run
-bun run boomkin onboard --directory "$HOME/defi-agent" --skip-model-setup
-bun run boomkin onboard --directory "$HOME/defi-agent" --no-install
-bun run boomkin model --directory "$HOME/defi-agent"
-```
-
-Use the same `--directory` for subsequent commands. `--skip-model-setup` is for preparing a profile before interactive login; it does not mark the model authenticated. Existing SOUL, instructions and unrelated settings are preserved. A conflicting named MCP configuration is reported for review instead of overwritten.
+[All 27 workflows, inputs and outputs](docs/WORKFLOWS.md)
 
 ## Keep the question and the evidence
 
-Save a research question as a project, preview its brief and run it through native Hermes. Each run keeps its own report, raw sources, observation hashes and reviewable unsigned plan. A model response stays in review until its artifact checks pass. [Project commands and output contract](docs/PROJECTS.md).
+Save this public research example as `inputs.json`:
+
+```json
+{
+  "chain": "Ethereum",
+  "asset": "USDC",
+  "minimumTvlUsd": "10000000",
+  "yieldPreference": "Separate base yield from incentive emissions",
+  "limit": 5,
+  "question": "What evidence is missing before a deposit decision?"
+}
+```
 
 ```bash
 boomkin project create --name stablecoin-yields \
   --workflow yield-screen --input-file ./inputs.json
 boomkin project run --name stablecoin-yields --dry-run
+boomkin onboard --workflow yield-screen --skip-model-setup
 boomkin project run --name stablecoin-yields
 boomkin project check --name stablecoin-yields
 ```
 
-Public market snapshots compare fresh CoinGecko and DefiLlama observations while keeping unavailable, stale and disagreeing sources visible. The strategy pack runs local daily spot simulations with next-observation decisions, fixed fees and adverse slippage, flow-neutral returns, drawdown and a same-flow buy-and-hold benchmark. [Try the same engine in the browser](https://galleonlabs.github.io/boomkin/lab/) with a dated Bitcoin capture, synthetic fixtures or your own dataset.
-
-## Pick a job
-
-```bash
-bun run boomkin workflows
-bun run boomkin workflows --protocol Uniswap
-bun run boomkin workflows --workflow aave-health --json
-bun run boomkin onboard --workflow aave-health
-```
-
-`workflows` works before setup and makes no network calls. It shows the required inputs, deliverable and provider access. `--workflow` installs that task's independent pack. On an existing profile it selects that pack for future updates, just like `--pack`; already copied files and custom instructions are preserved. Use a separate `--directory` for a dedicated task profile.
-
-| Task | What you get |
-| --- | --- |
-| `market-snapshot` | Source timestamps, raw-response hashes and public price comparison |
-| `strategy-backtest` | Reproducible daily spot tests, costs and a same-flow benchmark |
-| `thesis-review` | Saved thesis, invalidation conditions and fresh evidence for review |
-| `aave-health` | V3 position reads, stressed health factor and reserve constraints |
-| `morpho-market` / `compound-borrow` | Protocol-specific collateral, debt and liquidity analysis |
-| `uniswap-position` / `aerodrome-position` | Position accounting, range checks and gauge/exit requirements |
-| `uniswap-quote` / `bridge-status` | Route review, permissions and settlement evidence |
-| `lido-exit` | Withdrawal NFT ownership, finalization and claimability |
-| `pendle-maturity` / `vault-exit` | Maturity accounting and what can actually be redeemed |
-| `token-research` / `yield-screen` | Contract-based identity and reproducible yield screening |
-| `coinbase-readiness` | CDP/AgentKit capabilities and policy gaps |
-| `hyperliquid-risk` | Venue/account-mode, margin and funding analysis |
-| `agent-capabilities` | Exact access, cost and permission boundaries for a tool |
-| `unsigned-plan` / `transaction-simulation` | Ordered signer-free payload construction and exact-state simulation evidence |
-| `aave-v4-health` | Verified V4 hub/spoke accounting and deployment maturity |
-| `sablier-stream` / `superfluid-stream` | Vesting rights, claimable amounts, flow deposits and runway |
-| `across-route` / `explorer-diligence` | Cross-chain quote/arrival and code/control/transaction evidence |
-| `prediction-research` / `prediction-resolution` | Public Polymarket research, resolution and payout constraints |
+Creation and preview make no model or data calls. Onboarding prepares the selected workflow and preserves your configured model. A live run uses that model and your tools, then saves a separate report, raw sources, hashes and unsigned plan. Checks establish the saved evidence contract; they do not certify economic safety or authorize execution. [Project guide](docs/PROJECTS.md)
 
 ## Discover the right provider
 
@@ -102,110 +95,47 @@ bun run boomkin onboard --workflow aave-health
 boomkin providers --search simulation --json
 boomkin providers --capability Data --access keyless
 boomkin providers --provider blockscout
-boomkin connect --provider blockscout
 ```
 
-Discovery covers all 58 studied [skills.eth.sh](https://skills.eth.sh/) entries and two existing connections with dated primary sources, authorship, access, cost and authority metadata. It runs locally and installs no third-party skills. Keyless access and free access are distinct; wallet tools and paid x402 services remain explicit choices. CoinGecko remains the sole onboarding default; Blockscout is an optional keyless explorer with reviewed named reads. [Provider guide](docs/PROVIDERS.md).
-
-## Skill packs
-
-The reviewed catalog contains **17 independent packs and 48 skills**. Install all of them or choose the workflows you need; the agent loads relevant instructions on demand.
-
-| Pack | What it covers |
-| --- | --- |
-| [Agent plans](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/agent) | Unsigned builder/playbook plans and exact simulation evidence |
-| [Prediction markets](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/prediction) | Rules, order-book depth, versioned ledgers and payout evidence |
-| [Infrastructure](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/infra) | RPC, Alchemy, Coinbase, wallet policies and readiness |
-| [Data](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/data) | CoinGecko, DefiLlama and AIXBT research, identity, freshness and source-hashed market captures |
-| [Strategy](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/strategy) | Daily spot simulations, cash flows, costs, drawdown and reproducible benchmarks |
-| [Liquidity provision](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lp) | Uniswap, Aerodrome, Revert and VFAT position workflows |
-| [Hyperliquid](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/hyperliquid) | Venue-specific analysis, planning, execution, monitoring and review |
-| [Lending](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lending) | Collateral, borrowing, interest, repayment and liquidation risk |
-| [Staking](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/staking) | Staking, restaking, receipts and withdrawal queues |
-| [Yield](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/yield) | Vault diligence, share accounting and yield sources |
-| [Tokenized assets](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/tokenized-assets) | Asset claims, eligibility, restrictions and redemption |
-| [Routing](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/routing) | Swap and bridge quotes, route limits and settlement |
-| [Derivatives](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/derivatives) | Exposure, margin, funding and venue-specific constraints |
-| [Portfolio](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/portfolio) | Assets, debt, cash flows, performance and rebalance plans |
-| [Security](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/security) | Token diligence, evidence comparisons, transaction effects and permissions |
-| [Payments](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/payments) | Agent payments, x402 challenges and settlement evidence |
-| [Governance](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/governance) | Proposals, voting, delegation and execution stages |
-
-Start with the protocol workflow matching your task. Use infrastructure and cross-protocol skills when the task needs them. The broader primitive skills use the `galleon-defi-` prefix to avoid upstream name collisions. Read [workflow examples](docs/WORKFLOWS.md) for useful combinations.
-
-Each pack is independently versioned and published from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills). Boomkin's [catalog](catalog/skills.json) records the npm identity, version, immutable source commit, package directory and expected skills. Downloads, installed metadata and every copied supporting file are checked before a successful sync is recorded. Local file digests let `check` and `doctor` detect missing references and changed scripts afterward.
-
-Fresh onboarding includes every pack in the checked-out catalog. Select fewer with repeated `--pack` options:
-
-```bash
-bun run boomkin onboard --pack defi-infra-skills --pack defi-data-skills
-```
-
-Updates preserve your selection. Future packs are opt-in. To expand an existing installation deliberately:
-
-```bash
-bun run boomkin onboard --directory "$HOME/your-existing-hermes-profile" --all-packs
-```
-
-Other harnesses can still install the portable skills through [advanced compatibility setup](docs/HARNESSES.md). Boomkin's end-to-end product flow is Hermes-first.
+The directory covers 58 studied [skills.eth.sh](https://skills.eth.sh/) entries and two existing connections. Dated sources distinguish authorship, access, cost and authority. Discovery does not install or connect all 60 providers. Keyless access can still cost money; wallet and x402 capabilities need separate choices. [Provider guide](docs/PROVIDERS.md)
 
 ## Connect your tools
 
 ```bash
-bun run boomkin providers
-bun run boomkin connect --provider aixbt
-bun run boomkin connect --provider alchemy
-bun run boomkin connect --provider defillama
-bun run boomkin connect --provider coinbase
-bun run boomkin connect --provider tenderly
+boomkin connect --provider blockscout
+boomkin doctor --live
 ```
 
-| Connection | Setup and scope |
-| --- | --- |
-| CoinGecko | Public, keyless MCP configured during onboarding. Its reviewed tools are `execute` and `search_docs`; hosted execution is restricted to the provider's data SDK. |
-| Alchemy | Native Hermes OAuth and explicit tool selection. Select the intended Alchemy app; data/RPC access and wallet/admin actions have different scopes. |
-| AIXBT | Optional crypto intelligence through native Hermes MCP; the key stays in `AIXBT_API_KEY`. Discovery is public; protected research reads require account access. |
-| DeFiLlama | Native Hermes OAuth with an API subscription. Queries consume credits; connecting another client can disconnect the previous client. |
-| Tenderly | Optional paid-plan OAuth with explicit tool selection. Simulations and inspection require the intended project; results persist there. |
-| Coinbase account | Official local MCP through a pinned CLI, with six read tools and a profile-specific configuration/keychain environment. Account credentials remain a separate step. |
-| Agentic Wallet | Separate official `awal` CLI flow for managed wallet and x402 use. Login, wallet creation, funding and spend limits require your choices; see the connection guide. |
+Blockscout adds optional keyless explorer reads. Other supported connections include AIXBT, Alchemy, DeFiLlama, Tenderly and Coinbase account data, each with its own setup and access boundary. Restart Hermes after changing MCP settings.
 
-For Coinbase, supply a scoped key file to the native CLI through Boomkin:
+Hermes owns tools and authentication. MCP tool selection does not constrain its terminal or replace provider-enforced account and spending limits. [Exact prerequisites and connection scope](docs/CONNECTIONS.md)
 
-```bash
-bun run boomkin connect --provider coinbase --key-file /absolute/path/to/scoped-key.json
-```
+## Skill packs
 
-The command uses the OS keychain and does not opt into plaintext secret storage. It configures credentials; it does not check balances, trade or approve payments. Coinbase's remote account MCP currently restricts custom harnesses, so Boomkin uses its supported local server. Coinbase for Agents and Agentic Wallet have different custody and payment capabilities.
+Boomkin installs reviewed releases from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills): agent plans, prediction markets, infrastructure, data, strategy, liquidity, Hyperliquid, lending, staking, yield, tokenized assets, routing, derivatives, portfolio, security, payments and governance.
 
-Read [the connection guide](docs/CONNECTIONS.md) for exact prerequisites, diagnostics and limits. Restart Hermes after changing MCP settings. MCP tool selection controls that connection; it is not a sandbox around Hermes's terminal or a substitute for provider-enforced account and spending limits.
+Each pack installs independently. The [catalog](catalog/skills.json) pins its package, version, immutable source commit and expected skills. Installation checks the copied supporting files; later integrity checks reveal missing or modified instructions and scripts.
 
-## First useful task
-
-> Use galleon-aave-position to inspect my wallet on this Aave V3 market: [chain, market and address]. Show current health factor and the effect of a 20% collateral-price fall. Identify missing reads and keep any repayment or borrow plan unsigned.
-
-Boomkin loads only the relevant skills and provider references. It separates infrastructure readiness, data evidence, protocol workflows, portfolio reporting and transaction review from execution. It uses Hermes's native memory and scheduling when appropriate; a scheduled task retains the same authorization and freshness requirements as an interactive task.
-
-`doctor` reports configuration, installed versions and file integrity. Older installations can run `update` once to record file digests; preserve any local skill edits first. `doctor --live` additionally verifies keyless CoinGecko MCP initialization and tool discovery, plus credential-free AIXBT discovery when connected. Neither is proof of a successful model response, authenticated paid data, wallet authority or an executed transaction. Use the data pack's public diagnostic for a first market observation, and the infrastructure pack's RPC diagnostic for a configured chain.
+Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; updates preserve that selection and future packs remain opt-in. Hermes supplies the native runtime, sessions, memory and model setup. [Other harnesses](docs/HARNESSES.md) receive portable skills only.
 
 ## Updates and recovery
 
 ```bash
-bun run boomkin check --directory "$HOME/.boomkin/hermes"
-bun run boomkin update --directory "$HOME/.boomkin/hermes"
-bun run boomkin doctor --live
-bun run boomkin start
+bun install -g boomkin@0.9.1
+boomkin check --directory "$HOME/.boomkin/hermes"
+boomkin update --directory "$HOME/.boomkin/hermes"
+boomkin doctor --directory "$HOME/.boomkin/hermes" --live
 ```
 
-Pull this repo and run `bun install --frozen-lockfile` when updating Boomkin itself. `update` refreshes the reviewed skill catalog, not the Hermes runtime. Use native Hermes updates separately and rerun the readiness checks afterward. The reviewed runtime pin and installer checksum are in [src/hermes.ts](src/hermes.ts).
+Update Boomkin, selected skill packs and Hermes separately. Preserve local skill edits before updates. [Updates, backups and recovery](docs/UPDATES.md)
 
-Onboarding can be rerun after a failed install or interrupted login. Completed skill installs and existing instructions remain intact. Review any reported operation lock before removing it. Provider failure does not change the approved route or cause an automatic retry of a financial action.
+## ChatGPT authentication
 
-See [updates and recovery](docs/UPDATES.md) for pack selection, backups and troubleshooting. Keep credentials, private evidence and generated profiles outside this repository.
+Use `boomkin chatgpt --action login` and `--action status` for native Hermes ChatGPT OAuth. Model selection stays with Hermes. [The authentication guide](docs/CHATGPT.md) distinguishes sign-in, partner plan consent and verified usage attribution.
 
 ## Contributing
 
-Bug reports, clearer guides, new workflows and focused pull requests are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md) for setup and the checks relevant to your change. Report a reproducible problem in [GitHub Issues](https://github.com/galleonlabs/boomkin/issues); use [private reporting](SECURITY.md) for security concerns.
+Bug reports, clearer guides and focused pull requests are welcome. [Contributing guide](CONTRIBUTING.md) · [Issues](https://github.com/galleonlabs/boomkin/issues) · [Private security reporting](SECURITY.md)
 
 ### Local development
 
@@ -213,19 +143,12 @@ Bug reports, clearer guides, new workflows and focused pull requests are welcome
 bun install --frozen-lockfile
 bun run check
 bun run build
-bun run smoke
 ```
 
-The compatibility smoke checks fresh setup/update and independent pack selection. [Native Hermes smoke](scripts/hermes-native-smoke.py) additionally checks the actual runtime's profile, SOUL, MCP configuration and tool filtering in a temporary home, using a local mock MCP. `--public` adds a keyless CoinGecko discovery check. No model or wallet action is part of these checks.
+Run the [change-specific checks](CONTRIBUTING.md#work-locally) before a pull request. Agents can start with [the documentation index](docs/AGENT-INDEX.md) and [AGENTS.md](AGENTS.md).
 
 ## License and credit
 
-[MIT licensed](LICENSE), with the copyright and permission notice retained when reusing copies or substantial portions. Created by [Andrew Wilkinson](https://andrewwilkinson.io) and [Galleon Labs](https://github.com/galleonlabs).
+[MIT licensed](LICENSE). Created by [Andrew Wilkinson](https://andrewwilkinson.io) and [Galleon Labs](https://github.com/galleonlabs). Preserve copyright and license notices when reusing the project; [attribution guidance](ATTRIBUTION.md) includes an optional credit line. A repository star is appreciated and entirely optional.
 
-See [reuse and attribution](ATTRIBUTION.md) for a ready-to-copy credit line. If Boomkin helps your work, [a star on the original repository](https://github.com/galleonlabs/boomkin) is appreciated and entirely optional.
-
-The documentation copy controls were inspired by [Rare UI](https://www.rareui.com/components/code-block) and implemented independently.
-
-## ChatGPT authentication
-
-Use `bun run boomkin chatgpt --action login` for native Hermes ChatGPT OAuth, `--action status` to inspect it, and `--action model` for catalog-supported selection including GPT-6.1 Sol when available. [ChatGPT onboarding and verification](docs/CHATGPT.md) distinguishes native OAuth from partner plan consent and attributed usage. No tokens are copied into Boomkin and the runtime pin is unchanged.
+Documentation copy controls were inspired by [Rare UI](https://www.rareui.com/components/code-block) and implemented independently.

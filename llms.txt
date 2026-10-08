@@ -1,0 +1,34 @@
+# Boomkin
+
+> Your open-source DeFi desk on native Hermes: reviewed skills, bounded research workflows, source evidence and local strategy tests.
+
+The catalog contains 27 workflows, 17 independent Galleon packs and 48 reviewed skills. Provider discovery contains 60 sourced entries; it does not connect or install every provider. CoinGecko is the sole onboarding default. Other harnesses receive portable skills only.
+
+## Start here
+
+- [README](https://github.com/galleonlabs/boomkin/blob/main/README.md): product, browser demo, installation and first public-data task.
+- [Agent documentation index](https://github.com/galleonlabs/boomkin/blob/main/docs/AGENT-INDEX.md): task routing, authoritative artifacts and operating boundaries.
+- [Repository instructions](https://github.com/galleonlabs/boomkin/blob/main/AGENTS.md): contributor ownership and required checks.
+- [Live strategy lab](https://galleonlabs.github.io/boomkin/lab/): local browser simulation with dated or synthetic daily observations.
+
+## Task guides
+
+- [Getting started](https://github.com/galleonlabs/boomkin/blob/main/docs/GETTING-STARTED.md)
+- [Protocol workflows](https://github.com/galleonlabs/boomkin/blob/main/docs/WORKFLOWS.md)
+- [Provider discovery](https://github.com/galleonlabs/boomkin/blob/main/docs/PROVIDERS.md)
+- [Connections](https://github.com/galleonlabs/boomkin/blob/main/docs/CONNECTIONS.md)
+- [Saved research projects](https://github.com/galleonlabs/boomkin/blob/main/docs/PROJECTS.md)
+- [ChatGPT authentication](https://github.com/galleonlabs/boomkin/blob/main/docs/CHATGPT.md)
+- [Updates and recovery](https://github.com/galleonlabs/boomkin/blob/main/docs/UPDATES.md)
+- [Skill-only harness compatibility](https://github.com/galleonlabs/boomkin/blob/main/docs/HARNESSES.md)
+- [Contributing](https://github.com/galleonlabs/boomkin/blob/main/CONTRIBUTING.md)
+
+## Source and live provenance
+
+- [Pinned skill catalog](https://github.com/galleonlabs/boomkin/blob/main/catalog/skills.json)
+- [Provider catalog](https://github.com/galleonlabs/boomkin/blob/main/catalog/providers.json)
+- [Workflow contracts](https://github.com/galleonlabs/boomkin/blob/main/catalog/workflows.json)
+- [Independent skill packs](https://github.com/galleonlabs/crypto-defi-skills)
+- [Public release manifest](https://galleonlabs.github.io/boomkin/release.json)
+
+Use the installed CLI help and current source for syntax. A source review is not an authenticated provider test; a simulation or ready-for-review artifact grants no financial authority. Read the linked guide's evidence contract before interpreting a result.

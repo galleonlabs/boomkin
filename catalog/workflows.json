@@ -219,7 +219,7 @@
       "id": "hyperliquid-risk",
       "protocol": "Hyperliquid",
       "title": "Review a Hyperliquid account before trading",
-      "skill": "hyperliquid-analyze",
+      "skill": "hyperliquid-monitor",
       "pack": "hyperliquid-skills",
       "inputs": [
         "Public account address and venue/market",

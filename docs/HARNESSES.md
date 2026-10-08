@@ -1,6 +1,8 @@
 # Advanced skill-only compatibility
 
-Boomkin's main onboarding product uses Hermes; start with the [getting-started guide](../README.md#get-started). The adapters below preserve portable skill installation in other harnesses and do not provision a complete Boomkin runtime there.
+Boomkin's complete onboarding flow uses native Hermes; start with the [getting-started guide](GETTING-STARTED.md). The adapters below install portable skills in other harnesses. Models, credentials, tools and hosting remain with your selected harness.
+
+Examples use the installed `boomkin` command. From a source checkout, replace it with `bun run boomkin`.
 
 ## Choose a harness
 
@@ -13,14 +15,14 @@ Install the runtime from its official source; Boomkin does not vendor it.
 For a complete Boomkin profile, use native onboarding:
 
 ```bash
-bun run boomkin onboard --directory "$HOME/boomkin-hermes"
-bun run boomkin start --directory "$HOME/boomkin-hermes"
+boomkin onboard --directory "$HOME/boomkin-hermes"
+boomkin start --directory "$HOME/boomkin-hermes"
 ```
 
 To add only the skills to an existing Hermes home:
 
 ```bash
-bun run boomkin setup --harness hermes --directory "$HOME/your-hermes-profile"
+boomkin setup --harness hermes --directory "$HOME/your-hermes-profile"
 ```
 
 Boomkin passes that directory as `HERMES_HOME` to the skill installer, which writes to its `skills/` directory. Use your existing native Hermes launch configuration for that profile. Follow [Hermes gateway documentation](https://hermes-agent.nousresearch.com/docs/) for persistent operation.
@@ -31,8 +33,7 @@ Boomkin passes that directory as `HERMES_HOME` to the skill installer, which wri
 
 ```bash
 bunx eve@latest init "$HOME/boomkin-eve"
-# From your Boomkin checkout:
-bun run boomkin setup --harness eve --directory "$HOME/boomkin-eve"
+boomkin setup --harness eve --directory "$HOME/boomkin-eve"
 cd "$HOME/boomkin-eve"
 bunx eve dev
 # When ready to deploy using your Vercel account:
@@ -51,8 +52,8 @@ Use the actual workspace selected during onboarding:
 
 ```bash
 openclaw onboard
-# From your Boomkin checkout (change the path if your workspace differs):
-bun run boomkin setup --harness openclaw --directory "$HOME/.openclaw/workspace"
+# Change the path if your selected workspace differs:
+boomkin setup --harness openclaw --directory "$HOME/.openclaw/workspace"
 openclaw skills list
 ```
 
@@ -65,9 +66,9 @@ or remote deployment. Skills alone do not configure an exchange connection.
 Install/sign in using the native upstream installer, then:
 
 ```bash
-bun run boomkin setup --harness codex --directory "$HOME/boomkin-codex"
-bun run boomkin setup --harness claude --directory "$HOME/boomkin-claude"
-bun run boomkin setup --harness opencode --directory "$HOME/boomkin-opencode"
+boomkin setup --harness codex --directory "$HOME/boomkin-codex"
+boomkin setup --harness claude --directory "$HOME/boomkin-claude"
+boomkin setup --harness opencode --directory "$HOME/boomkin-opencode"
 ```
 
 Launch the corresponding agent from its directory. Codex and OpenCode use

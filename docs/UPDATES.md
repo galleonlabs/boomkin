@@ -1,79 +1,77 @@
 # Updates and recovery
 
-Keep Boomkin, its skill packs and the Hermes runtime up to date separately. Use the same profile directory you chose during onboarding.
+Maintain Boomkin, its selected skill packs and the Hermes runtime separately. Use the same profile directory you chose during onboarding, and preserve local skill edits before updating.
 
-[Onboarding](../README.md#get-started) · [Connections](CONNECTIONS.md) · [Contributing](../CONTRIBUTING.md)
+[Getting started](GETTING-STARTED.md) · [Connections](CONNECTIONS.md) · [Release history](../CHANGELOG.md)
 
 ## Everyday updates
 
-From your Boomkin checkout:
+For the installed CLI and default profile:
+
+```bash
+bun install -g boomkin@0.9.1
+boomkin check --directory "$HOME/.boomkin/hermes"
+boomkin update --directory "$HOME/.boomkin/hermes"
+boomkin doctor --directory "$HOME/.boomkin/hermes" --live
+boomkin start --directory "$HOME/.boomkin/hermes"
+```
+
+Replace the directory in every command if you use another profile. Restart an active Hermes session after updating instructions or tools.
+
+| Component | Update path |
+| --- | --- |
+| Boomkin CLI and packaged guides | Install the desired published Boomkin version with Bun |
+| Selected skill packs | Run `boomkin update` in the chosen profile |
+| Hermes runtime | Use native Hermes updates, then rerun `doctor --live` |
+| Provider credentials and tools | Follow the provider's native [connection setup](CONNECTIONS.md) |
+
+From a source checkout, first pull the reviewed branch and its locked dependencies, then use `bun run boomkin` in place of `boomkin`:
 
 ```bash
 git pull --ff-only
 bun install --frozen-lockfile
 bun run boomkin check --directory "$HOME/.boomkin/hermes"
 bun run boomkin update --directory "$HOME/.boomkin/hermes"
-bun run boomkin doctor --live
-bun run boomkin start
 ```
 
-Replace the directory above if you use another profile, and pass it to `doctor` and `start` too. Back up customized skill files before updating; the upstream installer can replace them. Restart an active Hermes session to load changed instructions and tools.
-
-| Component | How it updates |
-| --- | --- |
-| Boomkin CLI and guides | Pull this repository and install its locked dependencies |
-| Selected skill packs | Run `boomkin update` against the chosen profile |
-| Hermes runtime | Use Hermes's native update procedure, then rerun `doctor --live` |
-| Provider credentials and tools | Use the native setup paths in the [connection guide](CONNECTIONS.md) |
-
-`doctor` checks configuration; `--live` also checks public CoinGecko tool discovery and credential-free AIXBT discovery when that optional connection is configured. Confirm a successful first task through Hermes before relying on the updated setup. These checks do not establish wallet or trading authority.
+`doctor` checks configuration and recorded file integrity. `--live` probes public CoinGecko discovery, plus optional Blockscout and AIXBT discovery when configured; it sends no credentials or protected data calls. Verify a first task through Hermes before relying on the setup. Discovery does not establish authenticated data, wallet authority or execution.
 
 ## Select your packs
 
-New protocol skills arrive through the existing pack selection. Updating a selected lending pack now installs its Aave, Morpho and Compound skills; there is no separate all-packs dependency. Run `bun run boomkin workflows` to see the task names. For a dedicated profile, `bun run boomkin onboard --workflow aave-health --directory "$HOME/aave-agent"` selects only the lending pack. On an existing profile, `--workflow` replaces the saved pack selection while preserving already copied files.
+The catalog contains 17 independently selected packs and 48 skills. New skills in a selected pack arrive when that pack updates; newly added packs remain opt-in. Discover task names with `boomkin workflows`.
 
-Fresh onboarding includes every pack in the checked-out catalog. Updates preserve the saved selection, and new catalog packs are opt-in for existing profiles. Use repeated `--pack` options to set the full desired selection:
+For a dedicated Aave profile:
 
 ```bash
-bun run boomkin update --directory "$HOME/.boomkin/hermes" \
+boomkin onboard --workflow aave-health --directory "$HOME/aave-desk"
+```
+
+On an existing profile, `--workflow` replaces the saved pack selection while preserving already copied files. Repeated `--pack` options set the complete desired selection:
+
+```bash
+boomkin update --directory "$HOME/.boomkin/hermes" \
   --pack defi-infra-skills --pack defi-data-skills
 ```
 
-Deselected pack files are preserved so that local edits are not deleted. To include every pack currently in Boomkin's checked-out catalog:
+Deselected files remain for review and local edits are not deleted. Deliberately include every pack in the installed/checked-out Boomkin catalog with:
 
 ```bash
-bun run boomkin onboard --directory "$HOME/.boomkin/hermes" --all-packs
+boomkin onboard --directory "$HOME/.boomkin/hermes" --all-packs
 ```
 
-Onboarding preserves existing SOUL and instruction files. It opens native model setup unless you pass `--skip-model-setup`. Configurations written before pack selection was recorded retain LP and Hyperliquid until you explicitly expand them.
+Onboarding preserves existing SOUL and instructions. It opens model setup unless you pass `--skip-model-setup`. Older profiles without a recorded selection retain their legacy LP/Hyperliquid selection until explicitly expanded.
 
 ## Verified releases
 
-Boomkin 0.7.2 updates its development-only Bun type definitions to 1.4.2. Type checking, the CLI build and isolated setup tests pass; runtime dependencies, setup behavior and catalog pins are unchanged.
+Read [CHANGELOG.md](../CHANGELOG.md) and [GitHub releases](https://github.com/galleonlabs/boomkin/releases) for version history. The [skill catalog](../catalog/skills.json) is the current authority for each pack's npm identity, version, immutable source commit, package directory and expected skills.
 
-Boomkin 0.7.1 updates its direct YAML parser to 2.9.1. Configuration editing still preserves comments and unknown fields, rejects aliases and malformed input without partial writes, and leaves existing profile selections and catalog pins unchanged. The upstream skills installer retains its independently locked YAML dependency.
+`setup` and `onboard` use the installed/checked-out catalog. `update` fetches the public Boomkin source catalog. New pins enter through reviewed changes after upstream publication and verification. The scheduled freshness report identifies newer releases; it does not rewrite your selection or upgrade the runtime.
 
-Boomkin 0.6.8 pins fresh installs to [Hermes 0.21.5](https://github.com/NousResearch/hermes-agent/releases/tag/v2026.9.24) at the reviewed commit and installer checksum. The daily catalog report now also shows whether that runtime pin lags the latest upstream release; runtime lag is advisory. Existing Hermes installations at 0.21.0 or newer remain in place, and the 14 skill pack pins are unchanged.
+Before installation, Boomkin validates source revision, package identity/version, skill metadata and path containment. Packages with symlinks are rejected. Only selected paths and skill names reach the upstream installer; temporary source checkouts are removed afterward.
 
-Boomkin 0.6.7 pins [Hyperliquid skills 0.3.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-hyperliquid-skills%400.3.4). The published pack adds dated guidance for account-mode action limits, builder approvals, nonce handling and asset IDs. Existing profile and pack selections are preserved; update a profile with Hyperliquid selected to load the new guidance. The other 13 catalog pins remain unchanged. This release changes instructions, not live exchange access or trading authority.
+`--offline-catalog` makes `check` and `update` use the installed/checked-out catalog. An update still needs network access to download pinned sources.
 
-Boomkin 0.6.4 pins [Derivatives 0.1.4](https://github.com/galleonlabs/crypto-defi-skills/releases/tag/galleon-defi-derivatives-skills%400.1.4), repairing Derive references after its official v3 documentation moved to docs.derive.xyz. The other 13 pack pins, all 26 skills, existing selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.
-
-Boomkin 0.6.3 pins all 14 packs to the [September 9 upstream release](https://github.com/galleonlabs/crypto-defi-skills/commit/d5d8439bd5bd1fec88994a6ca0448cde11e31747). These releases add configurable workflow guidance and task examples, including Hyperliquid planning preferences and monitoring stream discipline. The catalog still contains 26 skills; existing pack selections, profile instructions and native Hermes configuration are preserved. Update selected packs with the commands above.
-
-Boomkin 0.6.2 pins Security 0.2.1, Liquidity provision 0.5.1, Routing 0.1.2, Portfolio 0.1.2, Data 0.3.2 and Hyperliquid 0.3.2 after independent npm verification. These carry lessons recorded from a live autonomous trading operator: scanner labels versus verified liquidity custody, an owner address versus its reachable powers, fee tiers and quote assets as measured costs, capital on another chain as deployable through a quoted bridge, idempotent cash-flow journals and explicit candidate sizing, research queues with re-entry triggers, trader attribution rules, and receipt-verified live results for strategy validation. The other eight pins and selected-pack behavior remain unchanged.
-
-Boomkin 0.6.0 adds token diligence through Security 0.2.0, bringing the catalog to 26 skills across 14 packs. Investigate token controls, launch flows, liquidity custody and exit evidence, then compare repeat reviews without treating lost coverage or omitted findings as resolved risks. Security includes an optional read-only snapshot collector and evidence validator; these do not sign, broadcast or establish economic safety. Existing profiles with Security selected receive both Security skills when updated.
-
-Boomkin 0.5.1 pins Infra 0.2.1, Hyperliquid 0.3.1, Derivatives 0.1.1 and Security 0.1.1 after independent npm verification. These add CLI recovery, bot/manual-control handoffs and full-recipient verification. The [source review](https://github.com/galleonlabs/crypto-defi-skills/blob/38e58b1c9c345af0f3a61ce1d25fe33095c2003b/docs/research/minara-review.md) records attribution and validation limits. Other pack pins and selected-pack behavior remain unchanged.
-
-The [catalog](../catalog/skills.json) records each pack's npm package, published version, full source commit, package path and expected skills. `setup` and `onboard` use the checked-out catalog; `update` fetches the current public Boomkin catalog. New pins enter that catalog after publication and verification.
-
-Before installation, Boomkin verifies every selected source revision, package identity, version, skill metadata and path containment. Packages containing symlinks are rejected. Only the selected package paths and skill names reach the upstream installer, and temporary source checkouts are removed afterward.
-
-`--offline-catalog` uses the checked-out catalog for `check` and `update` instead of the published one. An update still requires GitHub access to download the pinned sources.
-
-`check` compares the last successful sync with the published catalog and always verifies the recorded file digests of the installed skills, so a pending update never hides changed files. Installed skill names and declared versions are additionally checked when no update is pending, because they are only comparable to the release you have installed. `status` lists installed skills. Neither command updates files.
+`check` compares the last successful sync with the public catalog and verifies recorded file digests even when an update is pending. It additionally checks declared skill versions when comparable to the installed release. `status` lists installed skills. Neither command modifies them.
 
 ## Profile files
 
@@ -81,36 +79,34 @@ Before installation, Boomkin verifies every selected source revision, package id
 | --- | --- |
 | `SOUL.md`, `AGENTS.md` | Agent identity and instructions; existing files are preserved |
 | `config.yaml`, `.env` | Native Hermes configuration and secrets |
-| `skills/` | Installed skill packs and supporting files |
-| `.boomkin/config.json` | Selected packs and the canonical profile/harness binding |
-| `.boomkin/state/` | Upstream installer records scoped to this profile |
-| `.boomkin/last-sync.json` | Catalog and provenance from the last completed installation |
+| `skills/` | Installed skills and supporting files |
+| `.boomkin/config.json` | Selected packs and canonical profile/harness binding |
+| `.boomkin/state/` | Profile-scoped upstream installer records |
+| `.boomkin/last-sync.json` | Provenance and integrity from the last successful sync |
 | `.boomkin/operation.lock` | Prevents concurrent installations in one profile |
 
-Keep profiles, credentials and private observations outside public repositories. Review saved paths and credentials before moving a configured profile.
+Keep profiles, credentials and private evidence outside public repositories. Review saved paths and credentials before moving a profile. [Saved projects](PROJECTS.md) have their own per-project run records and locks.
 
 ## Recover an interrupted update
 
-A failed catalog fetch or validation changes no packs. Installation is sequential: one pack may finish before another fails. Boomkin exits with an error, keeps the retry configuration and leaves the last successful sync record unchanged. Fix the reported cause and rerun the command.
+A failed catalog fetch or validation changes no packs. Installation is sequential, so an earlier pack may finish before a later one fails. Boomkin exits with an error, preserves retry configuration and leaves the last successful sync record unchanged. Resolve the reported cause and rerun the command.
 
-A version mismatch also prevents a success record. If the sync record is incomplete, `check` reports it; a successful `setup` or `update` rebuilds it atomically.
+A version mismatch prevents a success record. `check` reports incomplete state; a successful `setup` or `update` rebuilds it atomically. After a hard crash, confirm no installer is running before removing `.boomkin/operation.lock`.
 
-After a hard crash, verify that no installer is running before removing `.boomkin/operation.lock`. An existing lock is not permission to interrupt another process.
-
-For renamed skills, follow the [LP update guide](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lp#updates-and-migration) or [Hyperliquid update guide](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/hyperliquid#updates-and-migration). Boomkin reports retired directories and preserves their contents for review.
+For renamed skills, follow the [LP migration guide](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/lp#updates-and-migration) or [Hyperliquid migration guide](https://github.com/galleonlabs/crypto-defi-skills/tree/main/packages/hyperliquid#updates-and-migration). Retired directories are reported and preserved for review.
 
 ## Back up and restore
 
-Before updating, back up your profile's skills, lockfiles, instructions, Hermes configuration and `.boomkin/` records. Stop the runtime before restoring a snapshot. Treat backups containing credentials as private.
+Back up skills, lockfiles, instructions, Hermes configuration and `.boomkin/` records before updating. Stop the runtime before restoring; credential-bearing backups are private.
 
-For a reproducible deployment, retain the reviewed source revisions and installed skill versions. Use the same native deployment procedure after restoring; restoring local files does not change an already running remote agent.
+Retain source revisions and installed versions for reproducibility. Restoring local files does not update an already running remote agent; use and verify the same native deployment procedure afterward.
 
 ## Scheduled updates
 
-Unattended instruction updates are optional. Review pack sources first, use absolute paths and explicitly select the profile in your scheduler. Monitor failures and restart Hermes during a maintenance window. Boomkin does not create a background service or restart a session automatically.
+Unattended instruction updates are optional. Review sources, use absolute paths and select the exact profile in the native scheduler. Monitor failures and restart Hermes during a maintenance window. Boomkin creates no background update service and does not restart sessions automatically.
 
 ## Installed file integrity
 
-Boomkin 0.6.1 checks each copied reference, script and asset against the reviewed source before recording success. The sync record stores installed file digests, including the harness-normalized SKILL.md. `check` and `doctor` report later missing or changed files, even when the version header still matches. These local digests diagnose installation drift; they are not signed attestations.
+Every copied reference, script and asset is checked against its reviewed source before success is recorded. The sync record stores file digests, including the harness-normalized `SKILL.md`. Later `check` and `doctor` report missing or altered files even when the version header still matches. These digests detect local drift; they are not signed attestations.
 
-Older sync records remain readable. Run `update` once to establish integrity records. Before updating a modified skill, preserve your edits outside its installed directory and review them against the new release. Diagnostics do not delete or repair files automatically.
+Older sync records remain readable. Run `update` once to establish integrity records, preserving custom skill edits elsewhere first. Diagnostics do not delete or repair files automatically.

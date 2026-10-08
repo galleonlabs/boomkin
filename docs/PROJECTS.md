@@ -2,6 +2,8 @@
 
 A project keeps a question, its inputs and successive evidence together. Each run uses native Hermes and writes a separate report and unsigned plan. A completed model response stays `needs-review` until its files pass the evidence checks.
 
+[First session](GETTING-STARTED.md) · [Choose a workflow](WORKFLOWS.md) · [Provider access](CONNECTIONS.md)
+
 Examples use the installed `boomkin` command. From a source checkout, replace it with `bun run boomkin`.
 
 ## Create a project

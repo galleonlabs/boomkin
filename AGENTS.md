@@ -3,6 +3,8 @@
 Boomkin is a Hermes-first DeFi agent onboarding product with independently published Galleon skill packs across DeFi primitives. Other harness adapters preserve existing skill-only installations.
 Use TypeScript and Bun. Run `bun run check` and `bun run build` before shipping.
 
+For product usage or an agent task, start with [README.md](README.md) and [docs/AGENT-INDEX.md](docs/AGENT-INDEX.md). The index routes setup, workflows, providers, evidence and recovery to their focused guides. `llms.txt` provides repository-wide discovery; this file owns contributor instructions.
+
 ## Find the implementation
 
 | Task | Start here |
@@ -11,8 +13,9 @@ Use TypeScript and Bun. Run `bun run check` and `bun run build` before shipping.
 | Profiles, model setup and provider connections | `src/onboarding.ts`, `src/hermes.ts`; `docs/CONNECTIONS.md` and `docs/CHATGPT.md` |
 | Provider discovery, cost/authority metadata and public MCP probes | `catalog/providers.json`, `src/provider-catalog.ts`, `src/mcp-discovery.ts`; `docs/PROVIDERS.md` |
 | Pack selection, source pins and copied-file integrity | `catalog/skills.json`, `src/core.ts`, `src/source.ts`, `src/integrity.ts`; `docs/UPDATES.md` |
-| Workflow definitions and saved research runs | `src/workflows.ts`, `src/projects.ts`; `docs/WORKFLOWS.md` and `docs/PROJECTS.md` |
+| Workflow definitions and saved research runs | `catalog/workflows.json`, `src/workflows.ts`, `src/projects.ts`; `docs/WORKFLOWS.md` and `docs/PROJECTS.md` |
 | Website, browser lab and static delivery | `site/`, `scripts/build-site.ts`, `scripts/check-site.ts`; `docs/WEBSITE.md` |
+| Human onboarding and agent documentation | `README.md`, `docs/GETTING-STARTED.md`, `docs/AGENT-INDEX.md`, `llms.txt`; retain existing incoming anchors |
 | Change-specific checks | `CONTRIBUTING.md#work-locally`; `package.json` owns commands and `.github/workflows/` owns CI |
 
 `dist/` and `site-dist/` are generated outputs. Protocol skill procedures live in the separate `crypto-defi-skills` repository; the website's vendored strategy engine is pinned by `site/vendor/provenance.json`.

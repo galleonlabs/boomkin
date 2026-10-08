@@ -1,10 +1,14 @@
 # Boomkin connections
 
-Hermes owns authentication, tools and execution. Boomkin prepares an isolated profile and selected official connections; skill instructions do not create financial authority. Reviewed September 5, 2026; recheck current provider capabilities before granting access.
+Hermes owns authentication, tools and execution. Boomkin prepares an isolated profile with public CoinGecko as its sole default connection. Choose optional tools by the access, cost and authority your task needs. Skill instructions do not create financial authority.
+
+[Getting started](GETTING-STARTED.md) · [Provider discovery](PROVIDERS.md) · [Saved projects](PROJECTS.md)
+
+Provider-specific review dates and limits appear below. The broader discovery catalog was reviewed on October 8, 2026; source review and public MCP discovery do not establish authenticated account access.
 
 ## Model and runtime
 
-`bun run boomkin onboard` runs the official pinned Hermes installer when needed and opens `hermes setup model` with the selected `HERMES_HOME`. Use `bun run boomkin model` to revisit setup, and `bun run boomkin start` for native chat. Model keys, OAuth and local models use Hermes's facilities. A configured model name or CLI version is not proof of authentication.
+`boomkin onboard` runs the official pinned Hermes installer when needed and opens `hermes setup model` with the selected `HERMES_HOME`. Use `boomkin model` to revisit setup, and `boomkin start` for native chat. From a source checkout, use `bun run boomkin`. Model keys, OAuth and local models use Hermes's facilities. A configured model name or CLI version is not proof of authentication.
 
 Hermes v0.21.5 (upstream tag `v2026.9.24`) at [the reviewed source](https://github.com/NousResearch/hermes-agent/tree/f97608f178d1ffeca59860195ab7da295f7c8e5f) was tested. Boomkin pins the official installer and runtime for a fresh install. Existing installations are preserved. Native setup supports optional browser, tools and messaging features; configure those through Hermes rather than a second runtime.
 
@@ -16,7 +20,7 @@ Use `boomkin providers --capability Data --access keyless --json` to discover da
 
 CoinGecko public MCP is `https://mcp.api.coingecko.com/mcp`. Onboarding adds only `execute` and `search_docs`, the two tools returned during the live review, with `trust: untrusted` and resource/prompt utilities disabled. `execute` runs code against CoinGecko's hosted data SDK; it is not arbitrary local code execution. Use bounded queries with explicit asset IDs, currency and timestamps. Pricing, limits and tool discovery can change.
 
-`bun run boomkin doctor --live` checks initialization and tool discovery without calling a model or a paid service. A separate market read is available from the installed data skill:
+`boomkin doctor --live` checks initialization and tool discovery without calling a model or a paid service. A separate market read is available from the installed data skill:
 
 ```bash
 node "$HOME/.boomkin/hermes/skills/galleon-defi-data/scripts/price-check.mjs" --provider coingecko --id ethereum
@@ -43,8 +47,8 @@ When this connection is enabled, `doctor --live` checks its keyless initializati
 Store `AIXBT_API_KEY` in the selected Hermes profile's private `.env` using native secret facilities, then run:
 
 ```bash
-bun run boomkin connect --provider aixbt
-bun run boomkin doctor --live
+boomkin connect --provider aixbt
+boomkin doctor --live
 ```
 
 Pass the same `--directory` to both commands when using a custom profile. Boomkin writes the official Streamable HTTP endpoint `https://api.aixbt.tech/mcp` and the literal header reference `Authorization: Bearer ${AIXBT_API_KEY}`. Hermes resolves that reference from its environment; Boomkin never copies the key into YAML, arguments, or diagnostic output. The API v3 base `https://api.aixbt.tech/v3` is for REST calls, not the MCP server URL. Existing conflicting MCP settings are preserved and reported for review.
@@ -58,7 +62,7 @@ Use the installed `galleon-defi-data` skill for AIXBT research alongside asset i
 ## Alchemy and RPC
 
 ```bash
-bun run boomkin connect --provider alchemy
+boomkin connect --provider alchemy
 ```
 
 The command hands OAuth and tool selection to native Hermes at `https://mcp.alchemy.com/mcp`, then marks the resulting server untrusted. Select the intended app before RPC/data calls. Start with the necessary read tools; app administration and wallet session/transaction tools are separate choices. API-key access through the official CLI is distinct from hosted MCP OAuth. See [Alchemy agent tools](https://www.alchemy.com/ai-agents).
@@ -68,7 +72,7 @@ For the infrastructure diagnostic, configure `DEFI_RPC_URL` through the selected
 ## DeFiLlama
 
 ```bash
-bun run boomkin connect --provider defillama
+boomkin connect --provider defillama
 ```
 
 The official endpoint `https://mcp.defillama.com/mcp` requires OAuth and an API subscription. Requests consume credits. Its single-client restriction can disconnect an existing MCP client; choose the intended agent before authorizing. Boomkin does not authenticate this paid provider during default onboarding. The data pack also documents bounded public REST alternatives with separate coverage. See [the official MCP page](https://defillama.com/mcp).
@@ -76,8 +80,8 @@ The official endpoint `https://mcp.defillama.com/mcp` requires OAuth and an API 
 ## Coinbase account
 
 ```bash
-bun run boomkin connect --provider coinbase
-bun run boomkin connect --provider coinbase --key-file /absolute/path/to/scoped-key.json
+boomkin connect --provider coinbase
+boomkin connect --provider coinbase --key-file /absolute/path/to/scoped-key.json
 ```
 
 This uses `@coinbase/coinbase-cli@0.0.7`, Node.js 22+ and the native `coinbase mcp` stdio server. Its remote account MCP restricts supported harnesses, so Boomkin uses the local path. The configuration initially exposes only balance, portfolio listing/details, product listing/details and fee reads. It grants no trading or transfer tool through this MCP connection.
@@ -123,7 +127,7 @@ Provider-specific instructions and source pins live in the infrastructure and da
 ## Tenderly transaction review
 
 ```bash
-bun run boomkin connect --provider tenderly
+boomkin connect --provider tenderly
 ```
 
 Boomkin uses native Hermes OAuth and tool selection for the [official Tenderly MCP](https://docs.tenderly.co/ai-tools/overview) at `https://mcp.tenderly.co/mcp`. Tenderly documents paid-plan enablement and an account/project prerequisite. The command connects the provider; it does not purchase access, simulate a transaction or broadcast one.

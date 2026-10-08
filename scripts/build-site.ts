@@ -32,6 +32,8 @@ const header=`<header class="header"><a class="wordmark" href="${base}">boomkin<
 const footer=`<footer class="footer wrap"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><p>Open-source tools for a desk you control.</p><div><a href="${base}docs/">Documentation</a><a href="https://github.com/galleonlabs/boomkin">GitHub</a><a href="https://github.com/galleonlabs/crypto-defi-skills">Skill library</a></div><span class="footer-credit">Built by <a href="https://github.com/galleonlabs">Galleon Labs</a> · MIT</span></footer>`;
 const docs=[
  {slug:'',title:'Getting started',source:'site/docs/start.md'},
+ {slug:'setup',title:'Setup reference',source:'docs/GETTING-STARTED.md'},
+ {slug:'agents',title:'Agent reference',source:'docs/AGENT-INDEX.md'},
  {slug:'projects',title:'Research projects',source:'docs/PROJECTS.md'},
  {slug:'workflows',title:'Protocol workflows',source:'docs/WORKFLOWS.md'},
  {slug:'connections',title:'Connections',source:'docs/CONNECTIONS.md'},
@@ -72,5 +74,5 @@ await writeFile(join(out,'.nojekyll'),'');
 await writeFile(join(out,'robots.txt'),`User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`);
 const routes=['','lab/',...docs.map(doc=>`docs/${doc.slug?doc.slug+'/':''}`)];
 await writeFile(join(out,'sitemap.xml'),`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${routes.map(path=>`<url><loc>${origin}/${path}</loc></url>`).join('')}</urlset>\n`);
-await writeFile(join(out,'llms.txt'),`# Boomkin\n\nOpen-source DeFi agent on native Hermes. Version ${manifest.version}.\n\n${docs.map(doc=>`- [${doc.title}](${origin}/docs/${doc.slug?doc.slug+'/':''})`).join('\n')}\n- [Skill catalog](${origin}/assets/catalog.json)\n- [Provider discovery catalog](${origin}/assets/providers.json)\n- [Source](https://github.com/galleonlabs/boomkin)\n- [Independent skills](https://github.com/galleonlabs/crypto-defi-skills)\n`);
+await writeFile(join(out,'llms.txt'),`# Boomkin\n\nOpen-source DeFi agent on native Hermes. Version ${manifest.version}.\n\n${docs.map(doc=>`- [${doc.title}](${origin}/docs/${doc.slug?doc.slug+'/':''})`).join('\n')}\n- [Skill catalog](${origin}/assets/catalog.json)\n- [Provider discovery catalog](${origin}/assets/providers.json)\n- [Agent source index](https://github.com/galleonlabs/boomkin/blob/main/llms.txt)\n- [Source](https://github.com/galleonlabs/boomkin)\n- [Independent skills](https://github.com/galleonlabs/crypto-defi-skills)\n`);
 console.log(`Built ${routes.length} routes: ${out}; ${catalog.packs.length} packs; ${workflowFile.workflows.length} workflows; ${revision}`);

@@ -1,6 +1,6 @@
 {
   "name": "boomkin",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Your open-source DeFi desk: native Hermes research projects, verifiable evidence and independent financial skills.",
   "type": "module",
   "license": "MIT",
@@ -35,7 +35,8 @@
     "README.md",
     "CHANGELOG.md",
     "LICENSE",
-    "ATTRIBUTION.md"
+    "ATTRIBUTION.md",
+    "llms.txt"
   ],
   "engines": {
     "bun": ">=1.3.12"
@@ -51,5 +52,16 @@
   "author": "Galleon Labs",
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "defi",
+    "crypto",
+    "ai-agent",
+    "agent-skills",
+    "hermes",
+    "mcp",
+    "research",
+    "backtesting",
+    "galleon"
+  ]
 }
