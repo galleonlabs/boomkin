@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.0 · 2026-10-08
+
+- Add local discovery of 60 providers with primary-source provenance, capability, access, cost and transaction authority metadata.
+- Expand to 27 workflows and 17 reviewed packs containing 48 active skills, including unsigned plans, simulations, Aave V4, payment streams and prediction-market evidence.
+- Add optional Blockscout discovery with 15 explicitly reviewed reads; keep provider selection and connections scoped to the selected profile.
+- Bound public MCP discovery by time, response size and pagination; preserve redacted failures and reject redirected endpoints.
+- Publish source-backed provider documentation and catalogs on the website, and validate tool filters against the pinned native Hermes contract.
+
 ## 0.8.1 · 2026-10-02
 
 - Correct the published README catalog count and list the strategy pack and three new workflows. Keep npm and website installation commands aligned with this patch release.

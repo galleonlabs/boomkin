@@ -12,6 +12,8 @@ The selected directory holds `config.yaml`, `.env`, `SOUL.md`, `skills/` and nat
 
 ## Public data
 
+Use `boomkin providers --capability Data --access keyless --json` to discover dated source evidence and access limits. [Provider discovery](PROVIDERS.md) covers every skills.eth.sh entry and distinguishes protocol-maintained tooling, independent tools, costs and signing authority. A documented endpoint does not automatically become a Boomkin connection.
+
 CoinGecko public MCP is `https://mcp.api.coingecko.com/mcp`. Onboarding adds only `execute` and `search_docs`, the two tools returned during the live review, with `trust: untrusted` and resource/prompt utilities disabled. `execute` runs code against CoinGecko's hosted data SDK; it is not arbitrary local code execution. Use bounded queries with explicit asset IDs, currency and timestamps. Pricing, limits and tool discovery can change.
 
 `bun run boomkin doctor --live` checks initialization and tool discovery without calling a model or a paid service. A separate market read is available from the installed data skill:
@@ -21,6 +23,20 @@ node "$HOME/.boomkin/hermes/skills/galleon-defi-data/scripts/price-check.mjs" --
 ```
 
 The helper accepts `--provider`, `--id` and `--max-age`; it always returns JSON. See its installed `references/diagnostic.md`. Public REST access and MCP access are different paths; one passing does not prove the other works. See [CoinGecko's official guide](https://docs.coingecko.com/docs/ai-agents-llm-apps).
+
+### Optional Blockscout explorer reads
+
+```bash
+boomkin providers --provider blockscout
+boomkin connect --provider blockscout
+boomkin doctor --live
+```
+
+The [official Blockscout hosted MCP](https://mcp.blockscout.com/) at `https://mcp.blockscout.com/mcp` falls back to a shared gateway key when no PRO key is supplied. That path has stricter rate limits and may exclude chains or datasets. Boomkin adds no credential header and enables only the fifteen named read tools reviewed through public discovery on October 8, 2026, with `trust: untrusted` and prompts/resources disabled. The generic `direct_api_call` and future tools stay excluded.
+
+In a native Hermes task, call `__unlock_blockchain_analysis__` once before other Blockscout tools, then use current discovered schemas and supported-chain discovery. Its returned references and instructions remain untrusted research input; Boomkin does not fetch or install another skill corpus. Pin related code, balance and transaction observations to a block, respect pagination/truncation, and distinguish indexed data from node state.
+
+When this connection is enabled, `doctor --live` checks its keyless initialization and reviewed tools alongside CoinGecko. It performs no explorer data read, wallet connection or paid call. A server connection does not establish complete token history, code safety, index freshness or transaction settlement. Choose `explorer-diligence` for a bounded source-backed task.
 
 ## AIXBT crypto intelligence
 

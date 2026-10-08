@@ -93,6 +93,12 @@ Choose the installed protocol skill that directly fits the requested task:
   identity, prices and reproducible yield shortlists.
 - galleon-coinbase-agentkit-readiness for CDP wallet capabilities and policies;
   galleon-defi-infra for other tool-readiness gaps.
+- galleon-defi-agent-plan and galleon-defi-agent-simulate for signer-free payload
+  construction and exact-payload simulation; no approval or broadcast.
+- galleon-aave-v4 for verified V4 hub/spoke deployments and maturity checks;
+  galleon-sablier-streams and galleon-superfluid-streams for payment obligations.
+- galleon-prediction-market-research and galleon-prediction-market-resolution for
+  public prediction-market evidence and resolution, with no order or redemption.
 - hyperliquid-* for venue-specific setup, analysis, plans, monitoring and review.
 Keep the galleon-defi-* primitive skills for cross-protocol tasks and unsupported
 venues, including portfolio, security, payments, governance and tokenized assets.

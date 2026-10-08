@@ -42,8 +42,8 @@
       "id": "defi-infra-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "RPC, wallet and Hermes infrastructure skills with read-only readiness diagnostics.",
-      "version": "0.3.0",
-      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
+      "version": "0.4.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
         "galleon-coinbase-agentkit-readiness",
         "galleon-defi-infra"
@@ -55,8 +55,8 @@
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Capture timestamped market evidence, compare public sources, retrieve daily history and screen DeFi yields.",
-      "version": "0.5.0",
-      "revision": "72b0d85df41c2c2a6e0525d94b245faa6d11e5d4",
+      "version": "0.6.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
         "galleon-coingecko-token-research",
         "galleon-defi-data",
@@ -70,10 +70,11 @@
       "id": "defi-lending-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Research lending markets, plan borrowing and monitor liquidation exposure.",
-      "version": "0.2.0",
-      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
+      "version": "0.3.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
         "galleon-aave-position",
+        "galleon-aave-v4",
         "galleon-compound-borrow",
         "galleon-defi-lending",
         "galleon-morpho-market"
@@ -124,8 +125,8 @@
       "id": "defi-routing-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Compare swaps and bridges and track cross-chain settlement.",
-      "version": "0.2.0",
-      "revision": "8609564d3a79883ebf515fec201240e90fb271b2",
+      "version": "0.3.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
         "galleon-defi-routing",
         "lifi-cross-chain",
@@ -150,8 +151,8 @@
       "id": "defi-portfolio-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Reconcile DeFi assets, liabilities, cash flows and exposure.",
-      "version": "0.1.3",
-      "revision": "d5d8439bd5bd1fec88994a6ca0448cde11e31747",
+      "version": "0.2.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
         "galleon-defi-portfolio"
       ],
@@ -175,10 +176,12 @@
       "id": "defi-payments-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan stablecoin payments, x402 purchases and token streams.",
-      "version": "0.1.3",
-      "revision": "8db6fa5e965ed393e7f211fc1a5bd03c860d7b84",
+      "version": "0.2.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
       "skills": [
-        "galleon-defi-payments"
+        "galleon-defi-payments",
+        "galleon-sablier-streams",
+        "galleon-superfluid-streams"
       ],
       "path": "packages/payments",
       "package": "galleon-defi-payments-skills"
@@ -206,6 +209,32 @@
       ],
       "path": "packages/strategy",
       "package": "galleon-defi-strategy-skills"
+    },
+    {
+      "id": "defi-agent-skills",
+      "source": "galleonlabs/crypto-defi-skills",
+      "description": "Construct unsigned DeFi plans and verify exact transaction simulation evidence.",
+      "version": "0.1.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
+      "skills": [
+        "galleon-defi-agent-plan",
+        "galleon-defi-agent-simulate"
+      ],
+      "path": "packages/agent",
+      "package": "galleon-defi-agent-skills"
+    },
+    {
+      "id": "defi-prediction-skills",
+      "source": "galleonlabs/crypto-defi-skills",
+      "description": "Research prediction market order books and reconcile resolution without signing or trading.",
+      "version": "0.1.0",
+      "revision": "7451b2cb578ce786cbd1e3ee55a4d12ba599739d",
+      "skills": [
+        "galleon-prediction-market-research",
+        "galleon-prediction-market-resolution"
+      ],
+      "path": "packages/prediction",
+      "package": "galleon-defi-prediction-skills"
     }
   ]
 }

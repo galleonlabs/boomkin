@@ -5,10 +5,12 @@ import { createHash } from "node:crypto";
 import { installedVersion, parseCatalog, parseConfig, selectPacks, identity, type Catalog } from "./core.ts";
 import { ensureRuntime, runHermes, initializeProfile, configureMcpServers, localProfileStatus, setMcpTrustUntrusted } from "./hermes.ts";
 import { verifyIntegrity, readIntegrity } from "./integrity.ts";
+import { discoverPublicMcp, type Fetcher } from "./mcp-discovery.ts";
 
 export const defaultProfile = () => join(homedir(), ".boomkin", "hermes");
 export const providers = {
   coingecko: { url: "https://mcp.api.coingecko.com/mcp", access: "Public data; no key. Enabled by onboard with a reviewed tool selection." },
+  blockscout: { url: "https://mcp.blockscout.com/mcp", access: "Optional keyless explorer reads through a shared gateway with stricter rate limits and possible chain/dataset restrictions. Reviewed read tools only." },
   defillama: { url: "https://mcp.defillama.com/mcp", access: "Optional API subscription and OAuth; queries consume credits. One MCP client per account." },
   aixbt: { url: "https://api.aixbt.tech/mcp", access: "Optional crypto intelligence. Set AIXBT_API_KEY in the selected Hermes profile; only Topic reads are public. Protected tools use account access and quotas." },
   tenderly: { url: "https://mcp.tenderly.co/mcp", access: "Optional paid-plan OAuth and project access. Select simulation and inspection tools; simulation results persist in the project." },
@@ -19,6 +21,18 @@ export const coinGeckoConfig = {
   enabled: true,
   trust: "untrusted",
   tools: { include: ["execute", "search_docs"], resources: false, prompts: false },
+};
+
+// Official hosted docs and unauthenticated tools/list reviewed 2026-10-08,
+// server 1.26.0. Exclude the generic direct_api_call and all future tools.
+export const blockscoutConfig = {
+  url: providers.blockscout.url,
+  enabled: true,
+  trust: "untrusted",
+  tools: {
+    include: ["__unlock_blockchain_analysis__", "get_block_info", "get_block_number", "get_address_by_ens_name", "get_transactions_by_address", "get_token_transfers_by_address", "lookup_token_by_symbol", "get_contract_abi", "inspect_contract_code", "read_contract", "get_address_info", "get_tokens_by_address", "nft_tokens_by_address", "get_transaction_info", "get_chains_list"],
+    resources: false, prompts: false,
+  },
 };
 
 // Reviewed through unauthenticated tools/list on 2026-09-05. New upstream tools
@@ -72,12 +86,14 @@ export async function connectProvider(directory: string, provider: string, dryRu
     console.log(JSON.stringify({ configDirectory: settings.env.COINBASE_CONFIG_DIR, environment: settings.env.COINBASE_ENV, nextAction: "Use connect --provider coinbase --key-file /absolute/path/to/scoped-key.json to configure the native CLI, or follow docs/CONNECTIONS.md. Balances and account authority have not been checked." }, null, 2));
     return;
   }
-  if (!Object.hasOwn(providers, provider)) throw new Error("Choose coingecko, aixbt, defillama, alchemy, tenderly or coinbase. Agentic Wallet setup is a separate official CLI path in docs/CONNECTIONS.md.");
+  if (!Object.hasOwn(providers, provider)) throw new Error("Choose coingecko, blockscout, aixbt, defillama, alchemy, tenderly or coinbase. Run providers for source-reviewed discovery; other official tools are separate opt-ins.");
   const selected = providers[provider as keyof typeof providers];
   console.log(`${provider}: ${selected.access}`);
   if (dryRun) return;
   if (provider === "coingecko") {
     await configureMcpServers(directory, { coingecko: coinGeckoConfig });
+  } else if (provider === "blockscout") {
+    await configureMcpServers(directory, { blockscout: blockscoutConfig });
   } else if (provider === "aixbt") {
     await configureMcpServers(directory, { aixbt: aixbtConfig });
   } else {
@@ -88,53 +104,16 @@ export async function connectProvider(directory: string, provider: string, dryRu
   const status = await localProfileStatus(directory);
   const server = status.mcpServers.find(entry => entry.name === provider);
   if (!server?.enabled || server.missingEnvironment.length) throw new Error("Provider setup is incomplete. Resolve its native authentication/configuration before relying on it.");
-  if (!["coingecko", "aixbt"].includes(provider)) await setMcpTrustUntrusted(directory, provider);
+  if (!["coingecko", "blockscout", "aixbt"].includes(provider)) await setMcpTrustUntrusted(directory, provider);
   console.log(`${provider} configuration is present. Restart Hermes to load it; configuration alone does not prove a successful data read.`);
 }
 
-type Fetcher = (url: string, options: RequestInit) => Promise<Response>;
-export async function publicDataProbe(fetcher: Fetcher = fetch, provider: "coingecko" | "aixbt" = "coingecko") {
-  // Discovery is keyless for both providers. Never send credential headers or
-  // invoke tools/call: protected data reads may consume account quotas.
-  const selected = provider === "aixbt" ? aixbtConfig : coinGeckoConfig;
-  let session: string | null = null;
-  let protocol: string | undefined;
-  async function call(body: unknown) {
-    const response = await fetcher(selected.url, {
-      method: "POST", redirect: "error", signal: AbortSignal.timeout(15_000),
-      headers: { "Content-Type": "application/json", Accept: "application/json, text/event-stream", ...(session ? { "Mcp-Session-Id": session } : {}), ...(protocol ? { "MCP-Protocol-Version": protocol } : {}) },
-      body: JSON.stringify(body),
-    });
-    if (!response.ok) throw new Error(`public MCP HTTP ${response.status}`);
-    session = response.headers.get("mcp-session-id") ?? session;
-    if (response.status === 202 || response.status === 204) return null;
-    const reader = response.body?.getReader();
-    if (!reader) throw new Error("empty MCP response");
-    let text = "", length = 0;
-    const decoder = new TextDecoder();
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      length += value.byteLength;
-      if (length > 256_000) { await reader.cancel(); throw new Error("oversized MCP response"); }
-      text += decoder.decode(value, { stream: true });
-      // Streamable HTTP servers may keep an SSE response open after the result.
-      if (text.startsWith("event:") || text.startsWith("data:")) {
-        const data = text.split(/\r?\n/).filter(line => line.startsWith("data:")).map(line => line.slice(5).trim()).join("\n");
-        try { const parsed = JSON.parse(data); if (parsed.result || parsed.error) { await reader.cancel(); return parsed; } } catch { /* Wait for a complete event. */ }
-      }
-    }
-    return JSON.parse(text);
-  }
+export async function publicDataProbe(fetcher: Fetcher = fetch, provider: "coingecko" | "aixbt" | "blockscout" = "coingecko") {
+  // Discovery never sends configured credentials or invokes tools/call.
+  const selected = { coingecko: coinGeckoConfig, aixbt: aixbtConfig, blockscout: blockscoutConfig }[provider];
   try {
-    const init = await call({ jsonrpc: "2.0", id: 1, method: "initialize", params: { protocolVersion: "2025-03-26", capabilities: {}, clientInfo: { name: "boomkin-doctor", version: "0.6.1" } } });
-    if (!init.result?.serverInfo || init.error) throw new Error("MCP initialization failed");
-    protocol = init.result.protocolVersion;
-    await call({ jsonrpc: "2.0", method: "notifications/initialized" });
-    const tools = await call({ jsonrpc: "2.0", id: 2, method: "tools/list", params: {} });
-    const names = tools.result?.tools?.map((tool: { name: string }) => tool.name);
-    if (!Array.isArray(names) || !selected.tools.include.every(name => names.includes(name))) throw new Error("reviewed MCP tool contract changed");
-    return { provider, status: "verified" as const, observedAt: new Date().toISOString(), evidence: "public MCP initialization and reviewed tool discovery", tools: selected.tools.include, marketRead: "not-tested", scope: "Provider connectivity only; Hermes tool loading is checked by the native runtime" };
+    const discovered = await discoverPublicMcp(selected.url, selected.tools.include, fetcher);
+    return { provider, status: "verified" as const, observedAt: new Date().toISOString(), evidence: "public MCP initialization and reviewed tool discovery", tools: discovered.tools, discovered: discovered.discovered, marketRead: "not-tested", scope: "Provider connectivity only; Hermes tool loading is checked by the native runtime" };
   } catch {
     return { provider, status: "unavailable" as const, observedAt: new Date().toISOString(), evidence: "Public MCP could not verify the reviewed tool contract. Retry later or consult the provider connection guide." };
   }
@@ -164,6 +143,6 @@ export async function doctor(directory: string, catalog: Catalog, live = false) 
   if (!profile.mcpServers.some(server => server.name === "coingecko" && server.enabled)) gaps.push("Connect public CoinGecko data with onboard or connect --provider coingecko");
   for (const server of profile.mcpServers) if (server.missingEnvironment.length) gaps.push(`Configure missing environment for ${server.name}`);
   const publicData = live ? await publicDataProbe() : { status: "not-tested", nextAction: "Run doctor --live for a keyless public MCP connection check" };
-  const optionalData = live && profile.mcpServers.some(server => server.name === "aixbt" && server.enabled) ? [await publicDataProbe(fetch, "aixbt")] : [];
+  const optionalData = live ? await Promise.all((["aixbt", "blockscout"] as const).filter(name => profile.mcpServers.some(server => server.name === name && server.enabled)).map(name => publicDataProbe(fetch, name))) : [];
   return { directory, state: gaps.length ? "needs-setup" : "configured", ...profile, packs, publicData, optionalData, gaps, financialAccess: "No wallet, payment or trading authority is granted by onboarding", nextAction: gaps.length ? gaps[0] : "Run start; authentication and a successful model response are verified by Hermes at use time" };
 }
