@@ -41,7 +41,6 @@ const docs=[
  {slug:'strategy',title:'Strategy testing',source:'site/docs/strategy.md'},
  {slug:'evidence',title:'Evidence and control',source:'site/docs/evidence.md'},
  {slug:'harnesses',title:'Other harnesses',source:'docs/HARNESSES.md'},
- {slug:'research',title:'Minara research',source:'docs/research/minara-2026-10-02.md'},
 ];
 const sourceRoutes=new Map(docs.map(doc=>[resolve(root,doc.source),`${base}docs/${doc.slug?doc.slug+'/':''}`]));
 for(const doc of docs){

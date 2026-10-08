@@ -1,6 +1,6 @@
 # Boomkin design
 
-Boomkin presents an open-source DeFi desk for research, position review and strategy testing. The Minara reference informs its product clarity; Boomkin's own identity is charcoal, pale paper, acid yellow, Manrope and ruled data. Keep the question, inputs, evidence and next action visible. Source access belongs beside the work.
+Boomkin presents an open-source DeFi desk for research, position review and strategy testing. Its identity is charcoal, pale paper, acid yellow, Manrope and ruled data. Keep the question, inputs, evidence and next action visible. Source access belongs beside the work.
 
 The visual source of truth is `site/assets/style.css`, the homepage and lab HTML, `site/assets/app.js`, `site/assets/lab.js`, and the documentation template in `scripts/build-site.ts`. Desktop and mobile captures in `.impeccable/review/` establish the composition; current source controls copy and behavior.
 
