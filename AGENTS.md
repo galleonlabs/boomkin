@@ -10,6 +10,7 @@ For product usage or an agent task, start with [README.md](README.md) and [docs/
 | Task | Start here |
 | --- | --- |
 | CLI arguments and command dispatch | `src/cli.ts`; focused regressions in `test/` |
+| Local desk UI, captures and native browser setup | `desk/`, `src/desk.ts`, `src/desk-launch.ts`, `src/desk-model.ts`; `docs/DESK.md` |
 | Profiles, model setup and provider connections | `src/onboarding.ts`, `src/hermes.ts`; `docs/CONNECTIONS.md` and `docs/CHATGPT.md` |
 | Provider discovery, cost/authority metadata and public MCP probes | `catalog/providers.json`, `src/provider-catalog.ts`, `src/mcp-discovery.ts`; `docs/PROVIDERS.md` |
 | Pack selection, source pins and copied-file integrity | `catalog/skills.json`, `src/core.ts`, `src/source.ts`, `src/integrity.ts`; `docs/UPDATES.md` |

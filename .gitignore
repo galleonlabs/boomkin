@@ -21,3 +21,6 @@ site-dist/
 !site/assets/**
 !docs/assets/
 !docs/assets/boomkin-hero.svg
+!docs/assets/boomkin-desk.jpg
+!desk/assets/
+!desk/assets/**

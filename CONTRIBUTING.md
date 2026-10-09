@@ -27,6 +27,7 @@ bun run build
 | Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates and independent pack selection. Pull requests that touch those paths run the same Harness compatibility job |
 | Catalog pin authenticity | `bun scripts/catalog-freshness.ts --verify` checks each pin against upstream `galleon-*-skills@*` release tags. Pull requests that touch `catalog/**` run this job |
 | Native Hermes integration | `python3 scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes`; CI exercises the reviewed runtime |
+| Local desk | `bun run build`; `bun run boomkin desk --no-open --directory /absolute/test/profile`; inspect first use, all three jobs, sources, exports, cancel/restart and desktop/mobile behavior |
 | Documentation or website | Check commands against `bun run boomkin --help`; run `bun run build:site` and `bun run check:site` for rendered guides and links |
 | Public website interaction | Inspect affected desktop/mobile views, search or lab controls, browser errors and exact public serving revision; see [WEBSITE.md](docs/WEBSITE.md) |
 

@@ -2,9 +2,9 @@
 
 **Your open-source DeFi desk.**
 
-Research markets, inspect positions and test a thesis with a native [Hermes agent](https://github.com/NousResearch/hermes-agent). Keep the sources, assumptions and run history in your own profile.
+Research an asset, review public wallet costs and test a strategy in a simple local browser desk. Keep the result, sources and run history on your computer. Add native [Hermes research](https://github.com/NousResearch/hermes-agent) when you want to investigate further.
 
-[![Boomkin: research, inspect and test your DeFi thesis](https://raw.githubusercontent.com/galleonlabs/boomkin/main/docs/assets/boomkin-hero.svg)](https://galleonlabs.github.io/boomkin/lab/)
+[![Boomkin's local desk: one question, recent research, and asset, wallet and strategy jobs](https://raw.githubusercontent.com/galleonlabs/boomkin/main/docs/assets/boomkin-desk.jpg)](https://galleonlabs.github.io/boomkin/docs/desk/)
 
 **[Try the strategy lab →](https://galleonlabs.github.io/boomkin/lab/)** · [Explore workflows](https://galleonlabs.github.io/boomkin/#workflows) · [Read the docs](https://galleonlabs.github.io/boomkin/docs/)
 
@@ -21,25 +21,21 @@ The browser demo needs no installation. Choose a research rule, compare held-out
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.10.0
-boomkin onboard
-boomkin doctor --live
-boomkin start
+bun install -g boomkin@0.11.0
+boomkin desk
 ```
 
-Onboarding prepares `~/.boomkin/hermes`, installs the reviewed packs, configures public CoinGecko data and opens native Hermes model setup. Choose your model provider and sign in there. `start` opens chat in that profile.
+Choose **Prepare public tools**, then a task. Boomkin installs the three reviewed packs needed for the desk into `~/.boomkin/hermes`, retaining your existing instructions and selections. Public jobs need no model account or funded wallet. The launching terminal owns the local server; Ctrl-C stops it.
 
-CoinGecko is the sole default connection. Model access uses your account or local configuration; optional providers can require credentials, subscriptions or paid requests. Setup creates no wallet, makes no model call and starts no background service.
+Optional model setup opens Hermes's own isolated browser dashboard. Hermes owns sign-in and model selection; explicit research follow-ups use your account and may incur provider usage. The desk installs no background service or scheduler. [Local desk guide and API](docs/DESK.md).
 
-[Profiles, install options and source setup](docs/GETTING-STARTED.md) · [Model connections](docs/CONNECTIONS.md)
+[Native agent chat, profiles and source setup](docs/GETTING-STARTED.md) · [Model connections](docs/CONNECTIONS.md)
 
 ## First useful task
 
-Paste this into your new Hermes chat:
+Choose **Review a wallet**, supply a public Hyperliquid address and date range, or try the clearly labeled public vault example. Read fees, signed funding and current exposure; expand the source evidence, export the report, then reopen it from Recent research.
 
-> Use galleon-coingecko-token-research. Resolve CoinGecko ID ethereum and capture a public ETH/USD market observation. Show the asset identity, source URL, observation time and freshness limits. Mark missing data clearly and keep this task read-only.
-
-The result should separate supported observations from unknowns. `doctor --live` establishes public tool discovery; this first task checks whether your configured model can retrieve and explain market evidence.
+**Research an asset** captures public USD marks and their age. **Test a strategy** compares a documented daily rule across independently restarted reference and held-out periods at baseline and higher costs. Wallet coverage and simulation assumptions remain visible. Refresh saves a new run without overwriting earlier work.
 
 ## Start from a research template
 
@@ -133,7 +129,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.10.0
+bun install -g boomkin@0.11.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

@@ -7,6 +7,7 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 | User intent | Read | First command or artifact |
 | --- | --- | --- |
 | Try before installation | [Live strategy lab](https://galleonlabs.github.io/boomkin/lab/) | Dated or synthetic daily simulation in the browser |
+| Open the local crypto interface | [Local desk](DESK.md) | `boomkin desk`; scoped HTTP schemas and evidence states |
 | Prepare an agent and model | [Getting started](GETTING-STARTED.md) | `boomkin onboard`; `boomkin doctor --live` |
 | Choose a protocol job | [Workflows](WORKFLOWS.md) | `boomkin workflows --workflow <id> --json` |
 | Find a tool by capability/cost | [Providers](PROVIDERS.md) | `boomkin providers --search <term> --json` |
@@ -28,6 +29,7 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 - [catalog/providers.json](../catalog/providers.json): 60 discovery entries, sources, review dates, authorship, cost and authority. Discovery entries do not all have native integrations.
 - [src/hermes.ts](../src/hermes.ts): native runtime/installer pin and launch/authentication contracts.
 - [src/projects.ts](../src/projects.ts): project and evidence schemas, run states and validation limits.
+- [src/desk.ts](../src/desk.ts): authenticated loopback API, fixed helper adapters and saved desk results. [src/desk-model.ts](../src/desk-model.ts) owns the isolated native dashboard launch.
 - [Public catalog](https://galleonlabs.github.io/boomkin/assets/catalog.json), [provider catalog](https://galleonlabs.github.io/boomkin/assets/providers.json) and [release manifest](https://galleonlabs.github.io/boomkin/release.json): deployed revision and public documentation data.
 
 The installed/checked-out CLI catalog and deployed website can reflect different revisions during a release. `update` fetches the public Boomkin source catalog; `--offline-catalog` uses the installed/checked-out copy and still needs access to download pinned sources. Preserve exact package, version and source identity when reporting results.

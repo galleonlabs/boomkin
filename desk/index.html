@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#111214">
+  <title>Boomkin · Your crypto desk</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+  <link rel="preload" href="/assets/manrope.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="/assets/desk.css">
+  <script type="module" src="/assets/app.js"></script>
+</head>
+<body>
+  <!-- Job: capture useful crypto research, inspect its sources, and reopen the saved work.
+       Structure: quiet history rail, one task area, evidence below the answer.
+       Identity: charcoal, off-white, citron, local Manrope. No external assets or telemetry. -->
+  <a class="skip-link" href="#main">Skip to the desk</a>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar" aria-label="Research history">
+      <a class="wordmark" href="#" id="home-link" aria-label="Boomkin desk">boomkin<span class="brand-mark" aria-hidden="true"></span></a>
+      <button class="new-research" id="new-research" type="button"><span>New research</span><span aria-hidden="true">+</span></button>
+      <div class="history-heading"><span>Recent research</span><span id="research-count"></span></div>
+      <nav class="history-list" id="history-list" aria-label="Saved research"><p class="history-empty">Your research will appear here.</p></nav>
+      <div class="sidebar-bottom">
+        <button class="quiet-nav" type="button" id="settings-button"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M4 14h12"/><circle cx="7" cy="6" r="2"/><circle cx="13" cy="14" r="2"/></svg>Settings</button>
+        <a class="quiet-nav" href="https://galleonlabs.github.io/boomkin/docs/" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4h8a3 3 0 0 1 3 3v9H7a3 3 0 0 0-3 1ZM4 4v13m3-4h8"/></svg>Documentation<span class="external" aria-hidden="true">↗</span></a>
+        <div class="local-label"><span class="status-dot" id="connection-dot"></span><span id="connection-label">Connecting locally</span></div>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="workspace-bar">
+        <button class="mobile-menu icon-button" id="mobile-menu" type="button" aria-label="Open research history" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 5h12M4 10h12M4 15h12"/></svg></button>
+        <span class="workspace-title">Your crypto desk</span>
+        <span class="workspace-note"><span class="small-mark" aria-hidden="true"></span>Saved on this computer</span>
+      </header>
+      <main id="main" tabindex="-1">
+        <section class="connection-view" id="connection-view" aria-labelledby="connection-heading">
+          <span class="eyebrow">Local workspace</span>
+          <h1 id="connection-heading">Opening your desk.</h1>
+          <p id="connection-message">Checking the local server and available research tools…</p>
+          <button class="button primary" id="reconnect" type="button" hidden>Try again<span aria-hidden="true">↗</span></button>
+        </section>
+        <section class="setup-view" id="setup-view" aria-labelledby="setup-heading" hidden></section>
+        <section class="desk-view" id="desk-view" aria-labelledby="desk-heading" hidden>
+          <div class="desk-intro"><span class="eyebrow">Research. Review. Test.</span><h1 id="desk-heading">A clearer view<br>of your crypto.</h1><p>Start with a question. Keep the data and the evidence.</p></div>
+          <form class="question-box" id="question-form"><label class="sr-only" for="question">What would you like to understand?</label><textarea id="question" name="question" rows="2" maxlength="500" placeholder="What would you like to understand?" required></textarea><div class="question-footer"><span>Public data · no model needed</span><button class="question-submit" type="submit" aria-label="Choose a research task"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></button></div></form>
+          <p class="question-hint">Try “Research ETH”, paste a Hyperliquid address, or test a strategy.</p>
+          <div class="task-grid" aria-label="Start a research task">
+            <button class="task-choice" type="button" data-task="market"><span class="task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18V6m0 12h16M7 14l4-5 4 3 5-7"/></svg></span><strong>Research an asset</strong><span>Resolve its identity.<br> Compare public price marks.</span><span class="task-arrow" aria-hidden="true">↗</span></button>
+            <button class="task-choice" type="button" data-task="wallet"><span class="task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 6h13v3M5 6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1 0-4h13"/><path d="M15 12h5v5h-5z"/></svg></span><strong>Review a wallet</strong><span>Understand Hyperliquid<br> fees, funding and exposure.</span><span class="task-arrow" aria-hidden="true">↗</span></button>
+            <button class="task-choice" type="button" data-task="strategy"><span class="task-symbol" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18h16M4 8l4 5 4-7 4 4 4-5"/><path d="m4 14 4 2 4-3 4 2 4-4"/></svg></span><strong>Test a strategy</strong><span>Freeze a documented rule.<br> Inspect returns and costs.</span><span class="task-arrow" aria-hidden="true">↗</span></button>
+          </div>
+          <div class="desk-footnote"><span>Saved locally, with sources you can inspect.</span><a href="https://github.com/galleonlabs/boomkin" target="_blank" rel="noopener noreferrer">Open source<span aria-hidden="true">↗</span></a></div>
+        </section>
+        <section class="task-view" id="task-view" hidden></section>
+        <section class="result-view" id="result-view" hidden></section>
+        <section class="settings-view" id="settings-view" hidden></section>
+      </main>
+    </div>
+  </div>
+  <button class="sidebar-overlay" type="button" id="sidebar-overlay" aria-label="Close research history" hidden></button>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <div class="sr-only" id="announcement" role="status" aria-live="polite" aria-atomic="true"></div>
+  <noscript><div class="noscript">JavaScript is needed for the local desk. You can still use Boomkin from your terminal.</div></noscript>
+</body>
+</html>

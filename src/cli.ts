@@ -16,9 +16,15 @@ import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity 
 import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
 import { createProject, listProjects, readProject, projectRuns, runProject, checkProjectRun } from "./projects.ts";
 import { templates, selectTemplate, templateInputs, renderTemplate } from "./templates.ts";
+import { startDesk } from "./desk.ts";
+import { deskAssetsDirectory, deskPort, deskSetupPacks } from "./desk-launch.ts";
+import { createNativeDashboard } from "./desk-model.ts";
+import { terminateOwnedProcess } from "./processes.ts";
 
 const help = `Boomkin — your Hermes DeFi agent.
 
+boomkin desk
+boomkin desk --directory ~/.boomkin/hermes --no-open
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -46,6 +52,10 @@ boomkin chatgpt --action status
 boomkin check --directory ~/.boomkin/hermes
 boomkin update --directory ~/.boomkin/hermes
 
+desk opens your local browser desk for public market data, wallet reviews and strategy tests.
+Prepare public tools in the desk; these jobs need no model or funded wallet.
+Optional research uses native Hermes and your selected model. --port chooses a loopback port.
+--no-open prints the local address without opening a browser. Stop with Ctrl-C.
 onboard installs the official Hermes runtime if needed, prepares an isolated profile,
 installs the selected Galleon skill packs and public CoinGecko MCP, then runs native model setup.
 --directory chooses the Hermes home (default ~/.boomkin/hermes for the commands above).
@@ -84,13 +94,14 @@ async function canonicalPath(path: string): Promise<string> {
 async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
     name: { type: "string" }, "input-file": { type: "string" }, objective: { type: "string" }, "max-turns": { type: "string" }, "run-id": { type: "string" }, template: { type: "string" },
-    version: { type: "boolean", short: "v" }, action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
+    version: { type: "boolean", short: "v" }, action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" }, port: { type: "string" }, "no-open": { type: "boolean" },
     search: { type: "string" }, capability: { type: "string" }, access: { type: "string" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
   } });
   const command = positionals[0] ?? "help";
   if (values.version || command === "version") return console.log(`Boomkin ${packageFile.version}`);
   if (values.help || command === "help") return console.log(help);
+  if ((values.port !== undefined || values["no-open"]) && command !== "desk") throw new Error("--port and --no-open are only available for desk");
   if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
   if (positionals.length > (command === "project" ? 2 : 1)) throw new Error("Unexpected positional arguments");
   if (values.workflow !== undefined && !["workflows", "onboard", "project"].includes(command)) throw new Error("--workflow is available for workflows, onboard and project create");
@@ -104,7 +115,48 @@ async function main() {
   if (values.provider !== undefined && !["connect", "providers"].includes(command)) throw new Error("--provider is only available for connect and providers");
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
-  if (values["dry-run"] && !["onboard", "setup", "update", "connect", "start", "model", "chatgpt", "project"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+  if (values["dry-run"] && !["desk", "onboard", "setup", "update", "connect", "start", "model", "chatgpt", "project"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+
+  if (command === "desk") {
+    if (values.pack || values.harness || values["offline-catalog"]) throw new Error("desk uses its selected Hermes profile; pack options belong to setup or onboard");
+    const directory = await canonicalPath(resolve(values.directory ?? defaultProfile()));
+    const port = deskPort(values.port);
+    if (values["dry-run"]) return console.log(`Would serve the local desk on 127.0.0.1:${port || "an available port"} using ${directory}; no model, data read or setup starts in this preview.`);
+    const catalog = parseCatalog(catalogFile);
+    const nativeDashboard = createNativeDashboard(directory);
+    const desk = await startDesk({ directory, catalog, port, assetsDirectory: deskAssetsDirectory(import.meta.url),
+      onSetup: async signal => {
+        const selected = await deskSetupPacks(directory, catalog);
+        signal.throwIfAborted();
+        const group = process.platform !== "win32";
+        const child = Bun.spawn([process.execPath, fileURLToPath(import.meta.url), "setup", "--harness", "hermes", "--directory", directory, ...selected.flatMap(id => ["--pack", id])], { stdin: "inherit", stdout: "inherit", stderr: "inherit", detached: group });
+        let termination: Promise<void> | undefined;
+        const abort = () => { termination ??= terminateOwnedProcess(child, group); };
+        signal.addEventListener("abort", abort, { once: true });
+        try {
+          if (signal.aborted) abort();
+          const code = await child.exited;
+          signal.throwIfAborted();
+          if (code !== 0) throw new Error("Public tool preparation failed. Review the launching terminal and retry; completed packs remain installed.");
+        } finally { signal.removeEventListener("abort", abort); if (termination) await termination; }
+      },
+      onModelSetup: async signal => {
+        await prepareHermes(directory, { install: true, skipModelSetup: true, signal });
+        signal.throwIfAborted();
+        return nativeDashboard.open();
+      },
+    });
+    console.log(`Boomkin desk: ${desk.url}\nProfile: ${directory}\nPublic jobs use bounded keyless reads. Native model research is optional. Stop with Ctrl-C.`);
+    if (!values["no-open"]) {
+      const opener = process.platform === "darwin" ? "open" : process.platform === "win32" ? undefined : Bun.which("xdg-open");
+      if (opener) Bun.spawn([opener, desk.url], { stdout: "ignore", stderr: "ignore" });
+    }
+    const stop = async () => { await nativeDashboard.stop(); await desk.stop(); process.exit(0); };
+    process.once("SIGINT", stop);
+    process.once("SIGTERM", stop);
+    if (process.platform !== "win32") process.once("SIGHUP", stop);
+    return;
+  }
 
   if (command === "project") {
     const action = positionals[1];

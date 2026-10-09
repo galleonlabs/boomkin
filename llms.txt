@@ -13,6 +13,7 @@ The catalog contains 31 workflows, 17 independent Galleon packs and 49 reviewed 
 
 ## Task guides
 
+- [Local browser desk](https://github.com/galleonlabs/boomkin/blob/main/docs/DESK.md): public jobs, saved results, loopback API schemas and native model setup.
 - [Getting started](https://github.com/galleonlabs/boomkin/blob/main/docs/GETTING-STARTED.md)
 - [Protocol workflows](https://github.com/galleonlabs/boomkin/blob/main/docs/WORKFLOWS.md)
 - [Provider discovery](https://github.com/galleonlabs/boomkin/blob/main/docs/PROVIDERS.md)
