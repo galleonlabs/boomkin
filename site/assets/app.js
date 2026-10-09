@@ -45,7 +45,7 @@ function chooseDemo(tab) {
   byId('desk-panel').setAttribute('aria-labelledby',tab.id);
   byId('demo-question').textContent=demo.question; byId('demo-heading').textContent=demo.heading; byId('demo-description').textContent=demo.description;
   byId('demo-evidence').innerHTML=demo.evidence.map(([label,value])=>`<div><span>${escape(label)}</span><strong>${escape(value)}</strong></div>`).join('');
-  byId('demo-command').textContent=`boomkin onboard --workflow ${demo.workflow}`;
+  byId('demo-command').textContent='boomkin desk';
 }
 tabs.forEach((tab,index) => {
   tab.addEventListener('click',()=>chooseDemo(tab));

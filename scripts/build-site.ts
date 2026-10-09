@@ -33,6 +33,7 @@ const header=`<header class="header"><a class="wordmark" href="${base}">boomkin<
 const footer=`<footer class="footer wrap"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><p>Open-source tools for a desk you control.</p><div><a href="${base}docs/">Documentation</a><a href="https://github.com/galleonlabs/boomkin">GitHub</a><a href="https://github.com/galleonlabs/crypto-defi-skills">Skill library</a></div><span class="footer-credit">Built by <a href="https://github.com/galleonlabs">Galleon Labs</a> · MIT</span></footer>`;
 const docs=[
  {slug:'',title:'Getting started',source:'site/docs/start.md'},
+ {slug:'desk',title:'Local desk',source:'docs/DESK.md'},
  {slug:'setup',title:'Setup reference',source:'docs/GETTING-STARTED.md'},
  {slug:'agents',title:'Agent reference',source:'docs/AGENT-INDEX.md'},
  {slug:'projects',title:'Research projects',source:'docs/PROJECTS.md'},

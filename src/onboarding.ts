@@ -58,14 +58,16 @@ export function coinbaseSettings(directory: string) {
   };
 }
 
-export async function prepareHermes(directory: string, options: { install: boolean; dryRun?: boolean; skipModelSetup?: boolean }) {
+export async function prepareHermes(directory: string, options: { install: boolean; dryRun?: boolean; skipModelSetup?: boolean; signal?: AbortSignal }) {
+  options.signal?.throwIfAborted();
   if (!options.dryRun) await initializeProfile(directory, identity);
   const executable = await ensureRuntime(directory, options);
   if (options.dryRun) return;
+  options.signal?.throwIfAborted();
   await configureMcpServers(directory, { coingecko: coinGeckoConfig });
   if (!options.skipModelSetup) {
     if (!process.stdin.isTTY) throw new Error("Hermes model setup needs a terminal. Rerun onboard interactively, or use --skip-model-setup to prepare the profile and configure it later.");
-    await runHermes(directory, ["setup", "model"], { executable });
+    await runHermes(directory, ["setup", "model"], { executable, signal: options.signal });
   }
 }
 

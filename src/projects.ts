@@ -5,6 +5,7 @@ import { parseCatalog, installedVersion, type Catalog, type Pack } from "./core.
 import { findRuntime, runHermes } from "./hermes.ts";
 import { readIntegrity, verifyIntegrity } from "./integrity.ts";
 import { selectWorkflow, workflowPacks, type Workflow } from "./workflows.ts";
+import { terminateOwnedProcess } from "./processes.ts";
 
 type Input = string | number | boolean | null | Input[] | { [key: string]: Input };
 export interface Project {
@@ -246,7 +247,8 @@ export async function checkProjectRun(directory: string, project: string, select
   if (["prepared", "running", "failed"].includes(run.state)) issues.push(`Run state is ${run.state}; artifact checks do not prove the agent finished`);
   return { run, path, issues, observations: ids.size };
 }
-export async function runProject(directory: string, projectName: string, options: { dryRun?: boolean; maxTurns?: number; executable?: string } = {}): Promise<{ run?: ProjectRun; path: string; prompt: string }> {
+export async function runProject(directory: string, projectName: string, options: { dryRun?: boolean; maxTurns?: number; executable?: string; signal?: AbortSignal; onProgress?: (message: string) => Promise<void> | void; onPrepared?: (run: ProjectRun, path: string) => Promise<void> | void } = {}): Promise<{ run?: ProjectRun; path: string; prompt: string }> {
+  options.signal?.throwIfAborted();
   const project = await readProject(directory, projectName);
   const id = new Date().toISOString().replaceAll(":", "-").replace(".", "-") + "-" + randomUUID().slice(0, 8);
   const parts = [".boomkin", "projects", projectName, "runs", id];
@@ -256,6 +258,7 @@ export async function runProject(directory: string, projectName: string, options
   const args = projectHermesArgs(join(output, "prompt.md"), project.workflow.skill, maxTurns);
   if (options.dryRun) return { path: output, prompt };
   const executable = options.executable ?? await findRuntime(directory);
+  await options.onProgress?.("Checking the native Hermes profile and installed research tools");
   if (!executable) throw new Error("Hermes runtime is missing; onboard this profile before running a project");
   const selected = parseCatalog(JSON.parse(await readLimited(await safePath(directory, [".boomkin", "last-sync.json"]), 1_048_576)).catalog);
   const pack = selected.packs.find(item => item.id === project.workflow.pack && item.skills.includes(project.workflow.skill));
@@ -264,10 +267,22 @@ export async function runProject(directory: string, projectName: string, options
   if (installedVersion(await readLimited(skill)) !== pack.version) throw new Error("Installed workflow version differs from its recorded release; resolve doctor/update before running");
   const integrityIssues = await verifyIntegrity(join(directory, "skills"), { schemaVersion: 3, packs: [pack] }, await readIntegrity(directory));
   if (integrityIssues.length) throw new Error(integrityIssues.join("; "));
-  const probe = Bun.spawn([executable, "--profile", "default", "chat", "--help"], { cwd: resolve(directory), env: { ...process.env, HERMES_HOME: resolve(directory), HERMES_CONFIG: join(resolve(directory), "config.yaml"), HERMES_ENV: join(resolve(directory), ".env") }, stdout: "pipe", stderr: "ignore", timeout: 15_000 });
-  const help = await new Response(probe.stdout).text();
-  if (await probe.exited !== 0 || ["--query-file", "--skills", "--max-turns", "--oneshot", "--cli"].some(flag => !help.includes(flag))) throw new Error("Existing Hermes lacks the reviewed project launch contract; preserve it and review its native update");
+  options.signal?.throwIfAborted();
+  const group = process.platform !== "win32";
+  const probe = Bun.spawn([executable, "--profile", "default", "chat", "--help"], { cwd: resolve(directory), env: { ...process.env, HERMES_HOME: resolve(directory), HERMES_CONFIG: join(resolve(directory), "config.yaml"), HERMES_ENV: join(resolve(directory), ".env") }, stdout: "pipe", stderr: "ignore", detached: group });
+  let probeTermination: Promise<void> | undefined;
+  const abortProbe = () => { probeTermination ??= terminateOwnedProcess(probe, group); };
+  const probeTimeout = setTimeout(abortProbe, 15_000);
+  options.signal?.addEventListener("abort", abortProbe, { once: true });
+  let help: string, probeCode: number;
+  try {
+    if (options.signal?.aborted) abortProbe();
+    help = await new Response(probe.stdout).text(); probeCode = await probe.exited;
+    options.signal?.throwIfAborted();
+  } finally { clearTimeout(probeTimeout); options.signal?.removeEventListener("abort", abortProbe); if (probeTermination) await probeTermination; }
+  if (probeCode !== 0 || ["--query-file", "--skills", "--max-turns", "--oneshot", "--cli"].some(flag => !help.includes(flag))) throw new Error("Existing Hermes lacks the reviewed project launch contract; preserve it and review its native update");
   const lockParts = [".boomkin", "projects", projectName, "run.lock"];
+  options.signal?.throwIfAborted();
   const lock = await safePath(directory, lockParts);
   try { await mkdir(lock, { mode: 0o700 }); }
   catch (error) { if ((error as NodeJS.ErrnoException).code === "EEXIST") throw new Error("A project run lock exists. Check the recorded run and active Hermes process before removing a stale lock"); throw error; }
@@ -282,14 +297,18 @@ export async function runProject(directory: string, projectName: string, options
     await writeFile(join(output, "prompt.md"), prompt, { flag: "wx", mode: 0o600 });
     await atomicWrite(directory, [...parts, "run.json"], json(run));
     recorded = true;
+    await options.onPrepared?.(run, output);
+    options.signal?.throwIfAborted();
     run.state = "running";
     await atomicWrite(directory, [...parts, "run.json"], json(run));
     console.log(`Research run: ${output}. Native Hermes uses your configured model; provider usage may incur costs.`);
-    await runHermes(directory, args, { executable });
+    await options.onProgress?.("Native Hermes is researching your question");
+    await runHermes(directory, args, { executable, signal: options.signal });
     run.state = "needs-review";
     run.finishedAt = new Date().toISOString();
     await atomicWrite(directory, [...parts, "run.json"], json(run));
     const checked = await checkProjectRun(directory, projectName, id);
+    await options.onProgress?.("Checking the captured research files");
     run.issues = checked.issues;
     if (!checked.issues.length) run.state = "ready-for-review";
     await atomicWrite(directory, [...parts, "run.json"], json(run));
@@ -298,7 +317,7 @@ export async function runProject(directory: string, projectName: string, options
     if (recorded) {
       run.state = "failed";
       run.finishedAt = new Date().toISOString();
-      run.issues = ["Hermes or artifact validation failed; review the native output and preserved run files before retrying"];
+      run.issues = [options.signal?.aborted ? "Research was canceled; preserved files may be incomplete" : "Hermes or artifact validation failed; review the native output and preserved run files before retrying"];
       await atomicWrite(directory, [...parts, "run.json"], json(run));
     }
     throw error;

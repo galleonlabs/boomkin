@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.0 · 2026-10-09
+
+- Add a local browser desk with guided public-tool preparation, asset snapshots, Hyperliquid wallet cost reviews and documented strategy comparisons.
+- Preserve frozen inputs and separate saved runs with progress, cancellation, sources, hashes, exports and explicit partial/failure/interruption states.
+- Add optional native Hermes browser model setup and explicit research follow-ups; keep credentials and the agent loop with Hermes.
+- Bind the desk to authenticated loopback access, reject foreign origins and unsafe paths, and verify installed helper resources before execution.
+- Simplify the human start path and document the local API, evidence contracts and recovery for agents.
+
 ## 0.10.0 · 2026-10-09
 
 - Add four reviewed project templates with explicit defaults and required inputs, frozen per-project context and previews without model or data calls.

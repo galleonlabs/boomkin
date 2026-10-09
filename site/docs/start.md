@@ -1,6 +1,6 @@
 # Your first DeFi job
 
-Research a token, inspect a position or test an investment rule with a native Hermes agent and evidence you can review.
+Research an asset, review public wallet costs or test a strategy in your local browser desk. Keep each result with its sources and reopen your research later.
 
 Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare a moving-average rule, scheduled buys and buy-and-hold on a dated Bitcoin capture or labeled synthetic data. No installation or account is needed for the lab.
 
@@ -9,23 +9,19 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.10.0
-boomkin onboard
-boomkin doctor --live
-boomkin start
+bun install -g boomkin@0.11.0
+boomkin desk
 ```
 
-Onboarding prepares `~/.boomkin/hermes`, installs the reviewed official Hermes runtime when needed, adds the 17 reviewed skill packs and the public CoinGecko connection, then opens native model setup. Choose your model provider and sign in there. Keep Bun's global bin directory on your shell path.
+Keep Bun's global bin directory on your shell path. The desk opens a loopback browser page in `~/.boomkin/hermes`. Choose **Prepare public tools** to install its three reviewed skill packs. Existing instructions and selected packs remain intact. Keep the launching terminal open; Ctrl-C stops the desk.
 
-Hermes owns chat, models, sessions, memory and tools. Boomkin adds 31 workflows, source-pinned skills, file checks and research project records. Model usage follows your chosen provider's terms. Optional data and wallet providers have their own access requirements. [The setup reference](../../docs/GETTING-STARTED.md) covers prerequisites, source installation and existing Hermes profiles.
+Public desk jobs need no model account or funded wallet. Native model setup is optional: open Settings and use Hermes's own browser dashboard for sign-in and model selection. Explicit research follow-ups use your configured provider and may incur usage. [The desk guide](../../docs/DESK.md) covers saved results, native setup and recovery; [the setup reference](../../docs/GETTING-STARTED.md) covers native chat and advanced profiles.
 
 ## Ask your first question
 
-In the native Hermes chat, try:
+Choose **Review a wallet**, enter a public Hyperliquid address and date range, or choose the labeled public vault example. Inspect observed fees, signed funding and current exposure. Expand the sources, export your report and reopen it from Recent research. Limited history stays visible; this is not a complete portfolio return.
 
-> Use galleon-coingecko-token-research to research Ethereum's current USD market data. Resolve the exact CoinGecko ID, show source URLs, provider and retrieval times, and mark any missing or stale fields. Use public reads only.
-
-The result should identify the asset and include dated sources you can inspect. Public data may be unavailable or rate-limited; the workflow keeps those gaps visible. This first task needs no funded wallet.
+Or choose **Research an asset** for a sourced market snapshot, or **Test a strategy** for a documented daily-rule comparison. The result shows source age and missing information. Refresh captures new evidence in a separate run.
 
 ## Choose the next job
 

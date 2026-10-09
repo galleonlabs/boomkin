@@ -1,6 +1,6 @@
 # Your first Boomkin session
 
-[Try the browser lab](https://galleonlabs.github.io/boomkin/lab/) to inspect the strategy engine before installing. For an agent that can research your own question, prepare a native Hermes profile below.
+[Open the local desk](DESK.md) for guided public research and saved results. [Try the browser lab](https://galleonlabs.github.io/boomkin/lab/) before installation. Native Hermes chat and advanced profile setup remain available below.
 
 [README](../README.md#get-started) · [Choose a workflow](WORKFLOWS.md) · [Connect a provider](CONNECTIONS.md) · [Agent index](AGENT-INDEX.md)
 
@@ -9,7 +9,17 @@
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Keep Bun's global bin directory on your shell path. Windows users can use WSL2; an existing native Windows Hermes installation can also be reused through its official flow.
 
 ```bash
-bun install -g boomkin@0.10.0
+bun install -g boomkin@0.11.0
+boomkin desk
+```
+
+Choose **Prepare public tools** in the browser, then research an asset, review a public Hyperliquid wallet or test a documented strategy. These tasks need no model or funded wallet. Optional browser model setup and saved-run recovery are covered in the [desk guide](DESK.md).
+
+## Native agent chat
+
+For the complete native Hermes chat and all reviewed packs:
+
+```bash
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -69,6 +79,13 @@ CoinGecko is the sole onboarding data connection. Optional provider setup stays 
 git clone https://github.com/galleonlabs/boomkin.git
 cd boomkin
 bun install --frozen-lockfile
+bun run build
+bun run boomkin desk
+```
+
+For native agent chat:
+
+```bash
 bun run boomkin onboard
 bun run boomkin doctor --live
 bun run boomkin start

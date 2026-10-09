@@ -3,6 +3,7 @@ import { constants } from "node:fs";
 import { resolve, join } from "node:path";
 import { createHash, randomUUID } from "node:crypto";
 import { isMap, parseDocument } from "yaml";
+import { terminateOwnedProcess } from "./processes.ts";
 
 export const HERMES_VERSION = "0.21.5";
 export const HERMES_COMMIT = "f97608f178d1ffeca59860195ab7da295f7c8e5f";
@@ -36,6 +37,21 @@ export async function readHermesConfig(directory: string): Promise<Record<string
   const root = await profilePath(directory);
   return document(await textOrEmpty(join(root, "config.yaml"))).toJS({ maxAliasCount: 0 });
 }
+/** Native Hermes accepts both the legacy model string and its current mapping. */
+export function hermesModelConfigured(config: Record<string, unknown>): boolean {
+  const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === "object" && !Array.isArray(value);
+  const model = config.model;
+  if (typeof model === "string") return !!model.trim();
+  if (!object(model)) return false;
+  // Match native config canonicalization without rewriting the user's YAML.
+  const flatten = (value: unknown): unknown => {
+    if (!object(value)) return value;
+    const id = value.model || value.default;
+    return typeof id === "string" ? id.trim() : id;
+  };
+  const id = flatten(model.default) || flatten(model.model) || flatten(model.name);
+  return typeof id === "string" && !!id.trim();
+}
 async function executableAt(path: string): Promise<boolean> {
   try { await access(path, constants.X_OK); return true; } catch { return false; }
 }
@@ -52,15 +68,29 @@ function nativeEnvironment(root: string): NodeJS.ProcessEnv {
   // Explicit root selector prevents a sticky profile preference from redirecting this launch.
   return { ...process.env, HERMES_HOME: root, HERMES_CONFIG: join(root, "config.yaml"), HERMES_ENV: join(root, ".env") };
 }
-export async function runHermes(directory: string, args: string[], options: { executable?: string } = {}): Promise<void> {
+export async function runHermes(directory: string, args: string[], options: { executable?: string; signal?: AbortSignal } = {}): Promise<void> {
   const root = await profilePath(directory);
   const executable = options.executable ?? await findRuntime(root);
   if (!executable) throw new Error("Hermes runtime is missing. Run onboarding with runtime installation enabled.");
   if (args.some(arg => ["-p", "--profile"].includes(arg) || arg.startsWith("--profile="))) throw new Error("Select the Boomkin directory instead of overriding its Hermes profile");
-  const child = Bun.spawn([executable, "--profile", "default", ...args], { cwd: root, env: nativeEnvironment(root), stdin: "inherit", stdout: "inherit", stderr: "inherit" });
-  if (await child.exited !== 0) throw new Error("Hermes command failed; review its native output above.");
+  options.signal?.throwIfAborted();
+  const ownGroup = !!options.signal && process.platform !== "win32";
+  const child = Bun.spawn([executable, "--profile", "default", ...args], { cwd: root, env: nativeEnvironment(root), stdin: "inherit", stdout: "inherit", stderr: "inherit", detached: ownGroup });
+  let termination: Promise<void> | undefined;
+  const abort = () => { termination ??= terminateOwnedProcess(child, ownGroup); };
+  options.signal?.addEventListener("abort", abort, { once: true });
+  try {
+    if (options.signal?.aborted) abort();
+    const code = await child.exited;
+    options.signal?.throwIfAborted();
+    if (code !== 0) throw new Error("Hermes command failed; review its native output above.");
+  } finally {
+    options.signal?.removeEventListener("abort", abort);
+    if (termination) await termination;
+  }
 }
-export async function ensureRuntime(directory: string, options: { install: boolean; dryRun?: boolean }): Promise<string> {
+export async function ensureRuntime(directory: string, options: { install: boolean; dryRun?: boolean; signal?: AbortSignal }): Promise<string> {
+  options.signal?.throwIfAborted();
   const root = await profilePath(directory);
   const existing = await findRuntime(root);
   if (existing) {
@@ -69,7 +99,7 @@ export async function ensureRuntime(directory: string, options: { install: boole
       return existing;
     }
     await mkdir(root, { recursive: true, mode: 0o700 });
-    const status = await localProfileStatus(root);
+    const status = await localProfileStatus(root, { signal: options.signal });
     if (!status.runtime.available) throw new Error("The existing Hermes executable did not report a valid version; repair it before onboarding");
     const [major, minor] = status.runtime.version!.split(".").map(Number);
     if (major === 0 && minor! < 21) throw new Error("Boomkin requires Hermes 0.21.0 or newer for the reviewed profile and MCP controls. Update Hermes through its native flow, then rerun onboard.");
@@ -84,16 +114,26 @@ export async function ensureRuntime(directory: string, options: { install: boole
   }
   if (process.platform === "win32") throw new Error("Install Hermes with the official Windows installer first, then rerun Boomkin onboarding.");
   await mkdir(join(root, ".boomkin"), { recursive: true, mode: 0o700 });
-  const response = await fetch(HERMES_INSTALLER_URL, { signal: AbortSignal.timeout(30_000) });
+  const response = await fetch(HERMES_INSTALLER_URL, { signal: AbortSignal.any([AbortSignal.timeout(30_000), ...(options.signal ? [options.signal] : [])]) });
   if (!response.ok) throw new Error(`Official Hermes installer download failed (${response.status})`);
   const installer = await response.text();
   if (createHash("sha256").update(installer).digest("hex") !== HERMES_INSTALLER_SHA256) throw new Error("Official Hermes installer checksum mismatch; nothing was executed");
   const path = join(root, ".boomkin", `hermes-installer-${randomUUID()}.sh`);
   await writeFile(path, installer, { flag: "wx", mode: 0o600 });
   try {
+    options.signal?.throwIfAborted();
     console.log("Installing the official Hermes runtime. Its installer also manages the user-level hermes command and runtime dependencies.");
-    const child = Bun.spawn(["bash", path, "--commit", HERMES_COMMIT, "--dir", runtime, "--hermes-home", root, "--skip-setup", "--skip-browser", "--skip-computer-use", "--non-interactive"], { cwd: root, env: nativeEnvironment(root), stdin: "inherit", stdout: "inherit", stderr: "inherit" });
-    if (await child.exited !== 0) throw new Error("The official Hermes installer failed. Resolve its reported issue and retry onboarding.");
+    const group = !!options.signal;
+    const child = Bun.spawn(["bash", path, "--commit", HERMES_COMMIT, "--dir", runtime, "--hermes-home", root, "--skip-setup", "--skip-browser", "--skip-computer-use", "--non-interactive"], { cwd: root, env: nativeEnvironment(root), stdin: "inherit", stdout: "inherit", stderr: "inherit", detached: group });
+    let termination: Promise<void> | undefined;
+    const abort = () => { termination ??= terminateOwnedProcess(child, group); };
+    options.signal?.addEventListener("abort", abort, { once: true });
+    try {
+      if (options.signal?.aborted) abort();
+      const code = await child.exited;
+      options.signal?.throwIfAborted();
+      if (code !== 0) throw new Error("The official Hermes installer failed. Resolve its reported issue and retry onboarding.");
+    } finally { options.signal?.removeEventListener("abort", abort); if (termination) await termination; }
     const installed = await findRuntime(root);
     if (!installed || !installed.startsWith(runtime + "/")) throw new Error("The installer completed without a usable profile-managed Hermes executable");
     const git = Bun.spawn(["git", "-C", runtime, "rev-parse", "HEAD"], { stdout: "pipe", stderr: "ignore" });
@@ -180,21 +220,30 @@ function envValues(text: string): Record<string, string> {
   }
   return result;
 }
-export async function localProfileStatus(directory: string) {
+export async function localProfileStatus(directory: string, options: { signal?: AbortSignal } = {}) {
   const root = await profilePath(directory);
   const executable = await findRuntime(root);
   let version: string | undefined;
   let rootExists = false;
   try { rootExists = (await lstat(root)).isDirectory(); } catch (error) { if (!absent(error)) throw error; }
   if (executable && rootExists) {
-    const child = Bun.spawn([executable, "--profile", "default", "--version"], { cwd: root, env: nativeEnvironment(root), stdout: "pipe", stderr: "ignore", timeout: 15_000 });
-    const output = await new Response(child.stdout).text();
-    if (await child.exited === 0) version = output.match(/\bHermes(?: Agent)?\s+v?(\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?)/i)?.[1];
+    options.signal?.throwIfAborted();
+    const group = process.platform !== "win32";
+    const child = Bun.spawn([executable, "--profile", "default", "--version"], { cwd: root, env: nativeEnvironment(root), stdout: "pipe", stderr: "ignore", detached: group });
+    let termination: Promise<void> | undefined;
+    const abort = () => { termination ??= terminateOwnedProcess(child, group); };
+    const timeout = setTimeout(abort, 15_000);
+    options.signal?.addEventListener("abort", abort, { once: true });
+    try {
+      if (options.signal?.aborted) abort();
+      const output = await new Response(child.stdout).text();
+      if (await child.exited === 0) version = output.match(/\bHermes(?: Agent)?\s+v?(\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?)/i)?.[1];
+      options.signal?.throwIfAborted();
+    } finally { clearTimeout(timeout); options.signal?.removeEventListener("abort", abort); if (termination) await termination; }
   }
   const config = await readHermesConfig(root);
   const env = { ...process.env, ...envValues(await textOrEmpty(join(root, ".env"))) };
-  const model = config.model && typeof config.model === "object" ? config.model as Record<string, unknown> : {};
-  const modelConfigured = typeof model.default === "string" && !!model.default.trim();
+  const modelConfigured = hermesModelConfigured(config);
   const knownModelKeys = ["OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "NOUS_API_KEY", "GEMINI_API_KEY", "GROQ_API_KEY", "DEEPSEEK_API_KEY", "XAI_API_KEY"];
   const credentialConfigured = knownModelKeys.some(key => !!env[key]?.trim() && !env[key]?.includes("${"));
   const servers = config.mcp_servers && typeof config.mcp_servers === "object" && !Array.isArray(config.mcp_servers) ? config.mcp_servers as Record<string, McpServer> : {};

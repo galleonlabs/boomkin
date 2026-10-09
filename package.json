@@ -1,6 +1,6 @@
 {
   "name": "boomkin",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Your open-source DeFi desk: native Hermes research projects, verifiable evidence and independent financial skills.",
   "type": "module",
   "license": "MIT",
@@ -10,7 +10,7 @@
     "test": "bun test test",
     "typecheck": "tsc --noEmit",
     "check": "bun run typecheck && bun run test",
-    "build": "bun build src/cli.ts --target=bun --outdir=dist",
+    "build": "bun scripts/build.ts",
     "smoke": "bun scripts/smoke.ts",
     "build:site": "bun scripts/build-site.ts",
     "serve:site": "bun scripts/serve-site.ts",
