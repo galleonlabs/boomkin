@@ -2,6 +2,46 @@
   "schemaVersion": 1,
   "workflows": [
     {
+      "id": "hyperliquid-wallet-audit",
+      "protocol": "Hyperliquid",
+      "title": "Find fees, funding costs and exposure in a public wallet",
+      "skill": "hyperliquid-wallet-audit",
+      "pack": "hyperliquid-skills",
+      "inputs": ["Public account address and mainnet or testnet", "UTC startTime and endTime for the activity window", "Maximum history pages and explicit coverage limits"],
+      "output": "Reproducible wallet diagnostics with captured source hashes, observed realized PnL, signed fees and funding, maker/taker costs, current exposure and explicit history gaps.",
+      "access": "Bounded official Hyperliquid public info reads; no trading key or wallet connection. Default perpetual activity is distinct from a complete portfolio or verified investment return."
+    },
+    {
+      "id": "strategy-validation",
+      "protocol": "Strategy research",
+      "title": "Validate a frozen rule with higher costs and a held-out period",
+      "skill": "galleon-defi-strategy-backtest",
+      "pack": "defi-strategy-skills",
+      "inputs": ["Absolute dataFile and specFile paths for a sourced daily USD series and frozen rule", "Optional splitIndex for the first held-out observation", "Baseline fees/slippage and higher-cost assumptions"],
+      "output": "Separate baseline and higher-cost results for development and held-out periods, same-cost benchmarks, trade logs, input hashes and explicit independent restart accounting.",
+      "access": "Local Node.js helper with no wallet or network request; no parameter optimization, live execution or forward-return claim."
+    },
+    {
+      "id": "hyperliquid-market",
+      "protocol": "Hyperliquid",
+      "title": "Research a Hyperliquid market before planning a trade",
+      "skill": "hyperliquid-analyze",
+      "pack": "hyperliquid-skills",
+      "inputs": ["Exact network, market and DEX identity", "Research question, observation window and freshness limit", "Liquidity, funding and catalyst evidence requirements"],
+      "output": "Cited market/funding/liquidity evidence, supported thesis and invalidation conditions with data gaps; historical, paper and live evidence stay separate.",
+      "access": "Existing official public info reads or explicitly configured tools; market analysis grants no financial authority."
+    },
+    {
+      "id": "hyperliquid-review",
+      "protocol": "Hyperliquid",
+      "title": "Review a completed trade against its original intent",
+      "skill": "hyperliquid-review",
+      "pack": "hyperliquid-skills",
+      "inputs": ["Account, market/DEX and completed trade window", "Original ticket, risk unit, order/fill identities and exchange history", "Signed fees/funding, position changes and incident record"],
+      "output": "Reconciled trade outcome and cost accounting with a separate process grade, incident findings and one supported follow-up test.",
+      "access": "Read-only exchange history and local arithmetic; a profitable result does not establish that controls or authorization were respected."
+    },
+    {
       "id": "market-snapshot",
       "protocol": "Market data",
       "title": "Capture a bounded market snapshot with source evidence",

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10.0 · 2026-10-09
+
+- Add four reviewed project templates with explicit defaults and required inputs, frozen per-project context and previews without model or data calls.
+- Add public Hyperliquid wallet audits, market research, completed-trade review and frozen strategy validation workflows, expanding discovery to 31 tasks.
+- Add research rule presets and separate held-out/higher-cost validation to the browser strategy lab, with downloadable reports and disclosed restart accounting.
+- Review independently released Hyperliquid 0.4.0 and strategy 0.2.0 resources; preserve immutable source pins and existing profile selections.
+
 ## 0.9.1 · 2026-10-08
 
 - Refresh the GitHub and npm introduction with a browser demo, clear installation steps and a public-data first task.

@@ -8,6 +8,23 @@ Examples use the installed `boomkin` command. From a source checkout, replace it
 
 ## Create a project
 
+Start with `boomkin templates` for four reviewed starting points: wallet costs, frozen strategy validation, stablecoin yields and thesis review. Inspect the defaults and required inputs with `boomkin templates --template wallet-audit --json`. Replace example placeholders with your own public identifiers and constraints.
+
+```bash
+boomkin project create --name wallet-review \
+  --template wallet-audit --input-file ./inputs.json
+boomkin project run --name wallet-review --dry-run
+boomkin onboard --workflow hyperliquid-wallet-audit --skip-model-setup
+boomkin project run --name wallet-review
+boomkin project check --name wallet-review
+```
+
+Wallet inputs require `account` (the public account address), UTC `startTime` and `endTime`. The template defaults to `mainnet` and at most 10 history pages per endpoint; either can be overridden. The audit uses bounded official public reads and records fees, signed funding and current exposure. It explains incomplete history and does not present activity accounting as a complete portfolio return. No trading key is needed.
+
+For `strategy-validation`, supply absolute `dataFile` and `specFile` paths and optionally an integer `splitIndex` identifying the first held-out observation. The default splits the observations in half. Each period restarts independently from the rule's initial cash, with its own contributions and warmup. Review baseline and higher-cost results separately; do not tune a rule after looking at its held-out performance.
+
+Templates merge explicit user inputs over reviewed defaults and validate required fields before saving. The project freezes the resolved inputs, so later template changes do not rewrite existing projects. Use either `--template` or `--workflow` when creating a project. Creation and preview make no model or data call. Native Hermes runs require the matching installed pack and configured model.
+
 Start with a workflow from `boomkin workflows`. Put its public identifiers, constraints and question in a JSON object. Keep credentials in the selected Hermes profile's native configuration; never put keys, signed payloads or private recovery material in project inputs.
 
 For a public yield screen, save `inputs.json`:

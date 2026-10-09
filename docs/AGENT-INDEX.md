@@ -12,6 +12,7 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 | Find a tool by capability/cost | [Providers](PROVIDERS.md) | `boomkin providers --search <term> --json` |
 | Configure a supported integration | [Connections](CONNECTIONS.md) | `boomkin connect --provider <id>` |
 | Use native ChatGPT authentication | [ChatGPT](CHATGPT.md) | `boomkin chatgpt --action status` |
+| Start from a reviewed research brief | [Projects](PROJECTS.md) | `boomkin templates`; `project create --template <id> --input-file <file>` |
 | Preserve a research question and evidence | [Projects](PROJECTS.md) | Create with an input JSON file; preview with `run --dry-run` |
 | Maintain or repair a profile | [Updates](UPDATES.md) | `boomkin check --directory <profile>` |
 | Add skills to another harness | [Harness compatibility](HARNESSES.md) | `boomkin setup --harness <id> --directory <workspace>` |
@@ -21,8 +22,9 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 
 ## Read the authoritative artifacts
 
-- [catalog/skills.json](../catalog/skills.json): 17 independently published packs, 48 expected skill IDs, immutable source pins and npm versions.
-- [catalog/workflows.json](../catalog/workflows.json): 27 workflow IDs, selected pack/skill, inputs, outputs and access requirements. [src/workflows.ts](../src/workflows.ts) validates and queries these contracts.
+- [catalog/skills.json](../catalog/skills.json): 17 independently published packs, 49 expected skill IDs, immutable source pins and npm versions.
+- [catalog/workflows.json](../catalog/workflows.json): 31 workflow IDs, selected pack/skill, inputs, outputs and access requirements. [src/workflows.ts](../src/workflows.ts) validates and queries these contracts.
+- [catalog/templates.json](../catalog/templates.json): four reviewed starting points, explicit defaults, required inputs and replaceable examples.
 - [catalog/providers.json](../catalog/providers.json): 60 discovery entries, sources, review dates, authorship, cost and authority. Discovery entries do not all have native integrations.
 - [src/hermes.ts](../src/hermes.ts): native runtime/installer pin and launch/authentication contracts.
 - [src/projects.ts](../src/projects.ts): project and evidence schemas, run states and validation limits.

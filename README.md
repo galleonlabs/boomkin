@@ -8,9 +8,9 @@ Research markets, inspect positions and test a thesis with a native [Hermes agen
 
 **[Try the strategy lab →](https://galleonlabs.github.io/boomkin/lab/)** · [Explore workflows](https://galleonlabs.github.io/boomkin/#workflows) · [Read the docs](https://galleonlabs.github.io/boomkin/docs/)
 
-The browser demo needs no installation. Compare daily spot rules, change fees and slippage, and inspect simulated trades using a dated Bitcoin capture, synthetic prices or your own dataset. Uploaded data stays in your browser.
+The browser demo needs no installation. Choose a research rule, compare held-out periods and higher trading costs, and inspect simulated trades using a dated Bitcoin capture, synthetic prices or your own dataset. Uploaded data stays in your browser.
 
-**27 workflows · 60 providers in discovery · 17 independent packs · 48 reviewed skills**
+**31 workflows · 60 providers in discovery · 17 independent packs · 49 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
@@ -21,7 +21,7 @@ The browser demo needs no installation. Compare daily spot rules, change fees an
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.9.1
+bun install -g boomkin@0.10.0
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -40,6 +40,18 @@ Paste this into your new Hermes chat:
 > Use galleon-coingecko-token-research. Resolve CoinGecko ID ethereum and capture a public ETH/USD market observation. Show the asset identity, source URL, observation time and freshness limits. Mark missing data clearly and keep this task read-only.
 
 The result should separate supported observations from unknowns. `doctor --live` establishes public tool discovery; this first task checks whether your configured model can retrieve and explain market evidence.
+
+## Start from a research template
+
+```bash
+boomkin templates
+boomkin templates --template wallet-audit --json
+boomkin project create --name wallet-review \
+  --template wallet-audit --input-file ./inputs.json
+boomkin project run --name wallet-review --dry-run
+```
+
+Four reviewed templates cover public wallet cost audits, frozen strategy validation, stablecoin income and thesis review. Supply your public account/window or local dataset/rule paths; required fields and defaults are visible before saving. Templates preserve the question and evidence in your own profile. [Inputs and run guide](docs/PROJECTS.md)
 
 ## Pick a job
 
@@ -61,7 +73,7 @@ Workflow discovery runs locally. Each job names its inputs, expected result and 
 | Review an exact unsigned payload | `unsigned-plan`, `transaction-simulation` |
 | Research prediction markets | `prediction-research`, `prediction-resolution` |
 
-[All 27 workflows, inputs and outputs](docs/WORKFLOWS.md)
+[All 31 workflows, inputs and outputs](docs/WORKFLOWS.md)
 
 ## Keep the question and the evidence
 
@@ -121,7 +133,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.9.1
+bun install -g boomkin@0.10.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

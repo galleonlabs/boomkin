@@ -1,6 +1,6 @@
 # Protocol workflows
 
-**27 jobs with explicit inputs, results and access requirements.** Choose by the question you need answered, then inspect its evidence contract before installing or running it.
+**31 jobs with explicit inputs, results and access requirements.** Choose by the question you need answered, then inspect its evidence contract before installing or running it.
 
 Find a task with `boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `boomkin onboard --workflow <id>`. From a source checkout, use `bun run boomkin` in place of `boomkin`. Discovery is local and does not connect wallets or send transactions.
 
@@ -281,3 +281,19 @@ Inputs: Exact market/condition and outcome token identities; Resolution rules, d
 Output: Current resolution state, oracle/dispute/finality evidence and payout/redemption constraints; data evidence is distinct from any actual redemption.
 
 Access: Official public Polymarket data and onchain reads; no claim/redeem transaction, approval or signing.
+
+## Public wallet diagnostics
+
+Skill: `hyperliquid-wallet-audit`. Task ID: `hyperliquid-wallet-audit`.
+
+Capture a public account and explicit UTC activity window, with bounded pages from the official Hyperliquid info API. Review observed realized PnL, signed fees/rebates, funding, maker/taker costs and current default-perpetual exposure. Preserve raw evidence hashes and explain partial history, unsupported assets/account modes and unproven stop coverage. Use `boomkin templates --template wallet-audit` for required inputs. No key or wallet connection is needed.
+
+## Frozen strategy validation
+
+Skill: `galleon-defi-strategy-backtest`. Task ID: `strategy-validation`.
+
+Supply absolute daily dataset and frozen rule paths, with an optional first held-out observation index. Compare the unchanged rule with its same-cost benchmark under baseline and higher fees/slippage in two chronological periods. Each period restarts from initial cash with a fresh warmup and its own contributions; results are separate simulations. The helper performs no optimization or network calls. Try the same tests in the [browser lab](https://galleonlabs.github.io/boomkin/lab/).
+
+## Hyperliquid research and trade review
+
+`hyperliquid-market` routes to `hyperliquid-analyze` for exact market/DEX identity, funding/liquidity evidence, thesis and invalidation research. `hyperliquid-review` routes to `hyperliquid-review` for completed-trade accounting against the original ticket, risk unit and exchange history. Review grades process separately from profit. Both workflows remain read-only.

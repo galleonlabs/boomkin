@@ -15,6 +15,7 @@ import { runHermes, runChatGpt, type ChatGptAction } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
 import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
 import { createProject, listProjects, readProject, projectRuns, runProject, checkProjectRun } from "./projects.ts";
+import { templates, selectTemplate, templateInputs, renderTemplate } from "./templates.ts";
 
 const help = `Boomkin — your Hermes DeFi agent.
 
@@ -27,6 +28,9 @@ boomkin providers --access keyless
 boomkin providers --provider blockscout
 boomkin workflows
 boomkin workflows --workflow aave-health
+boomkin templates
+boomkin templates --template wallet-audit --json
+boomkin project create --name wallet-review --template wallet-audit --input-file ./inputs.json
 boomkin project create --name my-research --workflow yield-screen --input-file ./inputs.json
 boomkin project run --name my-research --dry-run
 boomkin project run --name my-research
@@ -50,6 +54,8 @@ installs the selected Galleon skill packs and public CoinGecko MCP, then runs na
 --all-packs opts an existing onboarding profile into every pack in the current catalog.
 --workflow chooses one task's pack for onboarding; updates keep that selection.
 workflows lists inputs, concrete results and access requirements; --json emits structured data.
+templates lists reviewed starting points; --template inspects the required inputs and example.
+project create accepts either --template or --workflow with your --input-file.
 providers discovers sourced provider tools locally; --search, --capability and --access narrow results.
 --provider inspects one entry. Discovery does not install third-party skills or connect a service.
 project saves workflow inputs and keeps separate native Hermes runs, evidence and unsigned plans.
@@ -77,7 +83,7 @@ async function canonicalPath(path: string): Promise<string> {
 
 async function main() {
   const { values, positionals } = parseArgs({ args: process.argv.slice(2), allowPositionals: true, strict: true, options: {
-    name: { type: "string" }, "input-file": { type: "string" }, objective: { type: "string" }, "max-turns": { type: "string" }, "run-id": { type: "string" },
+    name: { type: "string" }, "input-file": { type: "string" }, objective: { type: "string" }, "max-turns": { type: "string" }, "run-id": { type: "string" }, template: { type: "string" },
     version: { type: "boolean", short: "v" }, action: { type: "string" }, workflow: { type: "string" }, protocol: { type: "string" }, json: { type: "boolean" },
     search: { type: "string" }, capability: { type: "string" }, access: { type: "string" },
     "key-file": { type: "string" }, provider: { type: "string" }, live: { type: "boolean" }, "all-packs": { type: "boolean" }, "skip-model-setup": { type: "boolean" }, "no-install": { type: "boolean" }, pack: { type: "string", multiple: true }, harness: { type: "string" }, directory: { type: "string" }, "dry-run": { type: "boolean" }, "offline-catalog": { type: "boolean" }, help: { type: "boolean", short: "h" },
@@ -88,7 +94,9 @@ async function main() {
   if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
   if (positionals.length > (command === "project" ? 2 : 1)) throw new Error("Unexpected positional arguments");
   if (values.workflow !== undefined && !["workflows", "onboard", "project"].includes(command)) throw new Error("--workflow is available for workflows, onboard and project create");
-  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project", "providers"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows, providers and project");
+  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project", "providers", "templates"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows, providers, templates and project");
+  if (values.template !== undefined && !["templates", "project"].includes(command)) throw new Error("--template is available for templates and project create");
+  if (values.template !== undefined && values.workflow !== undefined) throw new Error("Choose --template or --workflow separately");
   if ([values.search, values.capability, values.access].some(value => value !== undefined) && command !== "providers") throw new Error("--search, --capability and --access are only available for providers");
   if ([values.name, values["input-file"], values.objective, values["max-turns"], values["run-id"]].some(value => value !== undefined) && command !== "project") throw new Error("Project options are only available for project");
   if (values.workflow !== undefined && (values.pack || values["all-packs"] || values.protocol !== undefined)) throw new Error("Choose --workflow, --protocol, --pack or --all-packs separately");
@@ -102,7 +110,7 @@ async function main() {
     const action = positionals[1];
     if (!action || !["create", "list", "show", "run", "check"].includes(action)) throw new Error("Choose project create, list, show, run or check");
     if (values.pack || values.harness || values["offline-catalog"]) throw new Error("Project commands use the selected Hermes profile; pack options belong to onboard");
-    if (action !== "create" && [values.workflow, values["input-file"], values.objective].some(value => value !== undefined)) throw new Error("--workflow, --input-file and --objective are only available for project create");
+    if (action !== "create" && [values.workflow, values.template, values["input-file"], values.objective].some(value => value !== undefined)) throw new Error("--workflow, --template, --input-file and --objective are only available for project create");
     if (action !== "run" && values["max-turns"] !== undefined) throw new Error("--max-turns is only available for project run");
     if (action !== "check" && values["run-id"] !== undefined) throw new Error("--run-id is only available for project check");
     if (values["dry-run"] && !["create", "run"].includes(action)) throw new Error("--dry-run is available for project create and run");
@@ -115,10 +123,11 @@ async function main() {
     }
     if (!values.name) throw new Error("Pass --name with the saved project name");
     if (action === "create") {
-      if (!values.workflow || !values["input-file"]) throw new Error("project create requires --workflow and --input-file (a JSON object)");
+      if (!(values.workflow || values.template) || !values["input-file"]) throw new Error("project create requires --workflow or --template, and --input-file (a JSON object)");
       const file = Bun.file(resolve(values["input-file"]));
       if (file.size > 65_536) throw new Error("Project input file exceeds 64 KiB");
-      const project = await createProject(directory, { name: values.name, workflow: values.workflow, inputs: await file.json(), objective: values.objective, dryRun: values["dry-run"] }, parseCatalog(catalogFile));
+      const supplied = await file.json();
+      const project = await createProject(directory, { name: values.name, workflow: values.template ? selectTemplate(values.template).workflow : values.workflow!, inputs: values.template ? templateInputs(values.template, supplied) : supplied, objective: values.objective, dryRun: values["dry-run"] }, parseCatalog(catalogFile));
       return console.log(values.json ? JSON.stringify(project, null, 2) : `${values["dry-run"] ? "Would create" : "Saved"} ${project.name} in ${directory}. Preview with project run --name ${project.name} --dry-run.`);
     }
     if (action === "show") return console.log(JSON.stringify({ project: await readProject(directory, values.name), runs: await projectRuns(directory, values.name) }, null, 2));
@@ -130,6 +139,12 @@ async function main() {
     console.log(JSON.stringify(result, null, 2));
     if (result.issues.length) process.exitCode = 1;
     return;
+  }
+
+  if (command === "templates") {
+    if (values.pack || values.harness || values.directory || values["offline-catalog"] || values.workflow) throw new Error("templates accepts --template and --json");
+    const selected = values.template !== undefined ? [selectTemplate(values.template)] : templates;
+    return console.log(values.json ? JSON.stringify({ schemaVersion: 1, templates: selected }, null, 2) : selected.map(renderTemplate).join("\n\n"));
   }
 
   if (command === "workflows") {

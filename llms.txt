@@ -2,7 +2,7 @@
 
 > Your open-source DeFi desk on native Hermes: reviewed skills, bounded research workflows, source evidence and local strategy tests.
 
-The catalog contains 27 workflows, 17 independent Galleon packs and 48 reviewed skills. Provider discovery contains 60 sourced entries; it does not connect or install every provider. CoinGecko is the sole onboarding default. Other harnesses receive portable skills only.
+The catalog contains 31 workflows, 17 independent Galleon packs and 49 reviewed skills. Provider discovery contains 60 sourced entries; it does not connect or install every provider. CoinGecko is the sole onboarding default. Other harnesses receive portable skills only.
 
 ## Start here
 
@@ -17,7 +17,7 @@ The catalog contains 27 workflows, 17 independent Galleon packs and 48 reviewed 
 - [Protocol workflows](https://github.com/galleonlabs/boomkin/blob/main/docs/WORKFLOWS.md)
 - [Provider discovery](https://github.com/galleonlabs/boomkin/blob/main/docs/PROVIDERS.md)
 - [Connections](https://github.com/galleonlabs/boomkin/blob/main/docs/CONNECTIONS.md)
-- [Saved research projects](https://github.com/galleonlabs/boomkin/blob/main/docs/PROJECTS.md)
+- [Saved research projects](https://github.com/galleonlabs/boomkin/blob/main/docs/PROJECTS.md): wallet audits, frozen strategy validation, stablecoin yield screens and thesis review templates.
 - [ChatGPT authentication](https://github.com/galleonlabs/boomkin/blob/main/docs/CHATGPT.md)
 - [Updates and recovery](https://github.com/galleonlabs/boomkin/blob/main/docs/UPDATES.md)
 - [Skill-only harness compatibility](https://github.com/galleonlabs/boomkin/blob/main/docs/HARNESSES.md)
@@ -28,6 +28,7 @@ The catalog contains 27 workflows, 17 independent Galleon packs and 48 reviewed 
 - [Pinned skill catalog](https://github.com/galleonlabs/boomkin/blob/main/catalog/skills.json)
 - [Provider catalog](https://github.com/galleonlabs/boomkin/blob/main/catalog/providers.json)
 - [Workflow contracts](https://github.com/galleonlabs/boomkin/blob/main/catalog/workflows.json)
+- [Project templates](https://github.com/galleonlabs/boomkin/blob/main/catalog/templates.json)
 - [Independent skill packs](https://github.com/galleonlabs/crypto-defi-skills)
 - [Public release manifest](https://galleonlabs.github.io/boomkin/release.json)
 

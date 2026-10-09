@@ -65,7 +65,23 @@ DCA deploys the existing cash budget in increments. Additional cash flows are se
 - The buy-and-hold benchmark uses identical dates, cash flows and costs. Both begin trading on the second observation.
 - Final holdings are marked without a forced liquidation. The report contains every filled trade with its decision and execution timestamps.
 
-## What a result means
+## Check another period and higher costs
+
+The lab's **Validate frozen rule** action divides the observations into two chronological periods, then runs the unchanged rule at baseline and higher fees/slippage. Each period starts independently with the declared initial cash, its own contributions and a fresh warmup. It does not carry balances, earlier positions or pending orders across the split.
+
+The report shows strategy and same-cost benchmark returns, drawdown, trade counts and cost sensitivity for each period. It does not choose a winning rule or estimate future returns. A held-out period is meaningful only if you froze the rule before examining it; repeatedly editing parameters makes that period part of development.
+
+The same validation runs from the independently installed skill:
+
+```bash
+node scripts/validate-strategy.mjs --data ./daily-prices.json --spec ./frozen-rule.json
+```
+
+Use `--split <index>` to choose the zero-based first held-out observation. The default uses half the observations. Both periods need enough observations for the rule and at least one later execution mark. Built-in templates describe their data requirements; they are examples of research rules, not ranked trade recommendations.
+
+Boomkin can preserve the dataset/rule paths and successive reports with `boomkin project create --template strategy-validation --name my-rule --input-file ./inputs.json`. [Project documentation](../../docs/PROJECTS.md) covers required fields and evidence checks.
+
+## Interpret the result
 
 Aggregated daily market prices are research marks, not exchange candle closes or executable quotes. The next observation is an explicit simulation convention. The engine does not model intraday stops, order books, market impact, partial fills, latency, funding, borrow, staking yield, tax or cash interest.
 

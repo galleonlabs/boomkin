@@ -9,13 +9,13 @@
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Keep Bun's global bin directory on your shell path. Windows users can use WSL2; an existing native Windows Hermes installation can also be reused through its official flow.
 
 ```bash
-bun install -g boomkin@0.9.1
+bun install -g boomkin@0.10.0
 boomkin onboard
 boomkin doctor --live
 boomkin start
 ```
 
-Onboarding prepares `~/.boomkin/hermes`, installs the selected reviewed skill packs, writes Boomkin's initial identity and instructions, configures public CoinGecko MCP and opens native Hermes model setup. A fresh default profile includes all 17 packs and 48 skills. Select your model provider and complete its native sign-in. Existing instructions and unrelated settings are preserved; conflicting named MCP settings are reported for review.
+Onboarding prepares `~/.boomkin/hermes`, installs the selected reviewed skill packs, writes Boomkin's initial identity and instructions, configures public CoinGecko MCP and opens native Hermes model setup. A fresh default profile includes all 17 packs and 49 skills. Select your model provider and complete its native sign-in. Existing instructions and unrelated settings are preserved; conflicting named MCP settings are reported for review.
 
 Your account or local model configuration supplies inference. Optional services have their own credential, subscription and usage requirements. Onboarding makes no model call or paid data request, creates no wallet and starts no background service.
 

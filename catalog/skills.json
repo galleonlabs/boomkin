@@ -23,9 +23,9 @@
     {
       "id": "hyperliquid-skills",
       "source": "galleonlabs/crypto-defi-skills",
-      "description": "Agent skills for Hyperliquid setup, market analysis, trade planning and execution, monitoring, and performance review.",
-      "version": "0.3.5",
-      "revision": "9fe67c24efc0fd5796066605b29576f3b8f2de94",
+      "description": "Hyperliquid market research, trade planning, monitoring, performance review and reproducible public wallet cost audits.",
+      "version": "0.4.0",
+      "revision": "3f91a955d59a55b9927403ddc3c2e26660d48bf8",
       "skills": [
         "hyperliquid-analyze",
         "hyperliquid-engineer",
@@ -33,7 +33,8 @@
         "hyperliquid-monitor",
         "hyperliquid-plan",
         "hyperliquid-review",
-        "hyperliquid-setup"
+        "hyperliquid-setup",
+        "hyperliquid-wallet-audit"
       ],
       "path": "packages/hyperliquid",
       "package": "galleon-hyperliquid-skills"
@@ -201,9 +202,9 @@
     {
       "id": "defi-strategy-skills",
       "source": "galleonlabs/crypto-defi-skills",
-      "description": "Test daily spot rules with costs, cash flows, drawdown and a reproducible buy-and-hold benchmark.",
-      "version": "0.1.1",
-      "revision": "9fe67c24efc0fd5796066605b29576f3b8f2de94",
+      "description": "Test frozen daily spot rules with chronological held-out periods, higher trading costs and reproducible same-cost benchmarks.",
+      "version": "0.2.0",
+      "revision": "3f91a955d59a55b9927403ddc3c2e26660d48bf8",
       "skills": [
         "galleon-defi-strategy-backtest"
       ],

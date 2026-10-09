@@ -1,10 +1,10 @@
 {
   "package": "galleon-defi-strategy-skills",
-  "version": "0.1.0",
-  "source": "https://github.com/galleonlabs/crypto-defi-skills/tree/72b0d85df41c2c2a6e0525d94b245faa6d11e5d4/packages/strategy",
-  "revision": "72b0d85df41c2c2a6e0525d94b245faa6d11e5d4",
+  "version": "0.2.0",
+  "source": "https://github.com/galleonlabs/crypto-defi-skills/tree/3f91a955d59a55b9927403ddc3c2e26660d48bf8/packages/strategy",
+  "revision": "3f91a955d59a55b9927403ddc3c2e26660d48bf8",
   "files": {
-    "vendor/strategy-engine.mjs": "c1bcf19d4e7db6b013fb2c74647638ff9edf8584fc6f6c453335383c01aad34d",
+    "vendor/strategy-engine.mjs": "1a94c469b2e04557a7da407e5ab027dfed666d2c09df918064e6d68e28f20287",
     "data/synthetic-daily.json": "5f543851bfce3ff3fa88686dce12a288d874fc9944ee8b02f3ca9b56123a25f1",
     "data/bitcoin-180d.json": "299a5afca84292ceaeb2ce5339f9b8a9ebe8a8aa5dee5a0f2e2caf3cae24bd7b",
     "data/bitcoin-capture.json": "b7765dcad7004ff4c906d1463196b13a001c1ea89d3349a0e58fc04036e8387c"

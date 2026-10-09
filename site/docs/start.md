@@ -9,7 +9,7 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.9.1
+bun install -g boomkin@0.10.0
 boomkin onboard
 boomkin doctor --live
 boomkin start
@@ -17,7 +17,7 @@ boomkin start
 
 Onboarding prepares `~/.boomkin/hermes`, installs the reviewed official Hermes runtime when needed, adds the 17 reviewed skill packs and the public CoinGecko connection, then opens native model setup. Choose your model provider and sign in there. Keep Bun's global bin directory on your shell path.
 
-Hermes owns chat, models, sessions, memory and tools. Boomkin adds 27 workflows, source-pinned skills, file checks and research project records. Model usage follows your chosen provider's terms. Optional data and wallet providers have their own access requirements. [The setup reference](../../docs/GETTING-STARTED.md) covers prerequisites, source installation and existing Hermes profiles.
+Hermes owns chat, models, sessions, memory and tools. Boomkin adds 31 workflows, source-pinned skills, file checks and research project records. Model usage follows your chosen provider's terms. Optional data and wallet providers have their own access requirements. [The setup reference](../../docs/GETTING-STARTED.md) covers prerequisites, source installation and existing Hermes profiles.
 
 ## Ask your first question
 

@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "templates": [
+    {
+      "id": "wallet-audit",
+      "title": "Find the costs in a Hyperliquid wallet",
+      "workflow": "hyperliquid-wallet-audit",
+      "description": "Reconcile a public account's realized activity, fees, funding and current exposure. Preserve raw sources and explain incomplete history.",
+      "defaults": { "network": "mainnet", "maxPages": 10 },
+      "requiredInputs": ["account", "startTime", "endTime"],
+      "exampleInputs": { "account": "YOUR_PUBLIC_ACCOUNT_ADDRESS", "startTime": "2026-10-01T00:00:00.000Z", "endTime": "2026-10-08T00:00:00.000Z" }
+    },
+    {
+      "id": "strategy-validation",
+      "title": "Test a rule on an untouched period",
+      "workflow": "strategy-validation",
+      "description": "Freeze a daily spot rule, compare higher trading costs and inspect a separate held-out period against the same-cost benchmark.",
+      "defaults": {},
+      "requiredInputs": ["dataFile", "specFile"],
+      "exampleInputs": { "dataFile": "/absolute/path/to/daily-prices.json", "specFile": "/absolute/path/to/frozen-rule.json" }
+    },
+    {
+      "id": "stablecoin-yields",
+      "title": "Screen stablecoin income",
+      "workflow": "yield-screen",
+      "description": "Separate base income from incentives and collect the missing exit and liquidity evidence before a deposit decision.",
+      "defaults": { "minimumTvlUsd": "10000000", "limit": 5, "yieldPreference": "Separate base yield from incentive emissions" },
+      "requiredInputs": ["chain", "asset"],
+      "exampleInputs": { "chain": "Ethereum", "asset": "USDC" }
+    },
+    {
+      "id": "thesis-review",
+      "title": "Keep an investment thesis accountable",
+      "workflow": "thesis-review",
+      "description": "Save explicit invalidation conditions and review preferences, then compare each research run with its captured baseline.",
+      "defaults": { "reviewFrequency": "Weekly", "notifyWhen": "An invalidation condition changes verdict" },
+      "requiredInputs": ["asset", "thesis", "invalidationConditions", "evidenceStandard"],
+      "exampleInputs": { "asset": "YOUR_EXACT_ASSET_IDENTITY", "thesis": "YOUR_THESIS", "invalidationConditions": ["YOUR_MEASURABLE_INVALIDATION_CONDITION"], "evidenceStandard": "YOUR_PRIMARY_SOURCE_REQUIREMENTS" }
+    }
+  ]
+}

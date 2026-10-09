@@ -11,3 +11,5 @@
 @media(max-width:380px){h1{font-size:39px}.header nav{gap:13px}.pack-grid{gap:0 16px}.pack h3{font-size:13px}.desk-content{padding:16px}.hero-actions{gap:15px}.evidence-list{gap:14px 9px}.lab-settings{gap:0 12px}.field input,.field select{font-size:11px}}
 @media(prefers-reduced-motion:reduce){:root{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 [hidden]{display:none!important}
+
+.lab-validation{margin:28px 0;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.lab-validation .text-button{margin-top:16px;text-decoration:underline}.lab-settings #validate-rule{width:100%;margin-top:16px}

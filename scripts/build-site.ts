@@ -5,6 +5,7 @@ import {execFileSync} from 'node:child_process';
 import {marked} from 'marked';
 import catalogFile from '../catalog/skills.json';
 import workflowFile from '../catalog/workflows.json';
+import templateFile from '../catalog/templates.json';
 import {parseCatalog} from '../src/core.ts';
 import {providerCatalog} from '../src/provider-catalog.ts';
 import {createDocsCodeRenderer} from './docs-code.ts';
@@ -26,7 +27,7 @@ for(const [path,expected] of Object.entries(provenance.files)){
   if(actual!==expected)throw new Error(`Vendored resource digest mismatch: ${path}`);
 }
 const catalog=parseCatalog(catalogFile);
-await writeFile(join(out,'assets/catalog.json'),JSON.stringify({schemaVersion:1,release:manifest.version,revision,packs:catalog.packs,workflows:workflowFile.workflows},null,2)+'\n');
+await writeFile(join(out,'assets/catalog.json'),JSON.stringify({schemaVersion:1,release:manifest.version,revision,packs:catalog.packs,workflows:workflowFile.workflows,templates:templateFile.templates},null,2)+'\n');
 await writeFile(join(out,'assets/providers.json'),JSON.stringify({...providerCatalog,release:manifest.version,revision},null,2)+'\n');
 const header=`<header class="header"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><nav aria-label="Main navigation"><a href="${base}#workflows">Workflows</a><a href="${base}lab/">Strategy lab</a><a href="${base}docs/" aria-current="page">Docs</a><a class="nav-source" href="https://github.com/galleonlabs/boomkin">GitHub <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8"/></svg></a></nav></header>`;
 const footer=`<footer class="footer wrap"><a class="wordmark" href="${base}">boomkin<span class="brand-mark" aria-hidden="true"></span></a><p>Open-source tools for a desk you control.</p><div><a href="${base}docs/">Documentation</a><a href="https://github.com/galleonlabs/boomkin">GitHub</a><a href="https://github.com/galleonlabs/crypto-defi-skills">Skill library</a></div><span class="footer-credit">Built by <a href="https://github.com/galleonlabs">Galleon Labs</a> · MIT</span></footer>`;
