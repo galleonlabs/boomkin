@@ -22,5 +22,8 @@ site-dist/
 !docs/assets/
 !docs/assets/boomkin-hero.svg
 !docs/assets/boomkin-desk.jpg
+!docs/research/assets/
+!docs/research/assets/boomkin-comparison-desktop.png
+!docs/research/assets/boomkin-comparison-mobile.png
 !desk/assets/
 !desk/assets/**
