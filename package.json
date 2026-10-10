@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@types/bun": "1.4.2",
-    "marked": "16.4.0",
+    "marked": "18.1.0",
     "typescript": "7.0.2"
   },
   "bin": {
