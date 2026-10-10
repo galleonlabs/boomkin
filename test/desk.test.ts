@@ -19,10 +19,10 @@ export async function marketSnapshot(options, deps) {
     const source = provider === 'coingecko' ? 'https://api.coingecko.com/api/v3/simple/price' : 'https://coins.llama.fi/prices/current/';
     const response = await deps.fetch(source);
     const raw = await response.json();
-    reads.push({provider,source,observations:[raw.unavailable ? {ok:false,provider,error:'fixture_unavailable',identity:{id:options.ids[0]}} : {ok:true,provider,priceUsd:raw.price,observedAt:new Date().toISOString(),retrievedAt:new Date().toISOString(),identity:{id:options.ids[0]}}]});
+    reads.push({provider,source,observations:[raw.unavailable ? {ok:false,provider,error:'fixture_unavailable',identity:{namespace:'coingecko',id:options.ids[0]}} : {ok:true,provider,unit:'USD',priceUsd:raw.price,observedAt:raw.observedAt ?? new Date().toISOString(),retrievedAt:new Date().toISOString(),identity:{namespace:'coingecko',id:options.ids[0]}}]});
   }
   const count = reads.flatMap(x=>x.observations).filter(x=>x.ok).length;
-  return {ok:count===2,status:count===2?'complete':count?'partial':'unavailable',reads,comparisons:[],limitations:['Synthetic fixture: not a live quote.']};
+  return {ok:count===2,status:count===2?'complete':count?'partial':'unavailable',parameters:{maxAgeSeconds:300},reads,comparisons:[],limitations:['Synthetic fixture: not a live quote.']};
 }
 export async function collectHistory(options,deps) { const response=await deps.fetch('https://api.coingecko.com/api/v3/coins/'+options.id+'/market_chart'); return {ok:true,dataset:await response.json()}; }
 `;
@@ -304,10 +304,17 @@ writeFileSync(join(output,'plan.json'),JSON.stringify({schemaVersion:1,status:'n
 `);
   await chmod(runtime, 0o700);
   const project = await create(ctx), run = await start(ctx, project.name); await finish(ctx, project.name, run.id);
-  const response = await ctx.call(`/api/projects/${project.name}/followup`, "POST", { question: "What changed in the sources?", maxTurns: 2 });
+  const newerRun = await start(ctx, project.name); await finish(ctx, project.name, newerRun.id);
+  const response = await ctx.call(`/api/projects/${project.name}/followup`, "POST", { question: "What changed in the sources?", maxTurns: 2, runId: run.id });
   expect(response.status).toBe(202);
   const derived = await response.json();
   expect(derived.project.name).not.toBe(project.name); expect(derived.project.execution).toBe("native-hermes");
+  expect(derived.project.parent).toEqual({ project: project.name, runId: run.id });
+  expect(derived.project.inputs.previousRunId).toBe(run.id);
+  expect(derived.project.inputs.previousReport).toContain(`/runs/${run.id}/report.md`);
+  const prompt = await readFile(join(ctx.root, ".boomkin/projects", derived.project.name, "runs", derived.run.id, "prompt.md"), "utf8");
+  expect(prompt).toContain(`/runs/${run.id}/report.md`);
+  expect(prompt).not.toContain(`/runs/${newerRun.id}/report.md`);
   const details = await finish(ctx, derived.project.name, derived.run.id);
   expect(details.run.state).toBe("complete"); expect(details.run.execution).toBe("native-hermes");
   expect(details.report).toContain("Native fixture follow-up"); expect(details.integrity.issues).toEqual([]);
@@ -317,6 +324,7 @@ writeFileSync(join(output,'plan.json'),JSON.stringify({schemaVersion:1,status:'n
   expect(captured.status).toBe(200);
   expect(await captured.json()).toEqual({fixture:true,answer:'Native fixture only'});
   const pending = await (await ctx.call(`/api/projects/${project.name}/followup`, "POST", { question: "wait-for-cancellation", maxTurns: 2 })).json();
+  expect(pending.project.parent.runId).toBe(newerRun.id);
   const waiting = join(ctx.root, ".boomkin/projects", pending.project.name, "runs", pending.run.id, "waiting");
   let observed = false;
   for (let i = 0; i < 100; i++) { try { observed = (await readFile(waiting, "utf8")) === "yes"; } catch {} if (observed) break; await Bun.sleep(10); }
@@ -387,4 +395,93 @@ test("native model readiness preserves both supported legacy and current config 
   for (const model of [undefined, null, 42, " ", [], { default: " " }, { default: 42 }]) expect(hermesModelConfigured({ model })).toBe(false);
   await writeFile(join(ctx.root, "config.yaml"), "model: legacy-model\n");
   expect((await (await ctx.call("/api/status")).json()).profile.modelConfigured).toBe(true);
+}));
+
+test("saved comparisons recheck both captures, export exact run identities and survive reopening", async () => {
+  let capture = 0;
+  const observedAt = Date.now() - 10_000;
+  await withDesk(async ctx => {
+    const project = await create(ctx), before = await start(ctx, project.name);
+    const original = await finish(ctx, project.name, before.id);
+    expect(original.integrity.resultVerified).toBe(true);
+    capture = 1;
+    const after = await start(ctx, project.name); await finish(ctx, project.name, after.id);
+    const path = `/api/projects/${project.name}/runs/${after.id}/compare?baseline=${before.id}`;
+    const response = await ctx.call(path); expect(response.status).toBe(200);
+    const comparison = await response.json();
+    expect(comparison.status).toBe("compared");
+    expect(comparison.baseline.id).toBe(before.id); expect(comparison.current.id).toBe(after.id);
+    expect(comparison.sections.flatMap((group: any) => group.rows).some((row: any) => row.delta === "100")).toBe(true);
+    expect(JSON.stringify(comparison)).not.toContain(ctx.root);
+    const reopened = await ctx.restart();
+    expect(await (await reopened.call(path)).json()).toEqual(comparison);
+    expect((await reopened.call(path, "POST")).status).toBe(404);
+    expect((await reopened.call(path.split("?")[0])).status).toBe(400);
+    expect((await reopened.call(path + `&baseline=${before.id}`)).status).toBe(400);
+    expect((await reopened.call(path.replace(before.id, "invalid"))).status).toBe(400);
+    const foreign = await create(reopened), foreignRun = await start(reopened, foreign.name); await finish(reopened, foreign.name, foreignRun.id);
+    expect((await reopened.call(path.replace(before.id, foreignRun.id))).status).toBe(404);
+    const resultPath = join(ctx.root, ".boomkin/projects", project.name, "runs", before.id, "result.json");
+    const bytes = await readFile(resultPath, "utf8");
+    await writeFile(resultPath, bytes.replace('"priceUsd": 2500', '"priceUsd": 100'));
+    const tampered = await (await reopened.call(path)).json();
+    expect(tampered.status).toBe("unavailable"); expect(tampered.sections).toEqual([]);
+    expect(tampered.issues.join(" ")).toContain("Structured result changed");
+    await writeFile(resultPath, bytes);
+    const sourcePath = join(ctx.root, ".boomkin/projects", project.name, "runs", before.id, "sources", "read-001.json");
+    await writeFile(sourcePath, '{}');
+    const sourceChanged = await (await reopened.call(path)).json();
+    expect(sourceChanged.status).toBe("unavailable"); expect(sourceChanged.sections).toEqual([]);
+  }, { fetcher: async () => Response.json({ price: 2500 + 100 * capture, observedAt: new Date(observedAt + 1000 * capture).toISOString() }) });
+});
+
+test("legacy captures remain readable but cannot claim verified numeric comparisons", async () => withDesk(async ctx => {
+  const project = await create(ctx), before = await start(ctx, project.name); await finish(ctx, project.name, before.id);
+  const after = await start(ctx, project.name); await finish(ctx, project.name, after.id);
+  const saved = join(ctx.root, ".boomkin/projects", project.name, "runs", before.id, "desk.json");
+  const record = JSON.parse(await readFile(saved, "utf8")); delete record.resultSha256;
+  await writeFile(saved, JSON.stringify(record));
+  const readable = await (await ctx.call(`/api/projects/${project.name}/runs/${before.id}/export`)).json();
+  expect(readable.result).not.toBeNull(); expect(readable.integrity.issues).toEqual([]); expect(readable.integrity.resultVerified).toBe(false);
+  const comparison = await (await ctx.call(`/api/projects/${project.name}/runs/${after.id}/compare?baseline=${before.id}`)).json();
+  expect(comparison.status).toBe("unavailable"); expect(comparison.sections).toEqual([]);
+  expect(comparison.issues.join(" ")).toMatch(/digest|verified|verification/i);
+}));
+
+test("exact-run follow-up rejects invalid, foreign, incomplete and modified captures before native launch", async () => withDesk(async ctx => {
+  const project = await create(ctx), run = await start(ctx, project.name); await finish(ctx, project.name, run.id);
+  const other = await create(ctx), foreignRun = await start(ctx, other.name); await finish(ctx, other.name, foreignRun.id);
+  const path = `/api/projects/${project.name}/followup`;
+  expect((await ctx.call(path, "POST", { question: "Inspect", runId: "../bad" })).status).toBe(400);
+  expect((await ctx.call(path, "POST", { question: "Inspect", runId: foreignRun.id })).status).toBe(409);
+  const recordPath = join(ctx.root, ".boomkin/projects", project.name, "runs", run.id, "desk.json");
+  const record = JSON.parse(await readFile(recordPath, "utf8"));
+  for (const state of ["running", "failed", "cancelled", "interrupted"]) {
+    await writeFile(recordPath, JSON.stringify({ ...record, state }));
+    expect((await ctx.call(path, "POST", { question: "Inspect", runId: run.id })).status).toBe(409);
+  }
+  await writeFile(recordPath, JSON.stringify(record));
+  await writeFile(join(ctx.root, ".boomkin/projects", project.name, "runs", run.id, "result.json"), '{}');
+  const rejected = await ctx.call(path, "POST", { question: "Inspect", runId: run.id });
+  expect(rejected.status).toBe(409);
+  expect((await rejected.json()).error.message).toContain("verified evidence");
+  expect((await readdir(join(ctx.root, ".boomkin/projects"))).sort()).toEqual([project.name, other.name].sort());
+}));
+
+test("malformed saved evidence and result JSON produce unavailable comparisons instead of server errors", async () => withDesk(async ctx => {
+  const project = await create(ctx), before = await start(ctx, project.name); await finish(ctx, project.name, before.id);
+  const after = await start(ctx, project.name); await finish(ctx, project.name, after.id);
+  const path = `/api/projects/${project.name}/runs/${after.id}/compare?baseline=${before.id}`;
+  const directory = join(ctx.root, ".boomkin/projects", project.name, "runs", before.id);
+  for (const [file, corrupt] of [
+    ["evidence.json", '{"schemaVersion":1,"observations":[null]}'],
+    ["evidence.json", '{"schemaVersion":1,"observations":{}}'],
+    ["evidence.json", '{'], ["result.json", '{'], ["brief.json", '{'],
+  ]) {
+    const saved = await readFile(join(directory, file), "utf8");
+    await writeFile(join(directory, file), corrupt);
+    const response = await ctx.call(path); expect(response.status).toBe(200);
+    const value = await response.json(); expect(value.status).toBe("unavailable"); expect(value.sections).toEqual([]); expect(value.issues.length).toBeGreaterThan(0);
+    await writeFile(join(directory, file), saved);
+  }
 }));

@@ -63,8 +63,34 @@ The desk's narrow HTTP API is for the launched local session. Use its base origi
 | `POST /api/projects/<name>/runs/<id>/cancel` | Cancel the active run; earlier evidence is retained |
 | `GET /api/projects/<name>/runs/<id>/export` | Download the structured result/report/evidence envelope |
 | `GET /api/projects/<name>/runs/<id>/evidence/<observation-id>` | Hash-checked captured source text |
-| `POST /api/projects/<name>/followup` | `{question, maxTurns?}`; explicit native research, default bounded turns |
+| `GET /api/projects/<name>/runs/<id>/compare?baseline=<earlier-id>` | Compare saved observations with explicit gaps and source changes |
+| `POST /api/projects/<name>/followup` | `{question, maxTurns?, runId?}`; explicit native research, default bounded turns |
 
 Wallet inputs: `account`, UTC `startTime`/`endTime`, optional `network` (`mainnet`/`testnet`) and `maxPages` (1–50). Market input: `asset` (exact CoinGecko ID). Strategy inputs: `asset`, `days` (91–365), `template` (`buy-and-hold`, `weekly-dca`, `sma-10`, `sma-30`), `initialCashUsd`, `feeBps`, `slippageBps`, optional funded-DCA `amountUsd`, `datasetSource` (`live`, `bundled`, `upload`) and an uploaded `dataset` when selected. [Daily dataset and modeling contract](https://galleonlabs.github.io/boomkin/docs/strategy/).
 
 Run states are `queued`, `running`, `complete`, `partial`, `failed`, `cancelled` and `interrupted`. Errors use `{error: {message}}` with an appropriate non-success HTTP status. A successful HTTP start response is a queued run, not a completed result. [src/desk.ts](https://github.com/galleonlabs/boomkin/blob/main/src/desk.ts) owns the exact request validation and saved desk schema.
+
+## Compare saved captures
+
+After a refresh, **What changed?** compares the displayed capture with the nearest earlier completed capture. Choose another baseline, open that earlier report, or export the structured comparison. This reads local saved files only; it does not refresh data, run a model or create a monitor.
+
+- Market comparisons match the same provider and exact asset identity. Cached, backward, stale or missing observations do not yield a price-change claim.
+- Wallet activity compares revised observations for the **same frozen historical window**. Changes are not profit earned since the previous run. Current gross exposure is a separate comparison of sequential snapshots. Signed USDC differences retain exact decimals; partial history remains explicit.
+- Strategy values can be inspected side by side, but numeric deltas require identical dataset, specification and engine hashes and matching periods. A new live-history window is a different experiment. Percentage metrics use percentage-point differences.
+
+Both captures must have matching frozen inputs and helper revision, completed public-job states, valid source evidence and a verified structured-result digest. New captures record `resultSha256` in `desk.json`; run details and exports report `integrity.resultVerified`. Captures from earlier versions remain readable and exportable. To compare them under the new contract, create two new captures. Hashes establish saved-byte consistency, not source truth or economic validity. Native research reports are prose and are not numerically compared.
+
+Follow-up questions now use the exact displayed run. The derived project records `parent: {project, runId}` and offers **Open the capture behind this follow-up**. The frozen native inputs include `previousProject`, `previousRunId`, and paths to that capture's report and evidence. If the selected capture is incomplete or its evidence has changed, the request fails before Hermes starts.
+
+### Comparison API
+
+`GET /api/projects/<name>/runs/<current-id>/compare?baseline=<earlier-id>` requires exactly one earlier run from the same project. It uses the same loopback origin and bearer-token rules as other desk routes. It returns:
+
+- `schemaVersion: 1`, `kind`, `baseline` and `current` identities/timestamps/states;
+- `status`: `compared`, `limited` or `unavailable`, with `summary`, `issues` and `notes`;
+- `sections[].rows[]`: `id`, `label`, `unit`, `before`, `after`, `delta`, `changePct`, `note`;
+- `sourceChanges`: `added`, `removed` and `changed` source-artifact identities.
+
+Numeric fields are decimal strings or `null`; missing amounts are never zero-filled. `delta` means current minus baseline, and percentage metrics produce percentage points. `changePct` is relative price movement for compatible market marks only; signed wallet accounting has no relative-return claim. `unavailable` is an honest comparison outcome and may return HTTP 200. Malformed selections return 400; a run outside the selected project returns 404. Exports use this same response, recomputed against the saved files at export time.
+
+`POST /api/projects/<name>/followup` additionally accepts optional `runId`. Desk callers always supply the displayed run; omitting it retains the previous latest-completed behavior for existing API clients. The selected capture must pass the completed-evidence contract. Model use and provider permissions remain as described above.
