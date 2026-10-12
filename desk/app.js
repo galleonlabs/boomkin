@@ -8,6 +8,7 @@ let token=launchToken || storage.get('boomkin.desk.token');
 let status,projects=[],selectedProject,selectedRun,detail,currentView='connection',pollTimer,toastTimer,historyFingerprint='',renderFingerprint='',setupBusy=false,requestBusy=false;
 let pendingQuestion='',uploadedDataset;
 let navigation=0;
+let comparisonBaseline=null,comparison=null;
 
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined&&text!==null)node.textContent=String(text);return node;}
 function button(label,className='text-button',action){const node=el('button',className,label);node.type='button';if(action)node.addEventListener('click',action);return node;}
@@ -215,7 +216,7 @@ async function openProject(name,runId){
     const captured=await api(`/api/projects/${encodeURIComponent(name)}`);if(requestedNavigation!==navigation)return;
     const project=captured.project,run=runId?project.runs?.find(item=>item.id===runId):newestRun(project);
     let capturedDetail;if(run){capturedDetail=await api(`/api/projects/${encodeURIComponent(name)}/runs/${encodeURIComponent(run.id)}`);if(requestedNavigation!==navigation)return;}
-    selectedProject=project;selectedRun=capturedDetail?.run ?? run;detail=capturedDetail;renderFingerprint='';
+    selectedProject=project;selectedRun=capturedDetail?.run ?? run;detail=capturedDetail;renderFingerprint='';comparisonBaseline=null;comparison=null;
     if(!selectedRun){renderSavedProject();}else renderResult(true);
     renderHistory();showView('result');schedulePoll();
   }catch(error){if(requestedNavigation===navigation)toast(errorMessage(error));}
@@ -237,6 +238,7 @@ function renderResult(force=false){
   else if(project.kind==='strategy')identity.textContent=`${result?.identity?.namespace ?? (project.inputs?.datasetSource==='upload'?'supplied':'coingecko')}:${result?.identity?.id ?? project.inputs?.asset} · ${TEMPLATES.find(item=>item.id===project.inputs?.template)?.label ?? project.inputs?.template} · daily USD spot simulation`;
   else identity.textContent=`coingecko:${project.inputs?.asset} · USD aggregate marks · exact identity`;
   view.append(identity);view.append(el('p','result-date',`${run.finishedAt?'Saved':'Started'} ${dateTime(run.finishedAt ?? run.createdAt)}`));
+  if(project.parent)view.append(button('Open the capture behind this follow-up','text-button parent-capture',()=>openProject(project.parent.project,project.parent.runId)));
   const active=!TERMINAL_STATES.includes(run.state);
   if(active){renderProgress(view,run,project);return;}
   const actions=el('div','result-actions');const refresh=button(run.state==='failed'||run.state==='cancelled'||run.state==='interrupted'?'Try a new capture':'Refresh research','button subtle',()=>refreshRun(true));refresh.disabled=requestBusy;actions.append(refresh);
@@ -254,6 +256,7 @@ function renderResult(force=false){
   view.append(actions);
   const integrityIssues=detail?.integrity?.issues ?? [];
   if(integrityIssues.length){const notice=el('div','result-notice error');append(notice,el('strong','','Saved evidence needs review.'),list(integrityIssues));view.append(notice);}
+  if(!native)renderComparison(view);
   if(native)renderNativeReport(view,detail?.report);
   else if(project.kind==='wallet')renderWallet(view,result);
   else if(project.kind==='strategy')renderStrategy(view,result);
@@ -262,6 +265,60 @@ function renderResult(force=false){
   append(view,el('p','result-footer','Local research with captured evidence. A source capture or historical simulation does not establish execution readiness or permission to trade.'));
 }
 function list(items,className){const node=el('ul',className);for(const item of items ?? [])node.append(el('li','',typeof item==='string'?item:JSON.stringify(item)));return node;}
+function renderComparison(view){
+  const project=selectedProject,run=selectedRun,candidates=(project.runs ?? []).filter(item=>item.id!==run.id&&item.createdAt<run.createdAt&&['complete','partial'].includes(item.state)&&item.execution!=='native-hermes').sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
+  const box=el('section','comparison-section');box.setAttribute('aria-label','Compare saved captures');append(box,el('h2','','What changed?'));
+  if(!candidates.length){box.append(el('p','comparison-empty','Refresh this research to compare it with an earlier completed capture. Each run keeps its own evidence.'));view.append(box);return;}
+  if(!candidates.some(item=>item.id===comparisonBaseline))comparisonBaseline=candidates[0].id;
+  const controls=el('div','comparison-controls'),label=el('label'),select=el('select');select.id='comparison-baseline';append(label,el('span','','Compare with'),select);
+  for(const item of candidates){const option=el('option','',`${dateTime(item.createdAt)} · ${stateLabel(item.state)} · ${item.id.slice(-8)}`);option.value=item.id;select.append(option);}select.value=comparisonBaseline;
+  const open=button('Open earlier capture','text-button',()=>openProject(project.name,select.value));append(controls,label,open);box.append(controls);
+  const content=el('div');content.id='comparison-content';content.setAttribute('aria-live','polite');box.append(content);view.append(box);
+  const load=()=>{
+    const baseline=select.value,key=`${project.name}/${run.id}/${baseline}`;
+    if(comparison?.key===key){renderComparisonBody(content,comparison,project.name,run.id,baseline);return;}
+    comparison={key,phase:'loading'};renderComparisonBody(content,comparison,project.name,run.id,baseline);
+    api(`/api/projects/${encodeURIComponent(project.name)}/runs/${encodeURIComponent(run.id)}/compare?baseline=${encodeURIComponent(baseline)}`).then(value=>{
+      if(comparison?.key!==key)return;comparison={key,phase:'ready',value};
+      if(currentView==='result'&&selectedProject?.name===project.name&&selectedRun?.id===run.id)renderComparisonBody($('comparison-content'),comparison,project.name,run.id,baseline);
+    }).catch(error=>{
+      if(comparison?.key!==key)return;comparison={key,phase:'error',error};
+      if(currentView==='result'&&selectedProject?.name===project.name&&selectedRun?.id===run.id)renderComparisonBody($('comparison-content'),comparison,project.name,run.id,baseline);
+    });
+  };
+  select.addEventListener('change',()=>{comparisonBaseline=select.value;load();});load();
+}
+function comparisonValue(row,field){
+  const value=row[field];if(value===null||value===undefined)return field==='delta'?'Not compared':'Unavailable';
+  // Keep exact signed wallet decimals; a small difference must not round to zero.
+  if(row.unit==='USDC')return `${field==='delta'&&Number(value)>0?'+':''}${value} USDC`;
+  if(row.unit==='percent')return `${field==='delta'&&Number(value)>0?'+':''}${Number(value).toFixed(2)}${field==='delta'?' pp':'%'}`;
+  const formatted=row.unit==='USD'?money(value):count(value);return `${field==='delta'&&Number(value)>0?'+':''}${formatted}`;
+}
+function renderComparisonBody(content,state,projectName,runId,baseline){
+  if(!content)return;content.replaceChildren();content.setAttribute('aria-busy',String(state.phase==='loading'));
+  if(state.phase==='loading'){content.append(el('p','comparison-empty','Checking both saved captures and their evidence…'));return;}
+  if(state.phase==='error'){
+    content.append(errorBox(errorMessage(state.error)));content.append(button('Retry comparison','text-button',()=>{comparison=null;renderResult(true);}));return;
+  }
+  const value=state.value;content.append(el('p','comparison-summary',value.summary));
+  if(value.issues?.length)content.append(list(value.issues,'limit-list comparison-issues'));
+  const rowNotes=[];
+  for(const group of value.sections ?? []){
+    const section=el('div','comparison-group');append(section,el('h3','',group.title),el('p','table-note',group.description));
+    const rows=group.rows.map(row=>[row.label,comparisonValue(row,'before'),comparisonValue(row,'after'),comparisonValue(row,'delta')]);section.append(table(['Measure','Earlier capture','This capture','Change'],rows));
+    for(const row of group.rows)if(row.note)rowNotes.push(`${row.label}: ${row.note}`);content.append(section);
+  }
+  const details=el('details','evidence-details comparison-details');details.append(el('summary','','Comparison scope & source changes'));const body=el('div');
+  append(body,el('p','table-note',`Earlier ${dateTime(value.baseline.createdAt)} · this capture ${dateTime(value.current.createdAt)}. Values describe saved observations, not current executable prices.`),list(value.notes ?? [],'limit-list'));
+  if(rowNotes.length)append(body,el('h3','','Observation details'),list([...new Set(rowNotes)],'limit-list'));
+  const changes=value.sourceChanges;for(const [key,title] of [['added','Added source artifacts'],['removed','Missing source artifacts'],['changed','Changed source bytes']])if(changes?.[key]?.length)append(body,el('h3','',title),list(changes[key],'limit-list'));
+  if(changes&&!Object.values(changes).some(items=>items.length))body.append(el('p','table-note',value.status==='unavailable'?'Source changes could not be verified for this comparison.':'No source artifact identities or bytes changed.'));
+  append(body,el('p','table-note','Source byte changes can include metadata or retrieval times. They do not by themselves establish a market move. Hashes check local consistency, not source accuracy.'));details.append(body);content.append(details);
+  content.append(button('Export comparison','text-button',async()=>{
+    try{const response=await api(`/api/projects/${encodeURIComponent(projectName)}/runs/${encodeURIComponent(runId)}/compare?baseline=${encodeURIComponent(baseline)}`,{raw:true});downloadBlob(await response.blob(),`boomkin-comparison-${runId}.json`);toast('The comparison and its limitations were exported.');}catch(error){toast(errorMessage(error));}
+  }));
+}
 function renderNativeReport(view,report){
   const box=el('section','result-section native-report');
   if(!report){box.append(el('p','empty-message','No report was saved. Inspect the source evidence and run status.'));view.append(box);return;}
@@ -383,7 +440,9 @@ function renderFollowup(view){
   const box=el('section','followup-section');append(box,el('h2','','Take the next question deeper.'),el('p','',profileReady()?'Ask your native Hermes agent to explain this saved evidence. The captured data is the starting point; a live agent can gather additional sources.':'Connect a model through native Hermes to ask follow-up questions about this saved evidence.'));
   if(!profileReady()){box.append(button('Connect your model','text-button',showSettings));view.append(box);return;}
   const form=el('form','followup-form'),fieldBox=el('label','field'),label=el('span','sr-only','Question for the native Hermes agent'),textarea=el('textarea');textarea.name='question';textarea.rows=2;textarea.maxLength=2000;textarea.required=true;textarea.placeholder=selectedProject.kind==='wallet'?'Which captured markets contributed most to my fees?':selectedProject.kind==='strategy'?'What assumptions matter most for this result?':'What else should I check about this asset?';append(fieldBox,label,textarea);const submit=el('button','button subtle','Ask native Hermes');submit.type='submit';append(form,fieldBox,submit);box.append(form);box.append(el('p','followup-notice','This starts a native agent request. Your chosen model and connected tools may incur charges.'));
-  form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;submit.disabled=true;const prior=submit.textContent;submit.textContent='Preparing…';try{const value=await api(`/api/projects/${encodeURIComponent(selectedProject.name)}/followup`,{method:'POST',body:{question:textarea.value.trim(),maxTurns:10}});await loadProjects();await openProject(value.project.name,value.run.id);announce('Native Hermes has started the follow-up research.');}catch(error){box.append(errorBox(errorMessage(error)));}finally{submit.disabled=false;submit.textContent=prior;}});view.append(box);
+  const projectName=selectedProject.name,runId=selectedRun.id;
+  box.append(el('p','followup-notice',`Based on the selected capture from ${dateTime(selectedRun.createdAt)}.`));
+  form.addEventListener('submit',async event=>{event.preventDefault();if(!form.reportValidity())return;submit.disabled=true;const prior=submit.textContent,requestedNavigation=navigation;submit.textContent='Preparing…';try{const value=await api(`/api/projects/${encodeURIComponent(projectName)}/followup`,{method:'POST',body:{question:textarea.value.trim(),maxTurns:10,runId}});await loadProjects();if(requestedNavigation===navigation)await openProject(value.project.name,value.run.id);announce('Native Hermes has started the follow-up research.');}catch(error){box.append(errorBox(errorMessage(error)));}finally{submit.disabled=false;submit.textContent=prior;}});view.append(box);
 }
 
 function schedulePoll(delay=1600){clearTimeout(pollTimer);pollTimer=setTimeout(poll,delay);}

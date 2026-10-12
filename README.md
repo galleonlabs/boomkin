@@ -35,7 +35,7 @@ Optional model setup opens Hermes's own isolated browser dashboard. Hermes owns 
 
 Choose **Review a wallet**, supply a public Hyperliquid address and date range, or try the clearly labeled public vault example. Read fees, signed funding and current exposure; expand the source evidence, export the report, then reopen it from Recent research.
 
-**Research an asset** captures public USD marks and their age. **Test a strategy** compares a documented daily rule across independently restarted reference and held-out periods at baseline and higher costs. Wallet coverage and simulation assumptions remain visible. Refresh saves a new run without overwriting earlier work.
+**Research an asset** captures public USD marks and their age. **Test a strategy** compares a documented daily rule across independently restarted reference and held-out periods at baseline and higher costs. Wallet coverage and simulation assumptions remain visible. Refresh saves a new run without overwriting earlier work. Compare saved captures to see changed observations and coverage; follow-up questions stay tied to the report you selected.
 
 ## Start from a research template
 

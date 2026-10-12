@@ -7,15 +7,16 @@ import packageFile from "../package.json";
 import { installedVersion, parseCatalog, type Catalog, type Pack } from "./core.ts";
 import { hermesModelConfigured, localProfileStatus, readHermesConfig } from "./hermes.ts";
 import { verifyIntegrity } from "./integrity.ts";
+import { compareDeskRuns, type ComparisonSnapshot } from "./desk-comparison.ts";
 import { checkProjectRun, createProject, listProjects, projectRuns, readProject, renderProjectPrompt, runProject, type Evidence, type Project, type ProjectRun } from "./projects.ts";
 
 export type DeskKind = "wallet" | "market" | "strategy";
 export type DeskRunState = "queued" | "running" | "complete" | "partial" | "failed" | "cancelled" | "interrupted";
 export interface DeskRun {
   schemaVersion: 1; id: string; project: string; kind: DeskKind; state: DeskRunState;
-  createdAt: string; finishedAt?: string; progress: string; error?: string; execution?: "native-hermes";
+  createdAt: string; finishedAt?: string; progress: string; error?: string; execution?: "native-hermes"; resultSha256?: string;
 }
-interface DeskProject { schemaVersion: 1; kind: DeskKind; title: string; execution?: "native-hermes"; maxTurns?: number; }
+interface DeskProject { schemaVersion: 1; kind: DeskKind; title: string; execution?: "native-hermes"; maxTurns?: number; parent?: { project: string; runId: string }; }
 export interface DeskOptions {
   directory: string; catalog?: Catalog; assetsDirectory?: string; port?: number;
   onSetup?: (signal: AbortSignal) => Promise<unknown>; onModelSetup?: (signal: AbortSignal) => Promise<unknown>;
@@ -75,6 +76,7 @@ function parseRun(value: unknown, name: string, id: string): DeskRun {
 }
 function parseMetadata(value: unknown): DeskProject {
   if (!object(value) || value.schemaVersion !== 1 || !Object.hasOwn(kinds, value.kind) || typeof value.title !== "string" || !value.title.trim() || value.title.length > 160) throw new DeskError("Saved desk project is malformed; files were preserved", 409);
+  if (value.parent !== undefined && (!object(value.parent) || typeof value.parent.project !== "string" || !slug.test(value.parent.project) || typeof value.parent.runId !== "string" || !runPattern.test(value.parent.runId))) throw new DeskError("Saved parent capture is malformed; files were preserved", 409);
   return value as DeskProject;
 }
 function normalizeInput(kind: DeskKind, input: unknown) {
@@ -149,7 +151,7 @@ export async function startDesk(options: DeskOptions) {
       try { runs.push(await readDeskRun(project.name, run.id)); }
       catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
     }
-    return { name: project.name, title: meta.title, kind: meta.kind, ...(meta.execution ? { execution: meta.execution } : {}), createdAt: project.createdAt, inputs: project.inputs, runs: runs.reverse() };
+    return { name: project.name, title: meta.title, kind: meta.kind, ...(meta.execution ? { execution: meta.execution } : {}), ...(meta.parent ? { parent: meta.parent } : {}), createdAt: project.createdAt, inputs: project.inputs, runs: runs.reverse() };
   }
   async function projects() {
     const result = [];
@@ -235,10 +237,25 @@ export async function startDesk(options: DeskOptions) {
   }); }
   async function runDetails(name: string, id: string) {
     const run = await readDeskRun(name, id), parts = runParts(name, id);
-    async function optional(file: string, parse = false) { try { const value = await limited(await safe(root, [...parts, file]), 20_971_520); return parse ? JSON.parse(value) : value; } catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return null; throw error; } }
-    let integrity = { issues: [] as string[] };
-    if (["complete", "partial"].includes(run.state)) integrity = { issues: (await checkProjectRun(root, name, id)).issues };
-    return { run, report: await optional("report.md"), evidence: await optional("evidence.json", true), result: await optional("result.json", true), integrity };
+    const integrity = { issues: [] as string[], resultVerified: false };
+    function parseSaved(value: string, file: string) { try { return JSON.parse(value); } catch { integrity.issues.push(`${file} contains invalid JSON`); return null; } }
+    async function optional(file: string, parse = false) { try { const value = await limited(await safe(root, [...parts, file]), 20_971_520); return parse ? parseSaved(value, file) : value; } catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return null; throw error; } }
+    const resultText = await optional("result.json");
+    if (["complete", "partial"].includes(run.state)) {
+      integrity.issues = (await checkProjectRun(root, name, id)).issues;
+      if (run.resultSha256 !== undefined) {
+        integrity.resultVerified = typeof run.resultSha256 === "string" && /^[a-f0-9]{64}$/.test(run.resultSha256) && resultText !== null && sha(resultText) === run.resultSha256;
+        if (!integrity.resultVerified) integrity.issues.push("Structured result changed or is missing since this capture finished");
+      }
+    }
+    return { run, report: await optional("report.md"), evidence: await optional("evidence.json", true), result: resultText === null ? null : parseSaved(resultText, "result.json"), integrity };
+  }
+  async function comparisonSnapshot(name: string, id: string): Promise<ComparisonSnapshot> {
+    const detail = await runDetails(name, id), record = (await projectRuns(root, name)).find(run => run.id === id)!;
+    // Known-invalid evidence/briefs must still return a structured unavailable
+    // comparison, even when the changed brief can no longer be parsed.
+    const brief = detail.integrity.issues.length ? { inputs: {} } : JSON.parse(await limited(await safe(root, [...runParts(name, id), "brief.json"])));
+    return { run: detail.run, inputs: brief.inputs, packRevision: record.pack.revision, result: detail.result, evidence: detail.evidence?.observations ?? [], integrityIssues: detail.integrity.issues, resultVerified: detail.integrity.resultVerified };
   }
   async function startRun(name: string) { return reserve(name, async controller => {
     const project = await readProject(root, name), meta = await readMetadata(name), tools = await installed(meta.kind);
@@ -265,13 +282,17 @@ export async function startDesk(options: DeskOptions) {
     return run;
   }); }
   async function followup(name: string, body: unknown) { return reserve(`followup-${name}`, async controller => {
-    if (!object(body) || Object.keys(body).some(key => !["question", "maxTurns"].includes(key)) || typeof body.question !== "string" || !body.question.trim() || body.question.length > 4000) throw new DeskError("Enter a follow-up question under 4000 characters");
+    if (!object(body) || Object.keys(body).some(key => !["question", "maxTurns", "runId"].includes(key)) || typeof body.question !== "string" || !body.question.trim() || body.question.length > 4000) throw new DeskError("Enter a follow-up question under 4000 characters");
+    if (body.runId !== undefined && (typeof body.runId !== "string" || !runPattern.test(body.runId))) throw new DeskError("Choose a valid saved run for the follow-up");
     const maxTurns = body.maxTurns ?? 10;
     if (!Number.isInteger(maxTurns) || maxTurns < 1 || maxTurns > 30) throw new DeskError("Follow-up requires 1–30 native model turns");
     const previous = await readProject(root, name), meta = await readMetadata(name);
     await installed(meta.kind);
-    const priorRun = (await projectRuns(root, name)).filter(item => item.state === "ready-for-review").at(-1);
-    if (!priorRun || (await checkProjectRun(root, name, priorRun.id)).issues.length) throw new DeskError("Follow up on a completed result with verified evidence", 409);
+    const runs = await projectRuns(root, name);
+    const priorRun = body.runId ? runs.find(item => item.id === body.runId) : runs.filter(item => item.state === "ready-for-review").at(-1);
+    if (!priorRun || priorRun.state !== "ready-for-review") throw new DeskError("Follow up on a completed result with verified evidence", 409);
+    const priorDetail = await runDetails(name, priorRun.id);
+    if (!["complete", "partial"].includes(priorDetail.run.state) || priorDetail.integrity.issues.length) throw new DeskError("Follow up on a completed result with verified evidence", 409);
     // Reuse the single-flight version probe used by status. Native runProject
     // independently validates the executable/help contract before launch.
     checkProfile(); await profilePromise;
@@ -280,8 +301,9 @@ export async function startDesk(options: DeskOptions) {
     if (!profileCache.runtimeAvailable || !hermesModelConfigured(config)) throw new DeskError("Configure the native Hermes runtime and model first", 409);
     const derivedName = `followup-${randomUUID().slice(0, 8)}`;
     const question = body.question.trim(), title = `Follow-up: ${question}`.slice(0, 160);
-    const project = await createProject(root, { name: derivedName, workflow: previous.workflow.id, objective: `Answer the user's follow-up using fresh public reads and the previous saved research as historical context. Question: ${question}`, inputs: { ...previous.inputs, followupQuestion: question, previousReport: await safe(root, [...runParts(name, priorRun.id), "report.md"]), previousEvidence: await safe(root, [...runParts(name, priorRun.id), "evidence.json"]) } }, catalog);
-    const derived: DeskProject = { schemaVersion: 1, kind: meta.kind, title, execution: "native-hermes", maxTurns };
+    const priorBrief = JSON.parse(await limited(await safe(root, [...runParts(name, priorRun.id), "brief.json"])));
+    const project = await createProject(root, { name: derivedName, workflow: previous.workflow.id, objective: `Answer the user's follow-up using fresh public reads and the previous saved research as historical context. Question: ${question}`, inputs: { ...priorBrief.inputs, followupQuestion: question, previousProject: name, previousRunId: priorRun.id, previousReport: await safe(root, [...runParts(name, priorRun.id), "report.md"]), previousEvidence: await safe(root, [...runParts(name, priorRun.id), "evidence.json"]) } }, catalog);
+    const derived: DeskProject = { schemaVersion: 1, kind: meta.kind, title, execution: "native-hermes", maxTurns, parent: { project: name, runId: priorRun.id } };
     await writeFile(await safe(root, [...projectParts(derivedName), "desk.json"]), json(derived), { flag: "wx", mode: 0o600 });
     const run = await startNative(project, derived, controller);
     return { project: await projectDto(project), run };
@@ -404,7 +426,9 @@ export async function startDesk(options: DeskOptions) {
       }
       signal.throwIfAborted();
       report += "\n\nCaptured evidence:\n" + evidence.map(item => `\n- [${item.id}] ${item.summary}`).join("") + "\n";
-      await atomic(root, [...parts, "result.json"], json(result));
+      const resultText = json(result);
+      await atomic(root, [...parts, "result.json"], resultText);
+      run.resultSha256 = sha(resultText);
       await atomic(root, [...parts, "report.md"], report);
       await atomic(root, [...parts, "evidence.json"], json({ schemaVersion: 1, observations: evidence }));
       await atomic(root, [...parts, "plan.json"], json({ schemaVersion: 1, status: "no-action", authorization: "not-granted", summary: "Read-only research; no financial action or authority", steps: [] }));
@@ -474,13 +498,20 @@ export async function startDesk(options: DeskOptions) {
             return response({ setup }, 202);
           }
           if (request.method === "POST" && path === "/api/projects") return response({ project: await create(await requestJson(request)) }, 201);
-          const match = path.match(/^\/api\/projects\/([a-z0-9-]+)(?:\/runs\/([^/]+)(?:\/(export|cancel|evidence)(?:\/([^/]+))?)?|\/(run|refresh|followup))?$/);
+          const match = path.match(/^\/api\/projects\/([a-z0-9-]+)(?:\/runs\/([^/]+)(?:\/(export|cancel|evidence|compare)(?:\/([^/]+))?)?|\/(run|refresh|followup))?$/);
           if (!match) throw new DeskError("Unknown desk route", 404);
           const [, name, id, action, observationId, operation] = match;
           if (!id && !operation && request.method === "GET") return response({ project: await projectDto(await readProject(root, name)) });
           if (operation === "followup" && request.method === "POST") return response(await followup(name, await requestJson(request)), 202);
           if (operation && request.method === "POST") return response({ run: await startRun(name) }, 202);
           if (id) {
+            if (action === "compare" && request.method === "GET") {
+              const params = new URL(request.url).searchParams, baseline = params.get("baseline");
+              if (!baseline || params.getAll("baseline").length !== 1 || [...params.keys()].some(key => key !== "baseline") || observationId) throw new DeskError("Choose one baseline run from this project");
+              validRun(baseline); validRun(id);
+              const before = await comparisonSnapshot(name, baseline), after = await comparisonSnapshot(name, id);
+              return response(compareDeskRuns(after.run.kind, before, after));
+            }
             if (action === "cancel" && request.method === "POST") {
               const run = await readDeskRun(name, id), pending = active.get(name);
               if (!pending || !["queued", "running"].includes(run.state)) throw new DeskError("This run is no longer active", 409);
