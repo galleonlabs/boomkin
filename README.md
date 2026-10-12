@@ -21,7 +21,7 @@ The browser demo needs no installation. Choose a research rule, compare held-out
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.11.0
+bun install -g boomkin@0.12.0
 boomkin desk
 ```
 
@@ -129,7 +129,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.11.0
+bun install -g boomkin@0.12.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

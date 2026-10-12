@@ -100,8 +100,8 @@
       "id": "defi-yield-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Evaluate vaults and yield tokens, including liquidity and maturity.",
-      "version": "0.2.1",
-      "revision": "9fe67c24efc0fd5796066605b29576f3b8f2de94",
+      "version": "0.3.0",
+      "revision": "27960db6bc3dfd4e3264b73232a0196dd845c37c",
       "skills": [
         "galleon-defi-yield",
         "galleon-pendle-maturity",

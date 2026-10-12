@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 · 2026-10-12
+
+- Add **What changed?** to the local desk: compare a saved research capture against an explicit earlier one for market marks, wallet accounting and strategy results, withholding deltas when inputs, helper revision or source bytes differ.
+- Bind follow-up research to the displayed run and link it back to that capture. API callers that omit `runId` keep the latest-completed behavior.
+- Review the independently released yield 0.3.0 pack, which adds offline vault exit assessment; preserve immutable source pins and existing profile selections.
+
 ## 0.11.0 · 2026-10-09
 
 - Add a local browser desk with guided public-tool preparation, asset snapshots, Hyperliquid wallet cost reviews and documented strategy comparisons.
