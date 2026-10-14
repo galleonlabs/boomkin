@@ -2,13 +2,15 @@
 
 **Your open-source DeFi desk.**
 
-Research an asset, review public wallet costs and test a strategy in a simple local browser desk. Keep the result, sources and run history on your computer. Add native [Hermes research](https://github.com/NousResearch/hermes-agent) when you want to investigate further.
+Boomkin is for people who research DeFi and want to keep the evidence. It is a local browser desk, a catalog of reviewed research workflows and a verified installer for the Galleon skill packs. Research an asset, review public wallet costs or test a strategy; the result, its sources and the run history stay on your computer. Add native [Hermes research](https://github.com/NousResearch/hermes-agent) when you want to investigate further.
 
 [![Boomkin's local desk: one question, recent research, and asset, wallet and strategy jobs](https://raw.githubusercontent.com/galleonlabs/boomkin/main/docs/assets/boomkin-desk.jpg)](https://galleonlabs.github.io/boomkin/docs/desk/)
 
 **[Try the strategy lab →](https://galleonlabs.github.io/boomkin/lab/)** · [Explore workflows](https://galleonlabs.github.io/boomkin/#workflows) · [Read the docs](https://galleonlabs.github.io/boomkin/docs/)
 
 The browser demo needs no installation. Choose a research rule, compare held-out periods and higher trading costs, and inspect simulated trades using a dated Bitcoin capture, synthetic prices or your own dataset. Uploaded data stays in your browser.
+
+Only want the skills inside Claude Code, Codex, Cursor or another agent you already use? Install them from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
 
 **31 workflows · 60 providers in discovery · 17 independent packs · 49 reviewed skills**
 
