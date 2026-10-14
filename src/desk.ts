@@ -557,7 +557,7 @@ export async function startDesk(options: DeskOptions) {
         const contents = await readFile(filePath);
         return new Response(request.method === "HEAD" ? null : contents, { headers: { ...headers, "content-type": file.type } });
       } catch (error) {
-        const status = error instanceof DeskError ? error.status : (error as NodeJS.ErrnoException).code === "ENOENT" ? 404 : 500;
+        const status = error instanceof DeskError ? error.status : (error as NodeJS.ErrnoException | undefined)?.code === "ENOENT" ? 404 : 500;
         return response({ error: { message: status === 500 ? "Desk operation failed; saved files were preserved" : (error as Error).message } }, status);
       }
     },
@@ -575,7 +575,9 @@ export async function startDesk(options: DeskOptions) {
     // A preparation can register its owned run while shutdown is waiting.
     for (const entry of active.values()) entry.controller.abort();
     await Promise.allSettled([...active.values()].map(entry => entry.done));
-    await Promise.allSettled([profilePromise, setupPromise]); server.stop(true); await rm(lock, { recursive: true, force: true });
+    await Promise.allSettled([profilePromise, setupPromise]);
+    // Owned work has settled; let in-flight handlers deliver their responses.
+    await server.stop(); await rm(lock, { recursive: true, force: true });
     })();
     return stopping;
   } };

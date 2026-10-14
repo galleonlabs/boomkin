@@ -378,6 +378,21 @@ test("setup and shutdown cannot pass a reserved native follow-up preparation", a
   }, { onSetup: async () => { setups++; } });
 });
 
+test("shutdown lets an in-flight follow-up request receive its response", async () => withDesk(async ctx => {
+  const project = await create(ctx), token = new URLSearchParams(new URL(ctx.desk.url).hash.slice(1)).get("token")!;
+  let send!: ReadableStreamDefaultController<Uint8Array>;
+  const body = new ReadableStream<Uint8Array>({ start(controller) { send = controller; } });
+  const pending = fetch(`${ctx.origin}/api/projects/${project.name}/followup`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body, duplex: "half" } as RequestInit);
+  for (let i = 0; i < 100 && ctx.desk.server.pendingRequests === 0; i++) await Bun.sleep(10);
+  expect(ctx.desk.server.pendingRequests).toBe(1);
+  const shutdown = ctx.desk.stop();
+  send.enqueue(new TextEncoder().encode(JSON.stringify({ question: "A fixture question" }))); send.close();
+  const response = await pending;
+  expect(response.status).toBe(503);
+  expect((await response.json()).error.message).toBe("This desk is shutting down");
+  await shutdown;
+}));
+
 test("shutdown cancels an owned first-use setup and waits for its terminal callback", async () => {
   let cancelled = false;
   await withDesk(async ctx => {
