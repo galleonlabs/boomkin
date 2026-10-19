@@ -115,7 +115,7 @@ test("dry run reports a planned Hermes install without writing a runtime", async
     const logs: string[] = [];
     const log = spyOn(console, "log").mockImplementation(message => { logs.push(String(message)); });
     try {
-      const planned = join(root, ".boomkin/runtime/venv/bin/hermes");
+      const planned = join(root, ".boomkin/runtime/.hermes/bin/hermes");
       expect(await ensureRuntime(root, { install: true, dryRun: true })).toBe(planned);
       expect(logs).toEqual([`Would install Hermes ${HERMES_VERSION} at ${planned}`]);
       expect(await Bun.file(planned).exists()).toBe(false);
@@ -128,7 +128,7 @@ test("a changed upstream installer is rejected before execution", async () => {
     const fetcher = spyOn(globalThis, "fetch").mockResolvedValue(new Response("echo never-execute-unverified-code"));
     try {
       await expect(ensureRuntime(root, { install: true })).rejects.toThrow("checksum mismatch");
-      expect(await Bun.file(join(root, ".boomkin/runtime/venv/bin/hermes")).exists()).toBe(false);
+      expect(await Bun.file(join(root, ".boomkin/runtime/.hermes/bin/hermes")).exists()).toBe(false);
       expect(await Bun.file(join(root, "config.yaml")).exists()).toBe(false);
     } finally { which.mockRestore(); fetcher.mockRestore(); }
   });

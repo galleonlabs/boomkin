@@ -5,9 +5,9 @@ import { createHash, randomUUID } from "node:crypto";
 import { isMap, parseDocument } from "yaml";
 import { terminateOwnedProcess } from "./processes.ts";
 
-export const HERMES_VERSION = "0.21.5";
-export const HERMES_COMMIT = "f97608f178d1ffeca59860195ab7da295f7c8e5f";
-export const HERMES_INSTALLER_SHA256 = "2017ddf0cc7bc6cfb70d40dc9fba1d916f47dbcccf5fe73bdee2cf93a11262af";
+export const HERMES_VERSION = "0.22.2";
+export const HERMES_COMMIT = "d923a5eb487a17c0a68801bba9ef0f56c81040a8";
+export const HERMES_INSTALLER_SHA256 = "f4cdb0e20f1aca2c3871a76b962fd4db61510f549cf973759c753ac13349beb5";
 export const HERMES_INSTALLER_URL = `https://raw.githubusercontent.com/NousResearch/hermes-agent/${HERMES_COMMIT}/scripts/install.sh`;
 export type McpServer = { url?: string; command?: string; args?: string[]; headers?: Record<string, string>; env?: Record<string, string>; enabled?: boolean; trust?: string; tools?: { include?: string[]; resources?: boolean; prompts?: boolean }; [key: string]: unknown };
 
@@ -59,7 +59,8 @@ export async function findRuntime(directory: string): Promise<string | undefined
   const root = await profilePath(directory);
   const runtime = join(root, ".boomkin", "runtime");
   await safePath(runtime);
-  for (const path of [join(runtime, ".venv", "bin", "hermes"), join(runtime, "venv", "bin", "hermes")]) {
+  // Hermes 0.22 installs a managed launcher; earlier installs used a virtual environment.
+  for (const path of [join(runtime, ".hermes", "bin", "hermes"), join(runtime, ".venv", "bin", "hermes"), join(runtime, "venv", "bin", "hermes")]) {
     if (await executableAt(path)) return path;
   }
   return Bun.which("hermes") ?? undefined;
@@ -108,7 +109,7 @@ export async function ensureRuntime(directory: string, options: { install: boole
   if (!options.install) throw new Error("Hermes runtime is missing. Run onboarding with runtime installation enabled.");
   const runtime = join(root, ".boomkin", "runtime");
   if (options.dryRun) {
-    const planned = join(runtime, "venv", "bin", "hermes");
+    const planned = join(runtime, ".hermes", "bin", "hermes");
     console.log(`Would install Hermes ${HERMES_VERSION} at ${planned}`);
     return planned;
   }

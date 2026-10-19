@@ -72,7 +72,7 @@ test("onboard dry run never creates the selected profile", async () => {
     expect(errors).toBe("");
     expect(output).toContain("Hermes home:");
     expect(output).not.toContain(harnesses.hermes.setup);
-    expect(output).toContain(`Would install Hermes ${HERMES_VERSION} at ${join(path, ".boomkin/runtime/venv/bin/hermes")}`);
+    expect(output).toContain(`Would install Hermes ${HERMES_VERSION} at ${join(path, ".boomkin/runtime/.hermes/bin/hermes")}`);
     await expect(readFile(path)).rejects.toThrow();
   });
 });
