@@ -92,9 +92,9 @@ test("version comparison orders patch releases", () => {
 test("Hermes freshness reports current, behind, and unavailable without changing catalog status", async () => {
   const release = (version: string, tag: string) =>
     async () => Response.json({ name: `Hermes Agent v${version} (${tag})`, tag_name: tag });
-  expect(await reportHermesRelease(release(HERMES_VERSION, "v2026.9.24"))).toBe(`hermes: pinned ${HERMES_VERSION} ${HERMES_COMMIT}; latest ${HERMES_VERSION} v2026.9.24; current`);
-  expect(await reportHermesRelease(release("0.21.6", "v2026.9.28"))).toContain("latest 0.21.6 v2026.9.28; behind");
-  expect(await reportHermesRelease(release("0.22.2", "v0.22.2"))).toContain("latest 0.22.2 v0.22.2; behind");
+  expect(await reportHermesRelease(release(HERMES_VERSION, `v${HERMES_VERSION}`))).toBe(`hermes: pinned ${HERMES_VERSION} ${HERMES_COMMIT}; latest ${HERMES_VERSION} v${HERMES_VERSION}; current`);
+  expect(await reportHermesRelease(release("99.0.0", "v99.0.0"))).toContain("latest 99.0.0 v99.0.0; behind");
+  expect(await reportHermesRelease(release("0.21.6", "v2026.9.28"))).toContain("latest 0.21.6 v2026.9.28; current");
   expect(await reportHermesRelease(async () => { throw new Error("network unavailable"); })).toContain("latest unavailable; unknown");
   expect(await reportHermesRelease(async () => Response.json({ name: "broken", tag_name: "latest" }))).toContain("latest unavailable; unknown");
   expect(reportCatalog(catalog, matching, "freshness").exitCode).toBe(0);

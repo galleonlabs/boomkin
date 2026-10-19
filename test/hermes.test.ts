@@ -2,15 +2,15 @@ import { expect, test, spyOn } from "bun:test";
 import { mkdtemp, mkdir, readFile, rm, writeFile, chmod, symlink, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { configureMcpServers, initializeProfile, localProfileStatus, runHermes, ensureRuntime, HERMES_VERSION, type McpServer, setMcpTrustUntrusted } from "../src/hermes";
+import { configureMcpServers, findRuntime, initializeProfile, localProfileStatus, runHermes, ensureRuntime, HERMES_VERSION, type McpServer, setMcpTrustUntrusted } from "../src/hermes";
 
 const server: McpServer = { url: "https://example.org/mcp", trust: "untrusted", tools: { include: ["read_price"], resources: false, prompts: false } };
 async function fixture(run: (root: string) => Promise<void>) {
   const root = await realpath(await mkdtemp(join(tmpdir(), "boomkin-hermes-")));
   try { await run(root); } finally { await rm(root, { recursive: true, force: true }); }
 }
-async function fakeRuntime(root: string, script: string) {
-  const bin = join(root, ".boomkin/runtime/venv/bin");
+async function fakeRuntime(root: string, script: string, layout = "venv/bin") {
+  const bin = join(root, ".boomkin/runtime", layout);
   await mkdir(bin, { recursive: true });
   const file = join(bin, "hermes");
   await writeFile(file, `#!/bin/sh\n${script}\n`);
@@ -109,13 +109,24 @@ test("dry runs never launch an existing runtime or create profile state", async 
     } finally { log.mockRestore(); }
   });
 });
+test("the Hermes 0.22 managed launcher is preferred over an older virtual environment", async () => {
+  await fixture(async root => {
+    await fakeRuntime(root, "echo 'Hermes Agent v0.21.5'");
+    const launcher = await fakeRuntime(root, "echo 'Hermes Agent v0.22.2 (2026.9.24) · stable'", ".hermes/bin");
+    const which = spyOn(Bun, "which").mockReturnValue(null);
+    try {
+      expect(await findRuntime(root)).toBe(launcher);
+      expect((await localProfileStatus(root)).runtime).toEqual({ available: true, executable: launcher, version: "0.22.2" });
+    } finally { which.mockRestore(); }
+  });
+});
 test("dry run reports a planned Hermes install without writing a runtime", async () => {
   await fixture(async root => {
     const which = spyOn(Bun, "which").mockReturnValue(null);
     const logs: string[] = [];
     const log = spyOn(console, "log").mockImplementation(message => { logs.push(String(message)); });
     try {
-      const planned = join(root, ".boomkin/runtime/venv/bin/hermes");
+      const planned = join(root, ".boomkin/runtime/.hermes/bin/hermes");
       expect(await ensureRuntime(root, { install: true, dryRun: true })).toBe(planned);
       expect(logs).toEqual([`Would install Hermes ${HERMES_VERSION} at ${planned}`]);
       expect(await Bun.file(planned).exists()).toBe(false);
@@ -128,7 +139,7 @@ test("a changed upstream installer is rejected before execution", async () => {
     const fetcher = spyOn(globalThis, "fetch").mockResolvedValue(new Response("echo never-execute-unverified-code"));
     try {
       await expect(ensureRuntime(root, { install: true })).rejects.toThrow("checksum mismatch");
-      expect(await Bun.file(join(root, ".boomkin/runtime/venv/bin/hermes")).exists()).toBe(false);
+      expect(await Bun.file(join(root, ".boomkin/runtime/.hermes/bin/hermes")).exists()).toBe(false);
       expect(await Bun.file(join(root, "config.yaml")).exists()).toBe(false);
     } finally { which.mockRestore(); fetcher.mockRestore(); }
   });

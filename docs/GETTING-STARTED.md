@@ -9,7 +9,7 @@
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Keep Bun's global bin directory on your shell path. Windows users can use WSL2; an existing native Windows Hermes installation can also be reused through its official flow.
 
 ```bash
-bun install -g boomkin@0.12.1
+bun install -g boomkin@0.12.2
 boomkin desk
 ```
 
@@ -69,7 +69,7 @@ boomkin model --directory "$HOME/research-desk"
 
 Hermes owns chat, tools, memory, sessions, scheduling and model authentication. Boomkin supplies reviewed financial procedures, source pins, installation checks and research projects. Other harness adapters install [skills only](HARNESSES.md).
 
-A fresh runtime installation uses reviewed Hermes 0.21.5, upstream tag `v2026.9.24`, through its pinned official installer. A working existing Hermes installation at 0.21.0 or newer is reused; the compatibility check covers only 0.21.5, and Hermes 0.22 has not been reviewed yet. Browser/computer-use dependencies are skipped initially; configure optional features through native Hermes setup. The reviewed runtime source and installer checksum live in [src/hermes.ts](../src/hermes.ts).
+A fresh runtime installation uses reviewed Hermes 0.22.2, upstream tag `v0.22.2`, through its pinned official installer, which manages its own Python 3.14 runtime. A working existing Hermes installation at 0.21.0 or newer is reused; the compatibility check covers 0.22.2. Browser/computer-use dependencies are skipped initially; configure optional features through native Hermes setup. The reviewed runtime source and installer checksum live in [src/hermes.ts](../src/hermes.ts).
 
 CoinGecko is the sole onboarding data connection. Optional provider setup stays explicit; [provider discovery](PROVIDERS.md) separates source references from the smaller native connection list. Tool availability, account authority and financial execution are different outcomes.
 
