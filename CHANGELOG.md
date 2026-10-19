@@ -3,6 +3,7 @@
 ## 0.12.1 · 2026-10-19
 
 - Let in-flight local desk requests deliver their responses before the server stops.
+- Review ten independently released skill packs. Hyperliquid 0.4.1 stops counting outcome fills as default perps in wallet audits; LP 0.6.2 covers the 2026-10-22 Aero upgrade that deactivates Aerodrome and Velodrome gauges; derivatives 0.1.6 records Drift's move to Velocity. Agent, governance, infra, lending, routing, security and yield receive dated source updates. Immutable source pins and existing profile selections are preserved.
 - Read native Hermes releases tagged with semantic versions, so the freshness report shows the latest release again instead of "unavailable".
 - State that the compatibility check covers Hermes 0.21.5 and that Hermes 0.22 is not yet reviewed; date the 58 studied skills.eth.sh entries.
 - Say who Boomkin is for, point agent users to the skill packs and describe what the installer checks; credit Galleon Labs in the website footer.
