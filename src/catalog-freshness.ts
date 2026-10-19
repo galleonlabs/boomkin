@@ -13,7 +13,7 @@ export async function reportHermesRelease(get: (url: string, init: RequestInit) 
     if (!response.ok) throw new Error("release lookup failed");
     const release = await response.json() as HermesRelease;
     const version = typeof release.name === "string" ? release.name.match(/^Hermes Agent v(\d+\.\d+\.\d+)\b/)?.[1] : undefined;
-    const tag = typeof release.tag_name === "string" && /^v\d{4}\.\d{1,2}\.\d{1,2}$/.test(release.tag_name) ? release.tag_name : undefined;
+    const tag = typeof release.tag_name === "string" && /^v\d+(\.\d+){2,3}$/.test(release.tag_name) ? release.tag_name : undefined;
     if (!version || !tag) throw new Error("invalid release metadata");
     return `${pinned}; latest ${version} ${tag}; ${compareVersions(version, HERMES_VERSION) > 0 ? "behind" : "current"}`;
   } catch {
