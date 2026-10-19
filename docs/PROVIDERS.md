@@ -1,6 +1,6 @@
 # Find a provider by capability and authority
 
-Boomkin's local discovery catalog studies all 58 entries in [skills.eth.sh](https://skills.eth.sh/), plus the existing AIXBT and Coinbase account connections. Primary documentation, repository instructions and public package readmes were reviewed on October 8, 2026. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
+Boomkin's local discovery catalog studies the 58 entries that [skills.eth.sh](https://skills.eth.sh/) listed on October 8, 2026, plus the existing AIXBT and Coinbase account connections. Entries added since then are not yet reviewed. Primary documentation, repository instructions and public package readmes were reviewed on October 8, 2026. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
 
 ```bash
 boomkin providers
