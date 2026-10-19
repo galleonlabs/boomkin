@@ -107,7 +107,7 @@ boomkin providers --capability Data --access keyless
 boomkin providers --provider blockscout
 ```
 
-The directory covers 58 studied [skills.eth.sh](https://skills.eth.sh/) entries and two existing connections. Dated sources distinguish authorship, access, cost and authority. Discovery does not install or connect all 60 providers. Keyless access can still cost money; wallet and x402 capabilities need separate choices. [Provider guide](docs/PROVIDERS.md)
+The directory covers the 58 [skills.eth.sh](https://skills.eth.sh/) entries studied on October 8, 2026 and two existing connections. Dated sources distinguish authorship, access, cost and authority. Discovery does not install or connect all 60 providers. Keyless access can still cost money; wallet and x402 capabilities need separate choices. [Provider guide](docs/PROVIDERS.md)
 
 ## Connect your tools
 
