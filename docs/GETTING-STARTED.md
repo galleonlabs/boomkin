@@ -9,7 +9,7 @@
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Keep Bun's global bin directory on your shell path. Windows users can use WSL2; an existing native Windows Hermes installation can also be reused through its official flow.
 
 ```bash
-bun install -g boomkin@0.12.0
+bun install -g boomkin@0.12.1
 boomkin desk
 ```
 

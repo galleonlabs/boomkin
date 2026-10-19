@@ -9,7 +9,7 @@ Maintain Boomkin, its selected skill packs and the Hermes runtime separately. Us
 For the installed CLI and default profile:
 
 ```bash
-bun install -g boomkin@0.12.0
+bun install -g boomkin@0.12.1
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

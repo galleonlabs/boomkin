@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.1 · 2026-10-19
+
+- Let in-flight local desk requests deliver their responses before the server stops.
+- Read native Hermes releases tagged with semantic versions, so the freshness report shows the latest release again instead of "unavailable".
+- State that the compatibility check covers Hermes 0.21.5 and that Hermes 0.22 is not yet reviewed; date the 58 studied skills.eth.sh entries.
+- Say who Boomkin is for, point agent users to the skill packs and describe what the installer checks; credit Galleon Labs in the website footer.
+
 ## 0.12.0 · 2026-10-12
 
 - Add **What changed?** to the local desk: compare a saved research capture against an explicit earlier one for market marks, wallet accounting and strategy results, withholding deltas when inputs, helper revision or source bytes differ.

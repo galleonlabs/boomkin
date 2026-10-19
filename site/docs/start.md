@@ -9,7 +9,7 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.12.0
+bun install -g boomkin@0.12.1
 boomkin desk
 ```
 
