@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.2 · 2026-10-19
+
+- Review native Hermes 0.22.2 and pin it for fresh installs. Its installer now provides a managed launcher at `.hermes/bin/hermes` instead of a virtual environment, so Boomkin finds that launcher and still reuses runtimes from earlier layouts.
+- The native compatibility check, isolated installation, onboarding, live doctor and browser model setup pass against 0.22.2.
+
 ## 0.12.1 · 2026-10-19
 
 - Let in-flight local desk requests deliver their responses before the server stops.
