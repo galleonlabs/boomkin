@@ -25,7 +25,7 @@ Reuse the existing CSS variables. The homepage alternates dark working surfaces 
 
 The lab uses existing blue-gray surfaces and dividers for settings, charts and trade rows. The benchmark is `#71818b`; errors use warm text on a subdued brown surface. Reuse these treatments for the same roles. Reserve broad acid-yellow fills for the primary action. Selected rows use a quiet neutral or pale olive tint.
 
-Use spacing and alignment before containers. Packs and ownership points are ruled rows, metrics are open readouts, and commands get a divider within their parent surface. Major panels use 12px corners, primary buttons 7px, and form controls 6px. The workbench has the site's restrained shadow; other surfaces rely on fill and structure. Avoid decorative gradients, glows or extra badges.
+Use spacing and alignment before containers. Packs are ruled rows, metrics are open readouts, and commands get a divider within their parent surface. Major panels use 12px corners, primary buttons 7px, and form controls 6px. The workbench has the site's restrained shadow; other surfaces rely on fill and structure. Avoid decorative gradients, glows or extra badges.
 
 ## Typography and layout
 
@@ -43,7 +43,7 @@ Manrope is self-hosted at `site/assets/manrope.ttf`, with variable weights 200�
 
 Large headings carry the argument; short supporting paragraphs explain the job. Use balanced headings and compact labels. Keep provenance and technical qualifications near their result, at a secondary reading level. Positive returns retain an explicit plus sign; numeric results state percent, USD or basis-point units.
 
-The common `.wrap` is at most 1240px including 40px side padding. The header has its own 1440px maximum. Homepage sections use approximately 65–105px vertical intervals and two-column compositions where comparison helps. The workbench uses a 210px menu; the workflow explorer pairs a scrolling list with detail; packs form three columns; the lab pairs 290px settings with results. Reuse nearby padding and gaps rather than inventing a spacing scale absent from the stylesheet.
+The common `.wrap` is at most 1240px including 40px side padding. The header has its own 1440px maximum. Homepage sections use approximately 65–105px vertical intervals and two-column compositions where comparison helps. The workbench uses a 210px menu; the workflow explorer pairs a scrolling list with detail; the expandable pack list uses three columns; the lab pairs 290px settings with results. Reuse nearby padding and gaps rather than inventing a spacing scale absent from the stylesheet.
 
 ## Controls and evidence
 
@@ -65,7 +65,7 @@ Allow code and tables to scroll within their own containers. Preserve exact comm
 
 ## Charts and simulation language
 
-The homepage chart is labeled **Illustrative curves** and has an accessible illustrative description. It carries no measured return claim. Lab plots use the engine's flow-neutral return index, beginning at 100, with dated endpoints and strategy/buy-and-hold labels. Acid yellow identifies the strategy; subdued gray identifies the benchmark. Keep the four outcome metrics, trade log and downloadable report adjacent to the plot.
+Lab plots use the engine's flow-neutral return index, beginning at 100, with dated endpoints and strategy/buy-and-hold labels. Acid yellow identifies the strategy; subdued gray identifies the benchmark. Keep the four outcome metrics, trade log and downloadable report adjacent to the plot.
 
 Every lab result identifies the asset, daily price type, observation count, historical or synthetic status, source and retrieval time. Evidence text also reports trade count, fees and slippage. Distinguish aggregate price marks from venue closes. Synthetic inputs remain explicitly synthetic. The simulation assumes long-only fractional spot, prior-observation decisions, next-observation fills, adverse slippage, fees and a benchmark with the same cash flows. The assumptions and research disclosure must remain reachable near the settings and result.
 
