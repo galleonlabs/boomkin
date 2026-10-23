@@ -2,7 +2,7 @@
 
 **Your open-source DeFi desk.**
 
-Boomkin is for people who research DeFi and want to keep the evidence. It is a local browser desk, a catalog of reviewed research workflows and an installer that pins and checks the Galleon skill packs. Research an asset, review public wallet costs or test a strategy; the result, its sources and the run history stay on your computer. Add native [Hermes research](https://github.com/NousResearch/hermes-agent) when you want to investigate further.
+Boomkin is a local DeFi research desk. Research an asset, review public wallet costs or test a strategy; sources and run history stay on your computer. Add native [Hermes research](https://github.com/NousResearch/hermes-agent) when you need a model.
 
 [![Boomkin's local desk: one question, recent research, and asset, wallet and strategy jobs](https://raw.githubusercontent.com/galleonlabs/boomkin/main/docs/assets/boomkin-desk.jpg)](https://galleonlabs.github.io/boomkin/docs/desk/)
 

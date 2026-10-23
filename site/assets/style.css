@@ -13,3 +13,5 @@
 [hidden]{display:none!important}
 
 .lab-validation{margin:28px 0;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.lab-validation .text-button{margin-top:16px;text-decoration:underline}.lab-settings #validate-rule{width:100%;margin-top:16px}
+
+.pack-catalog summary{cursor:pointer;padding:12px 0;border-bottom:1px solid var(--paper-line);font-weight:600}
