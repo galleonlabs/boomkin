@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.1
+
+- Prune obsolete research drafts/screenshots, superseded artwork, unused CSS and unused desk bindings; keep the current UI, incoming routes and saved-profile contracts.
+- Replace duplicated provider documentation with the source catalog and CLI, remove the unavailable Fluid discovery entry and retain all seven native connections.
+- Simplify design and agent-discovery guidance; refresh the reviewed DeFi pack pins after the corpus cleanup.
+
 ## 0.13.0
 
 - Expand protocol discovery to 63 workflows and 81 reviewed skills, including 32 dedicated lending, staking, savings, liquidity, routing, derivatives, tokenized-asset and governance procedures. Keep existing workflow IDs compatible.

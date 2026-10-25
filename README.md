@@ -12,7 +12,7 @@ The browser demo needs no installation. Choose a research rule, compare held-out
 
 Only want the skills inside Claude Code, Codex, Cursor or another agent you already use? Install them from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
 
-**63 workflows · 60 providers in discovery · 17 independent packs · 81 reviewed skills**
+**63 workflows · 59 providers in discovery · 17 independent packs · 81 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
@@ -23,7 +23,7 @@ Only want the skills inside Claude Code, Codex, Cursor or another agent you alre
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.13.0
+bun install -g boomkin@0.13.1
 boomkin desk
 ```
 
@@ -121,7 +121,7 @@ boomkin providers --capability Data --access keyless
 boomkin providers --provider blockscout
 ```
 
-The directory covers the 58 [skills.eth.sh](https://skills.eth.sh/) entries studied on October 8, 2026 and two existing connections. Dated sources distinguish authorship, access, cost and authority. Discovery does not install or connect all 60 providers. Keyless access can still cost money; wallet and x402 capabilities need separate choices. [Provider guide](docs/PROVIDERS.md)
+The catalog retains reviewed providers from the [skills.eth.sh](https://skills.eth.sh/) directory and existing native connections. Dated sources distinguish authorship, access, cost and authority. Discovery does not install or connect every listed provider. Keyless access can still cost money; wallet and x402 capabilities need separate choices. [Provider guide](docs/PROVIDERS.md)
 
 ## Connect your tools
 
@@ -145,7 +145,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.13.0
+bun install -g boomkin@0.13.1
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

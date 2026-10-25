@@ -1,6 +1,7 @@
 import {readFile,readdir,stat} from 'node:fs/promises';
 import {join,resolve,extname} from 'node:path';
 import {parseProviderCatalog} from '../src/provider-catalog.ts';
+import {providers as nativeProviders} from '../src/onboarding.ts';
 const root=resolve(import.meta.dir,'../site-dist'),base=process.env.SITE_BASE??'/boomkin/';
 async function files(directory:string):Promise<string[]>{const items=await readdir(directory,{withFileTypes:true});return(await Promise.all(items.map(item=>item.isDirectory()?files(join(directory,item.name)):[join(directory,item.name)]))).flat();}
 const pages=(await files(root)).filter(path=>path.endsWith('.html'));
@@ -35,5 +36,6 @@ for(const workflow of data.workflows){
   if(!pack)throw new Error(`Workflow has no reviewed skill: ${workflow.id}`);
 }
 const providers=parseProviderCatalog(JSON.parse(await readFile(join(root,'assets/providers.json'),'utf8')));
-if(providers.providers.filter(provider=>provider.listedInDirectory).length!==58)throw new Error('Provider catalog must retain all studied directory entries');
+const connections=providers.providers.flatMap(provider=>provider.integration.connection?[provider.integration.connection]:[]).sort();
+if(JSON.stringify(connections)!==JSON.stringify([...Object.keys(nativeProviders),'coinbase'].sort()))throw new Error('Published provider connections differ from native setup');
 console.log(`${pages.length} pages; ${links} local links/assets; reviewed workflow packs and strategy provenance valid`);

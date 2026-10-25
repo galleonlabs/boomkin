@@ -2,7 +2,7 @@
 
 > Your open-source DeFi desk on native Hermes: reviewed skills, bounded research workflows, source evidence and local strategy tests.
 
-The catalog contains 31 workflows, 17 independent Galleon packs and 49 reviewed skills. Provider discovery contains 60 sourced entries; it does not connect or install every provider. CoinGecko is the sole onboarding default. Other harnesses receive portable skills only.
+The source-controlled catalogs own the current workflow, pack, skill and provider inventory. Provider discovery does not connect or install every listed service. CoinGecko is the sole onboarding default. Other harnesses receive portable skills only.
 
 ## Start here
 
