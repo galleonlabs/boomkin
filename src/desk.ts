@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import { lstat, mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
+import { lstat, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import catalogFile from "../catalog/skills.json";
@@ -181,7 +181,7 @@ export async function startDesk(options: DeskOptions) {
     const reviewed = catalog.packs.find(item => item.id === contract.pack);
     if (!pack || !reviewed) throw new DeskError(`Install ${contract.pack} in this profile`, 409);
     if (pack.version !== reviewed.version || pack.revision !== reviewed.revision || json(pack) !== json(reviewed)) throw new DeskError("Installed release differs from the reviewed catalog; review update before running", 409);
-    const skills = await safe(root, ["skills"]), skillPath = await safe(root, ["skills", contract.skill]);
+    const skills = await safe(root, ["skills"]);
     if (installedVersion(await limited(await safe(root, ["skills", contract.skill, "SKILL.md"]))) !== pack.version) throw new DeskError("Installed skill version differs from its recorded release", 409);
     const issues = await verifyIntegrity(skills, { schemaVersion: 3, packs: [pack] }, recorded.integrity);
     if (issues.length) throw new DeskError(issues.join("; "), 409);

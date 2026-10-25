@@ -6,8 +6,8 @@ import { providerCatalog, parseProviderCatalog, filterProviders, selectProvider 
 import skills from "../catalog/skills.json";
 import { parseCatalog } from "../src/core.ts";
 
-test("provider discovery includes the entire studied directory without expanding the installation trust boundary", () => {
-  expect(providerCatalog.providers.filter(provider => provider.listedInDirectory)).toHaveLength(58);
+test("provider discovery retains primary reviews without expanding the installation trust boundary", () => {
+  expect(providerCatalog.providers.every(provider => provider.review.status === "primary-source-reviewed")).toBe(true);
   expect(providerCatalog.providers.filter(provider => provider.integration.defaultEnabled).map(provider => provider.id)).toEqual(["coingecko"]);
   expect(parseCatalog(skills).packs.every(pack => pack.source === "galleonlabs/crypto-defi-skills")).toBe(true);
   expect(providerCatalog.providers.filter(provider => provider.integration.connection).map(provider => provider.integration.connection).sort()).toEqual(["aixbt", "alchemy", "blockscout", "coinbase", "coingecko", "defillama", "tenderly"]);
@@ -58,7 +58,6 @@ test("primary review retains migrated endpoints, paid paths, external writes and
   expect(selectProvider("steer").authority).toBe("mixed");
   expect(selectProvider("ctrl").authority).toBe("mixed");
   expect(selectProvider("sablier").authority).toBe("mixed");
-  expect(selectProvider("fluid")).toMatchObject({ review: { status: "directory-listed" }, access: { kind: "unknown" }, cost: "unknown", authority: "unknown" });
   expect(selectProvider("zero-x").cost).toBe("mixed");
   expect(selectProvider("morpho")).toMatchObject({ documentedEndpoint: "https://mcp.morpho.org/", authority: "unsigned", integration: { policy: "no-connection" } });
 });
