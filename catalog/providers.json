@@ -616,16 +616,17 @@
       ],
       "summary": "Use explicit read/build allowlists; verify destination recipient asset amount and source/destination hashes, embedded beneficiary.",
       "sources": [
-        "https://skills.across.to/"
+        "https://skills.across.to/",
+        "https://docs.across.to/api-reference"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Across sources give quotes/fees/deposit tracking/security and hosted MCP. Existing research notes live tool surface includes wallet functionality beyond documented reads. Public initialize/tools-list discovery observed 14 tool names on 2026-10-08; no data, build, simulation or financial tool was called. This endpoint remains outside Boomkin connection setup."
+        "checkedOn": "2026-10-25",
+        "notes": "Current REST reference requires Bearer API access and integratorId for every request; use Swap API /swap/approval, with amount interpreted by tradeType. Suggested Fees is legacy. The separate hosted MCP remains a reference-only surface; prior tool discovery did not establish data access or transaction capability."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Across sources give quotes/fees/deposit tracking/security and hosted MCP. Existing research notes live tool surface includes wallet functionality beyond documented reads."
+        "requirements": "REST API requires the user's configured Bearer API key and integratorId. Hosted MCP authority must be independently reviewed; no setup connection is supplied by Boomkin."
       },
       "cost": "mixed",
       "authority": "mixed",

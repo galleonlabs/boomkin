@@ -9,6 +9,7 @@ import templateFile from '../catalog/templates.json';
 import {parseCatalog} from '../src/core.ts';
 import {providerCatalog} from '../src/provider-catalog.ts';
 import {createDocsCodeRenderer} from './docs-code.ts';
+import {checkWorkflowDocs} from './workflow-docs.ts';
 
 const root=resolve(import.meta.dir,'..'),out=join(root,'site-dist');
 const base=process.env.SITE_BASE??'/boomkin/';
@@ -19,6 +20,7 @@ const revision=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'
 const manifest=JSON.parse(await readFile(join(root,'package.json'),'utf8')) as {version:string};
 const esc=(value:string)=>value.replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]!));
 const render=(html:string)=>html.replaceAll('@@BASE@@',base).replaceAll('@@ORIGIN@@',origin);
+await checkWorkflowDocs();
 await rm(out,{recursive:true,force:true});await cp(join(root,'site'),out,{recursive:true});
 const provenance=JSON.parse(await readFile(join(root,'site/vendor/provenance.json'),'utf8')) as {files:Record<string,string>};
 for(const [path,expected] of Object.entries(provenance.files)){

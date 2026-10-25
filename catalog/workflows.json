@@ -7,7 +7,11 @@
       "title": "Find fees, funding costs and exposure in a public wallet",
       "skill": "hyperliquid-wallet-audit",
       "pack": "hyperliquid-skills",
-      "inputs": ["Public account address and mainnet or testnet", "UTC startTime and endTime for the activity window", "Maximum history pages and explicit coverage limits"],
+      "inputs": [
+        "Public account address and mainnet or testnet",
+        "UTC startTime and endTime for the activity window",
+        "Maximum history pages and explicit coverage limits"
+      ],
       "output": "Reproducible wallet diagnostics with captured source hashes, observed realized PnL, signed fees and funding, maker/taker costs, current exposure and explicit history gaps.",
       "access": "Bounded official Hyperliquid public info reads; no trading key or wallet connection. Default perpetual activity is distinct from a complete portfolio or verified investment return."
     },
@@ -17,7 +21,11 @@
       "title": "Validate a frozen rule with higher costs and a held-out period",
       "skill": "galleon-defi-strategy-backtest",
       "pack": "defi-strategy-skills",
-      "inputs": ["Absolute dataFile and specFile paths for a sourced daily USD series and frozen rule", "Optional splitIndex for the first held-out observation", "Baseline fees/slippage and higher-cost assumptions"],
+      "inputs": [
+        "Absolute dataFile and specFile paths for a sourced daily USD series and frozen rule",
+        "Optional splitIndex for the first held-out observation",
+        "Baseline fees/slippage and higher-cost assumptions"
+      ],
       "output": "Separate baseline and higher-cost results for development and held-out periods, same-cost benchmarks, trade logs, input hashes and explicit independent restart accounting.",
       "access": "Local Node.js helper with no wallet or network request; no parameter optimization, live execution or forward-return claim."
     },
@@ -27,7 +35,11 @@
       "title": "Research a Hyperliquid market before planning a trade",
       "skill": "hyperliquid-analyze",
       "pack": "hyperliquid-skills",
-      "inputs": ["Exact network, market and DEX identity", "Research question, observation window and freshness limit", "Liquidity, funding and catalyst evidence requirements"],
+      "inputs": [
+        "Exact network, market and DEX identity",
+        "Research question, observation window and freshness limit",
+        "Liquidity, funding and catalyst evidence requirements"
+      ],
       "output": "Cited market/funding/liquidity evidence, supported thesis and invalidation conditions with data gaps; historical, paper and live evidence stay separate.",
       "access": "Existing official public info reads or explicitly configured tools; market analysis grants no financial authority."
     },
@@ -37,7 +49,11 @@
       "title": "Review a completed trade against its original intent",
       "skill": "hyperliquid-review",
       "pack": "hyperliquid-skills",
-      "inputs": ["Account, market/DEX and completed trade window", "Original ticket, risk unit, order/fill identities and exchange history", "Signed fees/funding, position changes and incident record"],
+      "inputs": [
+        "Account, market/DEX and completed trade window",
+        "Original ticket, risk unit, order/fill identities and exchange history",
+        "Signed fees/funding, position changes and incident record"
+      ],
       "output": "Reconciled trade outcome and cost accounting with a separate process grade, incident findings and one supported follow-up test.",
       "access": "Read-only exchange history and local arithmetic; a profitable result does not establish that controls or authorization were respected."
     },
@@ -356,7 +372,7 @@
       "id": "across-route",
       "protocol": "Across",
       "title": "Review a cross-chain quote and reconcile deposit delivery",
-      "skill": "galleon-defi-routing",
+      "skill": "across-bridge",
       "pack": "defi-routing-skills",
       "inputs": [
         "Source/destination chains and exact token contracts",
@@ -364,7 +380,7 @@
         "Quote intent or existing Across deposit/transaction identity"
       ],
       "output": "Dated route/quote, fees and destination minimum, exact unsigned target/calldata, deposit identity and separate fill/refund reconciliation with unresolved outcomes.",
-      "access": "Official Across API/MCP reads; embedded actions, quote expiry and destination execution need separate review; no source approval or bridge submission."
+      "access": "Current official Across API requires configured Bearer access and integratorId. Public chain reads can reconcile a known deposit without sending an action."
     },
     {
       "id": "explorer-diligence",
@@ -407,6 +423,422 @@
       ],
       "output": "Current resolution state, oracle/dispute/finality evidence and payout/redemption constraints; data evidence is distinct from any actual redemption.",
       "access": "Official public Polymarket data and onchain reads; no claim/redeem transaction, approval or signing."
+    },
+    {
+      "id": "euler-lending",
+      "protocol": "Euler",
+      "title": "Inspect Euler collateral, debt and account liquidity",
+      "skill": "galleon-euler-lending",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain, EVC account and collateral/borrow vaults",
+        "Position size and proposed borrow or exit"
+      ],
+      "output": "Vault and account health, collateral eligibility, oracle/LLTV, borrow liquidity and an unsigned next step.",
+      "access": "Official Euler deployment data, EVC and vault reads; a vault share price does not establish account solvency."
+    },
+    {
+      "id": "sparklend-position",
+      "protocol": "Spark",
+      "title": "Inspect a SparkLend position and reserve limits",
+      "skill": "galleon-sparklend-position",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Chain, SparkLend market and wallet",
+        "Proposed supply, repayment, borrow or withdrawal"
+      ],
+      "output": "SparkLend collateral/debt, health factor, reserve limits and current liquidity, distinct from Spark savings and Morpho vaults.",
+      "access": "Official Spark deployments and read-only Pool/data-provider calls; no financial action."
+    },
+    {
+      "id": "kamino-lending",
+      "protocol": "Kamino",
+      "title": "Inspect a Kamino lending obligation",
+      "skill": "galleon-kamino-lending",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Solana cluster, market and obligation or wallet",
+        "Reserve mints, proposed amount and risk scenario"
+      ],
+      "output": "Obligation collateral/debt, reserve and oracle freshness, liquidation limits and a bounded unsigned plan.",
+      "access": "Official Kamino API/SDK and Solana RPC reads; identify mints and obligations rather than tickers."
+    },
+    {
+      "id": "save-lending",
+      "protocol": "Save / Solend",
+      "title": "Inspect a Save or legacy Solend lending position",
+      "skill": "galleon-save-lending",
+      "pack": "defi-lending-skills",
+      "inputs": [
+        "Solana cluster, market and obligation",
+        "Reserve mint and intended borrow or exit"
+      ],
+      "output": "Deployment status, obligation health, reserve liquidity and supported next step with unavailable or legacy state explicit.",
+      "access": "Verified Save/Solend deployment and Solana account reads; product continuity must be established before planning."
+    },
+    {
+      "id": "rocket-pool-reth",
+      "protocol": "Rocket Pool",
+      "title": "Compare rETH redemption with a market exit",
+      "skill": "galleon-rocket-pool-reth",
+      "pack": "defi-staking-skills",
+      "inputs": [
+        "Ethereum wallet and rETH amount",
+        "Exit size, destination and freshness limit"
+      ],
+      "output": "rETH/ETH conversion, available protocol redemption liquidity, market comparison and received-asset evidence requirements.",
+      "access": "Official Rocket Pool registry and rETH/DepositPool reads; exchange rate does not guarantee liquid redemption."
+    },
+    {
+      "id": "eigenlayer-restaking",
+      "protocol": "EigenLayer",
+      "title": "Inspect delegated restaking and queued withdrawals",
+      "skill": "galleon-eigenlayer-restaking",
+      "pack": "defi-staking-skills",
+      "inputs": [
+        "Chain, staker, strategy and operator",
+        "Withdrawal root or intended restaking exit"
+      ],
+      "output": "Strategy shares, delegation/slashing exposure, withdrawal delay and completion eligibility without assuming a queue is claimable.",
+      "access": "Official EigenLayer contracts and current withdrawal/delegation state; no delegation or withdrawal submission."
+    },
+    {
+      "id": "symbiotic-withdrawals",
+      "protocol": "Symbiotic",
+      "title": "Track a Symbiotic withdrawal through its epoch",
+      "skill": "galleon-symbiotic-withdrawals",
+      "pack": "defi-staking-skills",
+      "inputs": [
+        "Chain, vault and depositor",
+        "Withdrawal epoch and shares or assets"
+      ],
+      "output": "Vault identity, active versus pending balances, epoch eligibility, claim state and returned collateral evidence.",
+      "access": "Official Symbiotic deployment and vault reads; epoch eligibility and actual claim completion stay distinct."
+    },
+    {
+      "id": "yearn-vault",
+      "protocol": "Yearn",
+      "title": "Inspect a Yearn vault and owner exit limits",
+      "skill": "galleon-yearn-vault",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain, vault/version and owner",
+        "Share or asset amount to withdraw"
+      ],
+      "output": "Vault identity, share accounting, owner limits, strategy liquidity and loss assumptions with an unsigned exit assessment.",
+      "access": "Official Yearn registry and version-specific vault reads; a conversion preview alone is insufficient."
+    },
+    {
+      "id": "spark-savings",
+      "protocol": "Spark / Sky",
+      "title": "Compare Spark or Sky savings conversion and exit",
+      "skill": "galleon-spark-savings",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain, exact savings product and owner",
+        "Underlying denomination and proposed exit amount"
+      ],
+      "output": "Savings/share conversion, rate assumptions, owner limits, liquidity and the product-specific exit route.",
+      "access": "Official Spark/Sky product deployment and read-only calls; distinguish savings from SparkLend and bridge wrappers."
+    },
+    {
+      "id": "euler-earn",
+      "protocol": "Euler",
+      "title": "Inspect EulerEarn allocation and withdrawal capacity",
+      "skill": "galleon-euler-earn",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain, EulerEarn vault and owner",
+        "Shares or assets and desired exit size"
+      ],
+      "output": "Allocator/strategy exposure, fees, share conversion and available owner exit capacity with unresolved liquidity explicit.",
+      "access": "Official EulerEarn vault and strategy reads; allocator access does not make every underlying allocation liquid."
+    },
+    {
+      "id": "ethena-susde",
+      "protocol": "Ethena",
+      "title": "Check sUSDe cooldown and unstaking eligibility",
+      "skill": "galleon-ethena-susde",
+      "pack": "defi-yield-skills",
+      "inputs": [
+        "Chain, staking contract and owner",
+        "sUSDe shares, USDe amount or existing cooldown"
+      ],
+      "output": "Current cooldown configuration, owner withdrawal state, share conversion and the supported USDe claim path.",
+      "access": "Official Ethena deployment and staking reads; cooldown completion does not establish receipt of USDe."
+    },
+    {
+      "id": "ondo-assets",
+      "protocol": "Ondo",
+      "title": "Review an Ondo product's eligibility and settlement",
+      "skill": "galleon-ondo-assets",
+      "pack": "defi-tokenized-assets-skills",
+      "inputs": [
+        "Exact product, chain, token and investor jurisdiction",
+        "Subscription or redemption question and amount"
+      ],
+      "output": "Product-specific eligibility, transfer restrictions, issuer/custody risk and supported subscription/redemption evidence.",
+      "access": "Official issuer documentation and permitted public contract reads; no KYC submission or investor eligibility assertion."
+    },
+    {
+      "id": "openeden-tbill",
+      "protocol": "OpenEden",
+      "title": "Inspect TBILL eligibility and redemption terms",
+      "skill": "galleon-openeden-tbill",
+      "pack": "defi-tokenized-assets-skills",
+      "inputs": [
+        "Exact TBILL product, chain and holder",
+        "Jurisdiction, amount and redemption question"
+      ],
+      "output": "Investor restrictions, vault/share accounting, NAV timing and subscription/redemption settlement conditions.",
+      "access": "Official OpenEden product terms and permitted public reads; an onchain token balance does not establish redemption eligibility."
+    },
+    {
+      "id": "curve-liquidity",
+      "protocol": "Curve",
+      "title": "Inspect Curve pool accounting and an LP exit",
+      "skill": "curve-liquidity",
+      "pack": "lp-skills",
+      "inputs": [
+        "Chain, pool generation/address and LP owner",
+        "LP amount, withdrawal mode and optional gauge custody"
+      ],
+      "output": "Pool/coin identity, balances, gauge custody, expected withdrawal amounts and an unsigned exit plan.",
+      "access": "Official Curve registry, pool ABI and gauge reads; choose the exact pool generation and quote at current state."
+    },
+    {
+      "id": "balancer-liquidity",
+      "protocol": "Balancer",
+      "title": "Inspect Balancer liquidity and pool exit limits",
+      "skill": "balancer-liquidity",
+      "pack": "lp-skills",
+      "inputs": [
+        "Chain, pool version and pool ID/address",
+        "BPT amount, owner and desired exit assets"
+      ],
+      "output": "Pool/Vault identity, balances, recovery/paused state and version-specific exit quotation and constraints.",
+      "access": "Official Balancer deployment/API and Vault reads; V2 and V3 routing and token accounting differ."
+    },
+    {
+      "id": "revert-position",
+      "protocol": "Revert",
+      "title": "Inspect a Revert-managed liquidity position",
+      "skill": "revert-position",
+      "pack": "lp-skills",
+      "inputs": [
+        "Chain, manager/vault and position NFT",
+        "Owner and requested earnings or exit review"
+      ],
+      "output": "Underlying NFT identity, custody/automation permissions, fee/cost accounting and supported withdrawal evidence.",
+      "access": "Official Revert interfaces and verified manager/position reads; analytics do not establish custody or exit readiness."
+    },
+    {
+      "id": "vfat-sickle",
+      "protocol": "VFAT",
+      "title": "Inspect a VFAT Sickle position and exit dependencies",
+      "skill": "vfat-sickle",
+      "pack": "lp-skills",
+      "inputs": [
+        "Chain, owner, Sickle and farm/gauge",
+        "Position identifier and proposed unstake or exit"
+      ],
+      "output": "Sickle ownership, strategy approvals, gauge balances, rewards and ordered unsigned exit dependencies.",
+      "access": "Official VFAT deployment/source and contract reads; never reuse a third-party Sickle or assume owner-held NFTs."
+    },
+    {
+      "id": "zerox-swap",
+      "protocol": "0x",
+      "title": "Review a 0x quote and exact allowance target",
+      "skill": "zerox-swap",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Chain, token contracts, taker and base-unit sell amount",
+        "Slippage, recipient and freshness limit"
+      ],
+      "output": "Quote identity, fees, AllowanceHolder/Permit2 target, simulation caveats and an unsigned swap review.",
+      "access": "Official 0x Swap API with its configured API key; credentials and an executable payload grant no signing authority."
+    },
+    {
+      "id": "oneinch-swap",
+      "protocol": "1inch",
+      "title": "Review a 1inch swap quote and execution mode",
+      "skill": "oneinch-swap",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Chain, token contracts, base-unit amount, from account and origin EOA",
+        "Classic or intent route and price/expiry limits"
+      ],
+      "output": "Route type, allowances, fees, recipient, minimum output and mode-specific fulfillment evidence.",
+      "access": "Official 1inch API and configured developer access; distinguish classic transaction execution from intent filling."
+    },
+    {
+      "id": "cow-order",
+      "protocol": "CoW",
+      "title": "Review a CoW order and settlement evidence",
+      "skill": "cow-order",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Chain, sell/buy tokens, owner and amount",
+        "Order UID or proposed receiver, validity and partial-fill policy"
+      ],
+      "output": "Auction/order identity, signed terms, fees, fill state and actual received assets with cancellation/expiry limits.",
+      "access": "Official CoW quote/orderbook reads; no order signature, placement or cancellation without exact authority."
+    },
+    {
+      "id": "jupiter-swap",
+      "protocol": "Jupiter",
+      "title": "Review a Jupiter Swap v2 route",
+      "skill": "jupiter-swap",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Solana cluster, input/output mints and base-unit amount",
+        "Optional taker, recipient and slippage policy"
+      ],
+      "output": "Quote route, fees, executable-versus-quote-only status and Solana transaction validity and settlement checks.",
+      "access": "Official Jupiter Swap v2 API; keyless quote-only access has limits, while execution requires its own current contract."
+    },
+    {
+      "id": "relay-bridge",
+      "protocol": "Relay",
+      "title": "Reconcile a Relay cross-chain route",
+      "skill": "relay-bridge",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Origin/destination chain, currencies and recipient",
+        "Amount, request ID or source transaction"
+      ],
+      "output": "Quote/step identity, outstanding dependencies, destination delivery and unresolved or refundable state.",
+      "access": "Official Relay /quote/v2 requires the configured x-api-key; status access is separately scoped. Origin confirmation does not prove destination delivery."
+    },
+    {
+      "id": "across-bridge",
+      "protocol": "Across",
+      "title": "Review an Across route and destination fill",
+      "skill": "across-bridge",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "Origin/destination chain, tokens, amount and recipient",
+        "Integrator identity and quote/deposit or source transaction"
+      ],
+      "output": "Quote fees/limits, deposit identity, fill deadline and actual destination token/recipient/amount or refund status.",
+      "access": "Current Across API requires configured Bearer access and integratorId; legacy suggested-fees is not the default route."
+    },
+    {
+      "id": "circle-cctp",
+      "protocol": "Circle CCTP",
+      "title": "Track a CCTP message through attestation and mint",
+      "skill": "circle-cctp",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "CCTP version, source/destination domains and recipient",
+        "Burn transaction or message hash and USDC amount"
+      ],
+      "output": "Burn/message identity, attestation/finality state, destination nonce consumption and actual USDC mint evidence.",
+      "access": "Official Circle attestation API and verified TokenMessenger/MessageTransmitter reads; never equate attestation with a completed mint."
+    },
+    {
+      "id": "gmx-position",
+      "protocol": "GMX",
+      "title": "Inspect GMX V2 positions and pending requests",
+      "skill": "gmx-position",
+      "pack": "defi-derivatives-skills",
+      "inputs": [
+        "Chain, account, market and collateral token",
+        "Position key or request key and risk scenario"
+      ],
+      "output": "Collateral/margin, funding/borrowing costs, keeper request state and executed/cancelled outcome evidence.",
+      "access": "Official GMX V2 SDK/contracts and reads; request creation is distinct from keeper execution."
+    },
+    {
+      "id": "derive-options",
+      "protocol": "Derive",
+      "title": "Review Derive options risk and margin",
+      "skill": "derive-options",
+      "pack": "defi-derivatives-skills",
+      "inputs": [
+        "Derive subaccount, instrument and expiry",
+        "Existing position or proposed order size and limit"
+      ],
+      "output": "Contract unit/payoff, portfolio margin, collateral, expiry/settlement terms and order/fill evidence requirements.",
+      "access": "Official Derive market reads and explicitly configured account access; no session-key creation or order submission."
+    },
+    {
+      "id": "velocity-position",
+      "protocol": "Velocity / Drift",
+      "title": "Check Velocity or legacy Drift position support",
+      "skill": "velocity-position",
+      "pack": "defi-derivatives-skills",
+      "inputs": [
+        "Exact current venue/deployment and Solana account",
+        "Legacy position identity and requested read or exit"
+      ],
+      "output": "Current service status, supported account reads, position/margin evidence and explicit unsupported or legacy boundaries.",
+      "access": "Verify current official Velocity/Drift operating status before relying on legacy SDK endpoints; no inferred migration or live trading support."
+    },
+    {
+      "id": "pendle-boros",
+      "protocol": "Pendle Boros",
+      "title": "Inspect Boros margin and rate exposure",
+      "skill": "pendle-boros",
+      "pack": "defi-derivatives-skills",
+      "inputs": [
+        "Chain, market, account and position",
+        "Rate direction, maturity and margin/risk assumptions"
+      ],
+      "output": "Implied-versus-realized rate exposure, margin, accrued funding and liquidation/settlement constraints.",
+      "access": "Official Boros API/SDK and market/account reads; Boros margin is separate from Pendle V2 PT/YT maturity."
+    },
+    {
+      "id": "jupiter-perps",
+      "protocol": "Jupiter",
+      "title": "Inspect a Jupiter Perps position and exit request",
+      "skill": "jupiter-perps",
+      "pack": "defi-derivatives-skills",
+      "inputs": [
+        "Solana position, collateral mint and owner",
+        "Market, direction and proposed reduction or close"
+      ],
+      "output": "Position leverage, liquidation/fee assumptions, custody liquidity and request/settlement state.",
+      "access": "Official Jupiter Perps program/IDL and Solana RPC; do not apply swap quote or GMX accounting to this program."
+    },
+    {
+      "id": "snapshot-proposal",
+      "protocol": "Snapshot",
+      "title": "Review Snapshot proposal rules and voting evidence",
+      "skill": "snapshot-proposal",
+      "pack": "defi-governance-skills",
+      "inputs": [
+        "Space and proposal ID",
+        "Voter, choice and intended research or prior-vote review"
+      ],
+      "output": "Proposal identity, snapshot block, strategies, choice encoding, vote validity and execution-module boundaries.",
+      "access": "Official Snapshot Hub/GraphQL and space data; an offchain vote result does not prove onchain execution."
+    },
+    {
+      "id": "governor-proposal",
+      "protocol": "Governor / Cactus",
+      "title": "Inspect a Governor proposal and timelock state",
+      "skill": "governor-proposal",
+      "pack": "defi-governance-skills",
+      "inputs": [
+        "Chain, Governor deployment and proposal ID",
+        "Targets, values, calldata and proposal description"
+      ],
+      "output": "Proposal state, clock/quorum, exact operation hash, timelock readiness and execution receipt/state evidence.",
+      "access": "Verified Governor ABI/current contract reads; custom Governor/Cactus deployments require their own exact interface."
+    },
+    {
+      "id": "safe-transaction",
+      "protocol": "Safe",
+      "title": "Review a Safe transaction and confirmation state",
+      "skill": "safe-transaction",
+      "pack": "defi-governance-skills",
+      "inputs": [
+        "Chain, Safe address and Safe transaction hash or unsigned payload",
+        "Expected recipient, values, operation and nonce"
+      ],
+      "output": "Decoded effects, owner threshold, confirmations, nonce, modules/guards and executed transaction/state evidence.",
+      "access": "Official Safe Transaction Service and onchain Safe reads; a proposed transaction or collected signature is not execution authority."
     }
   ]
 }

@@ -9,7 +9,7 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.12.2
+bun install -g boomkin@0.13.0
 boomkin desk
 ```
 
@@ -42,6 +42,16 @@ boomkin start --directory "$HOME/aave-desk"
 ```
 
 Use the same `--directory` in later commands. Existing instructions and unrelated settings are preserved. A fresh full onboarding includes all reviewed packs. On an existing profile, `--workflow` selects that pack for future updates while preserving previously copied skills.
+
+## Bring a skill to your existing agent
+
+Each workflow opens a real protocol procedure, including what to read, how to decide and what evidence completes the job. The [workflow explorer](https://galleonlabs.github.io/boomkin/?workflow=aave-health#workflows) links to the exact skill reviewed by Boomkin and offers an individual install command:
+
+```bash
+npx skills add galleonlabs/crypto-defi-skills --skill galleon-aave-position
+```
+
+This command follows the skill library’s current `main`. Boomkin’s own installer uses reviewed pack releases. [Harness setup](harnesses/) explains full-pack installation and discovery.
 
 ## Keep a question and its evidence
 

@@ -30,8 +30,10 @@ for(const page of pages){
 const release=JSON.parse(await readFile(join(root,'release.json'),'utf8'));
 if(!/^[a-f0-9]{40}$/.test(release.strategy.revision))throw new Error('Strategy vendor source must pin a released commit');
 const data=JSON.parse(await readFile(join(root,'assets/catalog.json'),'utf8'));
-const ids=new Set(data.packs.map((pack:{id:string})=>pack.id));
-for(const workflow of data.workflows)if(!ids.has(workflow.pack))throw new Error(`Workflow has no reviewed pack: ${workflow.id}`);
+for(const workflow of data.workflows){
+  const pack=data.packs.find((pack:{id:string;skills:string[]})=>pack.id===workflow.pack&&pack.skills.includes(workflow.skill));
+  if(!pack)throw new Error(`Workflow has no reviewed skill: ${workflow.id}`);
+}
 const providers=parseProviderCatalog(JSON.parse(await readFile(join(root,'assets/providers.json'),'utf8')));
 if(providers.providers.filter(provider=>provider.listedInDirectory).length!==58)throw new Error('Provider catalog must retain all studied directory entries');
 console.log(`${pages.length} pages; ${links} local links/assets; reviewed workflow packs and strategy provenance valid`);

@@ -4,6 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { configureMcpServers, findRuntime, initializeProfile, localProfileStatus, runHermes, ensureRuntime, HERMES_VERSION, type McpServer, setMcpTrustUntrusted } from "../src/hermes";
 
+import {identity} from "../src/core";
+
 const server: McpServer = { url: "https://example.org/mcp", trust: "untrusted", tools: { include: ["read_price"], resources: false, prompts: false } };
 async function fixture(run: (root: string) => Promise<void>) {
   const root = await realpath(await mkdtemp(join(tmpdir(), "boomkin-hermes-")));
@@ -24,6 +26,18 @@ test("profile initialization preserves existing identity and secrets", async () 
     expect(await initializeProfile(root, "# Replacement\n")).toEqual({ createdSoul: false });
     expect(await readFile(join(root, "SOUL.md"), "utf8")).toBe("# Boomkin\n");
     expect(await readFile(join(root, ".env"), "utf8")).toContain("private-user-value");
+  });
+});
+test("fresh profile routing retains evidence and authority boundaries without a fixed protocol list", async () => {
+  await fixture(async root => {
+    await initializeProfile(root, identity);
+    const soul = await readFile(join(root, "SOUL.md"), "utf8");
+    expect(soul).toContain("Use native skill discovery");
+    expect(soul).toContain("boomkin workflows --workflow <id>");
+    expect(soul).toContain("check\nnative discovery before claiming the skill or its tools are available");
+    expect(soul).toContain("Installed skills and tool credentials do not\ngrant financial authority");
+    expect(soul).toContain("Preserve source identity, timestamps, methodology and handoff evidence");
+    expect(soul).toContain("never resend an ambiguous write");
   });
 });
 test("MCP edits preserve YAML comments and unknown fields and are idempotent", async () => {

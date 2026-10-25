@@ -3,7 +3,7 @@
 Open Boomkin in your browser, choose a question and keep the result with its sources. Market snapshots, public Hyperliquid wallet reviews and daily strategy tests work without a model account or funded wallet.
 
 ```bash
-bun install -g boomkin@0.12.2
+bun install -g boomkin@0.13.0
 boomkin desk
 ```
 
