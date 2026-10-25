@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.0
+
+- Expand protocol discovery to 63 workflows and 81 reviewed skills, including 32 dedicated lending, staking, savings, liquidity, routing, derivatives, tokenized-asset and governance procedures. Keep existing workflow IDs compatible.
+- Open the exact reviewed SKILL.md from each workflow, install one skill into an existing agent, share workflow links and search by multiple terms or skill name. Improve mobile selection.
+- Simplify onboarding and native agent instructions; generate workflow documentation from the source catalog and reject stale guides or missing skill targets.
+- Refresh Across access guidance and review native Hermes 0.22.5 with its pinned installer and frozen upstream dependency lock. Native verification uses the candidate catalog in an isolated profile.
+
 ## 0.12.2 · 2026-10-19
 
 - Review native Hermes 0.22.2 and pin it for fresh installs. Its installer now provides a managed launcher at `.hermes/bin/hermes` instead of a virtual environment, so Boomkin finds that launcher and still reuses runtimes from earlier layouts.

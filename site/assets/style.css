@@ -15,3 +15,5 @@
 .lab-validation{margin:28px 0;padding:22px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.lab-validation .text-button{margin-top:16px;text-decoration:underline}.lab-settings #validate-rule{width:100%;margin-top:16px}
 
 .pack-catalog summary{cursor:pointer;padding:12px 0;border-bottom:1px solid var(--paper-line);font-weight:600}
+
+.workflow-detail .detail-skill{margin:14px 0;font-size:11px}.detail-skill code{font:11px/1.8 ui-monospace,SFMono-Regular,Consolas,monospace;overflow-wrap:anywhere}.workflow-detail .desk-command{margin-top:8px;padding-top:8px}.skill-install{margin-top:20px;font-size:11px}.skill-install summary{cursor:pointer;line-height:1.7}.skill-install p{font-size:10px;color:#5f6a55}.detail-links{display:flex;gap:18px;flex-wrap:wrap;margin-top:20px}.workflow-detail:focus{outline:2px solid #535f17;outline-offset:4px}

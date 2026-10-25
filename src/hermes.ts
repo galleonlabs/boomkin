@@ -5,9 +5,9 @@ import { createHash, randomUUID } from "node:crypto";
 import { isMap, parseDocument } from "yaml";
 import { terminateOwnedProcess } from "./processes.ts";
 
-export const HERMES_VERSION = "0.22.2";
-export const HERMES_COMMIT = "d923a5eb487a17c0a68801bba9ef0f56c81040a8";
-export const HERMES_INSTALLER_SHA256 = "f4cdb0e20f1aca2c3871a76b962fd4db61510f549cf973759c753ac13349beb5";
+export const HERMES_VERSION = "0.22.5";
+export const HERMES_COMMIT = "bf0203a794a07aac3ff764972ab9087baa4e4f4e";
+export const HERMES_INSTALLER_SHA256 = "99cb3691d55019c6973a7acb775a915648666cc24e483ca827a1cdbb3531a674";
 export const HERMES_INSTALLER_URL = `https://raw.githubusercontent.com/NousResearch/hermes-agent/${HERMES_COMMIT}/scripts/install.sh`;
 export type McpServer = { url?: string; command?: string; args?: string[]; headers?: Record<string, string>; env?: Record<string, string>; enabled?: boolean; trust?: string; tools?: { include?: string[]; resources?: boolean; prompts?: boolean }; [key: string]: unknown };
 

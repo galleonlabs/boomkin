@@ -28,7 +28,7 @@ bun run build
 | Catalog pin authenticity | `bun scripts/catalog-freshness.ts --verify` checks each pin against upstream `galleon-*-skills@*` release tags. Pull requests that touch `catalog/**` run this job |
 | Native Hermes integration | `python3 scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes`; CI exercises the reviewed runtime |
 | Local desk | `bun run build`; `bun run boomkin desk --no-open --directory /absolute/test/profile`; inspect first use, all three jobs, sources, exports, cancel/restart and desktop/mobile behavior |
-| Documentation or website | Check commands against `bun run boomkin --help`; run `bun run build:site` and `bun run check:site` for rendered guides and links |
+| Documentation or website | Check commands against `bun run boomkin --help`; regenerate the workflow guide after catalog changes with `bun scripts/workflow-docs.ts --write`, then run `bun run build:site` and `bun run check:site` for rendered guides and links |
 | Public website interaction | Inspect affected desktop/mobile views, search or lab controls, browser errors and exact public serving revision; see [WEBSITE.md](docs/WEBSITE.md) |
 
 The native smoke uses a temporary profile and local mock MCP. Its optional `--public` flag adds keyless CoinGecko discovery. Validation must not authenticate paid services, call a model, create a wallet or submit a financial action.

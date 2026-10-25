@@ -5,17 +5,21 @@
       "id": "lp-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Agent skills and deterministic tools for Uniswap and Aerodrome liquidity provision.",
-      "version": "0.6.2",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.7.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
         "aerodrome-slipstream",
+        "balancer-liquidity",
+        "curve-liquidity",
         "lp-analyze",
         "lp-engineer",
         "lp-execute",
         "lp-monitor",
         "lp-plan",
         "lp-setup",
-        "uniswap-v3-liquidity"
+        "revert-position",
+        "uniswap-v3-liquidity",
+        "vfat-sickle"
       ],
       "path": "packages/lp",
       "package": "galleon-lp-skills"
@@ -71,14 +75,18 @@
       "id": "defi-lending-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Research lending markets, plan borrowing and monitor liquidation exposure.",
-      "version": "0.3.2",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.4.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
         "galleon-aave-position",
         "galleon-aave-v4",
         "galleon-compound-borrow",
         "galleon-defi-lending",
-        "galleon-morpho-market"
+        "galleon-euler-lending",
+        "galleon-kamino-lending",
+        "galleon-morpho-market",
+        "galleon-save-lending",
+        "galleon-sparklend-position"
       ],
       "path": "packages/lending",
       "package": "galleon-defi-lending-skills"
@@ -87,11 +95,14 @@
       "id": "defi-staking-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan liquid staking, restaking and queued withdrawals.",
-      "version": "0.2.1",
-      "revision": "9fe67c24efc0fd5796066605b29576f3b8f2de94",
+      "version": "0.3.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
         "galleon-defi-staking",
-        "galleon-lido-withdrawals"
+        "galleon-eigenlayer-restaking",
+        "galleon-lido-withdrawals",
+        "galleon-rocket-pool-reth",
+        "galleon-symbiotic-withdrawals"
       ],
       "path": "packages/staking",
       "package": "galleon-defi-staking-skills"
@@ -100,12 +111,16 @@
       "id": "defi-yield-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Evaluate vaults and yield tokens, including liquidity and maturity.",
-      "version": "0.3.1",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.4.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
         "galleon-defi-yield",
+        "galleon-ethena-susde",
+        "galleon-euler-earn",
         "galleon-pendle-maturity",
-        "galleon-vault-exit"
+        "galleon-spark-savings",
+        "galleon-vault-exit",
+        "galleon-yearn-vault"
       ],
       "path": "packages/yield",
       "package": "galleon-defi-yield-skills"
@@ -114,10 +129,12 @@
       "id": "defi-tokenized-assets-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Research tokenized assets, eligibility and issuer settlement.",
-      "version": "0.1.3",
-      "revision": "9fe67c24efc0fd5796066605b29576f3b8f2de94",
+      "version": "0.2.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
-        "galleon-defi-tokenized-assets"
+        "galleon-defi-tokenized-assets",
+        "galleon-ondo-assets",
+        "galleon-openeden-tbill"
       ],
       "path": "packages/tokenized-assets",
       "package": "galleon-defi-tokenized-assets-skills"
@@ -126,12 +143,19 @@
       "id": "defi-routing-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Compare swaps and bridges and track cross-chain settlement.",
-      "version": "0.3.2",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.4.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
+        "across-bridge",
+        "circle-cctp",
+        "cow-order",
         "galleon-defi-routing",
+        "jupiter-swap",
         "lifi-cross-chain",
-        "uniswap-swap"
+        "oneinch-swap",
+        "relay-bridge",
+        "uniswap-swap",
+        "zerox-swap"
       ],
       "path": "packages/routing",
       "package": "galleon-defi-routing-skills"
@@ -140,10 +164,15 @@
       "id": "defi-derivatives-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan derivatives positions and reconcile venue execution.",
-      "version": "0.1.6",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.2.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
-        "galleon-defi-derivatives"
+        "derive-options",
+        "galleon-defi-derivatives",
+        "gmx-position",
+        "jupiter-perps",
+        "pendle-boros",
+        "velocity-position"
       ],
       "path": "packages/derivatives",
       "package": "galleon-defi-derivatives-skills"
@@ -191,10 +220,13 @@
       "id": "defi-governance-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Research proposals, prepare votes and track governance execution.",
-      "version": "0.1.4",
-      "revision": "86130b45757a53dad00fd8a4701750baf3528674",
+      "version": "0.2.0",
+      "revision": "0fb6faf0369951b628c6b146f055f3d5c8c5e6cb",
       "skills": [
-        "galleon-defi-governance"
+        "galleon-defi-governance",
+        "governor-proposal",
+        "safe-transaction",
+        "snapshot-proposal"
       ],
       "path": "packages/governance",
       "package": "galleon-defi-governance-skills"

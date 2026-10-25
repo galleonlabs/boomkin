@@ -9,23 +9,33 @@
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Keep Bun's global bin directory on your shell path. Windows users can use WSL2; an existing native Windows Hermes installation can also be reused through its official flow.
 
 ```bash
-bun install -g boomkin@0.12.2
+bun install -g boomkin@0.13.0
 boomkin desk
 ```
 
 Choose **Prepare public tools** in the browser, then research an asset, review a public Hyperliquid wallet or test a documented strategy. These tasks need no model or funded wallet. Optional browser model setup and saved-run recovery are covered in the [desk guide](DESK.md).
 
-## Native agent chat
+## Use an existing agent
 
-For the complete native Hermes chat and all reviewed packs:
+For Claude Code, Codex, Cursor, Gemini CLI or another Agent Skills host, install the protocol skill directly:
 
 ```bash
-boomkin onboard
+npx skills add galleonlabs/crypto-defi-skills --skill galleon-aave-position
+```
+
+Open a job in the [workflow explorer](https://galleonlabs.github.io/boomkin/?workflow=aave-health#workflows) to read its full procedure, required inputs and exact reviewed source. The direct installer follows `main`; Boomkin installs pinned pack releases. [Harness setup](HARNESSES.md) covers full-pack installs and discovery locations.
+
+## Native agent chat
+
+To work in native Hermes, start with one protocol job:
+
+```bash
+boomkin onboard --workflow aave-health
 boomkin doctor --live
 boomkin start
 ```
 
-Onboarding prepares `~/.boomkin/hermes`, installs the selected reviewed skill packs, writes Boomkin's initial identity and instructions, configures public CoinGecko MCP and opens native Hermes model setup. A fresh default profile includes all 17 packs and 49 skills. Select your model provider and complete its native sign-in. Existing instructions and unrelated settings are preserved; conflicting named MCP settings are reported for review.
+Onboarding prepares `~/.boomkin/hermes`, installs the selected reviewed skill packs, writes Boomkin's initial identity and instructions, configures public CoinGecko MCP and opens native Hermes model setup. The command above selects the lending pack. Omit `--workflow` for a new profile with all reviewed packs. Select your model provider and complete its native sign-in. Existing instructions and unrelated settings are preserved; conflicting named MCP settings are reported for review.
 
 Your account or local model configuration supplies inference. Optional services have their own credential, subscription and usage requirements. Onboarding makes no model call or paid data request, creates no wallet and starts no background service.
 
@@ -69,7 +79,7 @@ boomkin model --directory "$HOME/research-desk"
 
 Hermes owns chat, tools, memory, sessions, scheduling and model authentication. Boomkin supplies reviewed financial procedures, source pins, installation checks and research projects. Other harness adapters install [skills only](HARNESSES.md).
 
-A fresh runtime installation uses reviewed Hermes 0.22.2, upstream tag `v0.22.2`, through its pinned official installer, which manages its own Python 3.14 runtime. A working existing Hermes installation at 0.21.0 or newer is reused; the compatibility check covers 0.22.2. Browser/computer-use dependencies are skipped initially; configure optional features through native Hermes setup. The reviewed runtime source and installer checksum live in [src/hermes.ts](../src/hermes.ts).
+A fresh runtime installation uses reviewed Hermes 0.22.5, upstream tag `v0.22.5`, through its pinned official installer, which manages its own Python 3.14 runtime. A working existing Hermes installation at 0.21.0 or newer is reused; the compatibility check covers 0.22.5. Browser/computer-use dependencies are skipped initially; configure optional features through native Hermes setup. The reviewed runtime source and installer checksum live in [src/hermes.ts](../src/hermes.ts).
 
 CoinGecko is the sole onboarding data connection. Optional provider setup stays explicit; [provider discovery](PROVIDERS.md) separates source references from the smaller native connection list. Tool availability, account authority and financial execution are different outcomes.
 

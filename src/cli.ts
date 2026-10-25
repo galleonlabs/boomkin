@@ -201,7 +201,8 @@ async function main() {
 
   if (command === "workflows") {
     if (values.pack || values.harness || values.directory) throw new Error("workflows accepts --workflow, --protocol and --json");
-    const selected = values.workflow !== undefined ? [selectWorkflow(values.workflow)] : workflows.filter(item => values.protocol === undefined || item.protocol.toLowerCase() === values.protocol.toLowerCase());
+    const protocol = values.protocol?.toLowerCase();
+    const selected = values.workflow !== undefined ? [selectWorkflow(values.workflow)] : workflows.filter(item => protocol === undefined || item.protocol.split(" / ").some(name => name.toLowerCase() === protocol));
     if (!selected.length) throw new Error("No matching protocol. Run workflows to list supported protocols.");
     return console.log(values.json ? JSON.stringify({ schemaVersion: 1, workflows: selected }, null, 2) : selected.map(renderWorkflow).join("\n\n"));
   }

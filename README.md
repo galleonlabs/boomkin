@@ -12,7 +12,7 @@ The browser demo needs no installation. Choose a research rule, compare held-out
 
 Only want the skills inside Claude Code, Codex, Cursor or another agent you already use? Install them from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
 
-**31 workflows · 60 providers in discovery · 17 independent packs · 49 reviewed skills**
+**63 workflows · 60 providers in discovery · 17 independent packs · 81 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
@@ -23,7 +23,7 @@ Only want the skills inside Claude Code, Codex, Cursor or another agent you alre
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.12.2
+bun install -g boomkin@0.13.0
 boomkin desk
 ```
 
@@ -71,7 +71,21 @@ Workflow discovery runs locally. Each job names its inputs, expected result and 
 | Review an exact unsigned payload | `unsigned-plan`, `transaction-simulation` |
 | Research prediction markets | `prediction-research`, `prediction-resolution` |
 
-[All 31 workflows, inputs and outputs](docs/WORKFLOWS.md)
+[All 63 workflows, inputs and outputs](docs/WORKFLOWS.md)
+
+### Read or install the protocol skill
+
+Every listed workflow names an actual `SKILL.md`: inputs, protocol reads, decision steps, failure handling and the evidence needed to finish. Open a workflow in the [explorer](https://galleonlabs.github.io/boomkin/?workflow=aave-health#workflows) to read the exact skill version reviewed by Boomkin. Its individual install command also works in an agent you already use:
+
+```bash
+npx skills add galleonlabs/crypto-defi-skills --skill galleon-aave-position
+```
+
+Then ask:
+
+> Use galleon-aave-position to inspect [chain, Aave V3 market and public wallet]. Show the current health factor and a scenario with a 20% collateral-price fall and 30 days of debt interest. Identify missing evidence and keep the plan unsigned.
+
+The installer follows the skill library’s current `main`; Boomkin pins reviewed releases. Both install procedures. Your agent and configured tools perform the protocol reads. You can inspect a workflow’s complete inputs and access requirements locally with `boomkin workflows --workflow aave-health`, before any setup or network request.
 
 ## Keep the question and the evidence
 
@@ -131,7 +145,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.12.2
+bun install -g boomkin@0.13.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

@@ -61,3 +61,11 @@ test("task onboarding dry run selects only its pack and creates no profile", asy
     await expect(access(directory)).rejects.toThrow();
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+test("protocol discovery recognizes reviewed legacy and product aliases", async () => {
+  for (const [protocol, id] of [["Drift", "velocity-position"], ["Velocity", "velocity-position"], ["Sky", "spark-savings"], ["Solend", "save-lending"], ["Cactus", "governor-proposal"]] as const) {
+    const result = await cli(["workflows", "--protocol", protocol, "--json"]);
+    expect(result.code, protocol).toBe(0);
+    expect(JSON.parse(result.stdout).workflows.map((item: { id: string }) => item.id), protocol).toContain(id);
+  }
+});

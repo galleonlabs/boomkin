@@ -1,299 +1,95 @@
 # Protocol workflows
 
-**31 jobs with explicit inputs, results and access requirements.** Choose by the question you need answered, then inspect its evidence contract before installing or running it.
-
-Find a task with `boomkin workflows`. Inspect one with `--workflow <id>`, or install its pack with `boomkin onboard --workflow <id>`. From a source checkout, use `bun run boomkin` in place of `boomkin`. Discovery is local and does not connect wallets or send transactions.
-
-Use [saved projects](PROJECTS.md) to keep task inputs, source evidence, successive reports and unsigned plans. Creating a project makes no model call; running it explicitly launches native Hermes.
-
-## Capture a bounded market snapshot with source evidence
-
-Skill: `galleon-defi-market-snapshot`. Task ID: `market-snapshot`.
-
-Inputs: Resolved CoinGecko IDs and quote currency; snapshot or daily-history request with an explicit observation limit; maximum acceptable age and comparison provider.
-
-Output: Timestamped source observations and raw response hashes, stale/partial coverage, aligned discrepancies and a daily-history envelope when requested.
-
-Access: Bounded public CoinGecko and documented public comparison reads; limits and outages remain explicit. Use the contract-aware token workflow when resolving chain/contract identities.
-
-## Test a strategy against a reproducible daily price history
-
-Skill: `galleon-defi-strategy-backtest`. Task ID: `strategy-backtest`.
-
-Inputs: Sourced, ordered daily prices with asset identity and units; buy-and-hold, funded DCA or moving-average rule; funding schedule, fees, slippage and comparison period.
-
-Output: A deterministic next-observation backtest, same-cash-flow benchmark, costs, time-weighted return, drawdown, source hash and explicit model limitations.
-
-Access: Local Node.js helper and a supplied evidence dataset. No exchange, wallet or trading account needed. Daily observations do not prove executable fills.
-
-## Review an investment thesis against explicit invalidation conditions
-
-Skill: `galleon-defi-data`. Task ID: `thesis-review`.
-
-Inputs: Exact asset identity, written thesis, invalidation conditions, evidence standard, review frequency and meaningful notification rule.
-
-Output: A cited baseline or comparison, verdict for each condition and unresolved evidence. [Thesis projects](PROJECTS.md#keep-a-thesis-explicit) validate the saved fields and carry prior reports into later runs.
-
-Access: Existing public or explicitly connected official data sources. A saved review frequency does not create a running monitor; native Hermes owns any separately configured recurrence.
-
-## Stress-test an Aave V3 position
-
-Skill: `galleon-aave-position`. Task ID: `aave-health`.
-
-Inputs: Chain ID, Aave V3 market and wallet; Collateral/debt and oracle state at one block; Your proposed borrow, repayment or withdrawal.
-
-Output: Current and stressed health factor, debt capacity, reserve restrictions and an unsigned action plan.
-
-Access: Read-only chain RPC or the official Aave client; no wallet connection needed for public address reads.
-
-## Inspect a Morpho market or vault
-
-Skill: `galleon-morpho-market`. Task ID: `morpho-market`.
-
-Inputs: Chain and market ID or vault address; Asset amount and intended supply or borrow.
-
-Output: Market identity, oracle/IRM/LLTV, liquidity and vault allocation or exit constraints.
-
-Access: Official Morpho API and chain reads; market IDs are not token tickers.
-
-## Check Compound III borrowing capacity
-
-Skill: `galleon-compound-borrow`. Task ID: `compound-borrow`.
-
-Inputs: Chain and Comet deployment; Wallet and desired base-asset borrow.
-
-Output: Base debt, collateral limits, interest exposure and an unsigned borrow or repay plan.
-
-Access: Read-only RPC against the selected Comet deployment.
-
-## Track a Lido withdrawal to claimability
-
-Skill: `galleon-lido-withdrawals`. Task ID: `lido-exit`.
-
-Inputs: Ethereum wallet or withdrawal request IDs; stETH or wstETH amount if planning a new request.
-
-Output: Request ownership, finalized/claimed status, claimable ETH and the next supported step.
-
-Access: Ethereum RPC and official Lido deployment registry; queue timing is not a guarantee.
-
-## Compare holding PT to maturity with exiting
-
-Skill: `galleon-pendle-maturity`. Task ID: `pendle-maturity`.
-
-Inputs: Chain and Pendle market address; PT/YT holdings, valuation time and proposed exit size.
-
-Output: Maturity terms, underlying accounting unit, executable exit comparison and post-expiry route.
-
-Access: Official Pendle market/API data and chain state.
-
-## Check what a vault withdrawal can return now
-
-Skill: `galleon-vault-exit`. Task ID: `vault-exit`.
-
-Inputs: Chain, vault address and share owner; Shares or assets to exit.
-
-Output: Preview versus owner limits, rounding, liquidity and asynchronous exit constraints.
-
-Access: Read-only RPC; a share conversion alone does not prove withdrawable assets.
-
-## Inspect a Uniswap V3 liquidity position
-
-Skill: `uniswap-v3-liquidity`. Task ID: `uniswap-position`.
-
-Inputs: Chain and position NFT ID; Token amounts or position sizing budget; Range intent or monitoring question.
-
-Output: Position composition, tick bounds, fee state and a bounded liquidity plan.
-
-Access: Official deployments and read-only RPC; explicitly V3, not V4 hooks.
-
-## Inspect Slipstream liquidity and gauge rewards
-
-Skill: `aerodrome-slipstream`. Task ID: `aerodrome-position`.
-
-Inputs: Base pool and position NFT ID; Wallet and gauge if staked.
-
-Output: Range status, gauge custody, fees versus emissions, and exit constraints.
-
-Access: Base RPC and current Aerodrome/Slipstream deployment records.
-
-## Prepare a Uniswap quote for review
-
-Skill: `uniswap-swap`. Task ID: `uniswap-quote`.
-
-Inputs: Input/output chain and token addresses; Exact input or output amount and wallet; Slippage limit and recipient.
-
-Output: Quote identity, route type, approval/Permit2 requirements and unsigned transaction review.
-
-Access: Official Uniswap Trading API access; quotes and permit requests never authorize signing.
-
-## Compare a bridge route and reconcile arrival
-
-Skill: `lifi-cross-chain`. Task ID: `bridge-status`.
-
-Inputs: Source/destination chains and token addresses; Amount, sender and recipient or existing transaction hash.
-
-Output: Net destination amount, gas needs, route limits and destination settlement evidence.
-
-Access: Official LI.FI quote/status API; source confirmation alone is not arrival.
-
-## Resolve a token before trusting its price
-
-Skill: `galleon-coingecko-token-research`. Task ID: `token-research`.
-
-Inputs: Chain and contract address, or explicit CoinGecko ID; Quote currency and freshness requirement.
-
-Output: Resolved token identity, timestamped market evidence and unsupported or stale fields.
-
-Access: Official CoinGecko MCP or REST; API tier affects access and freshness.
-
-## Screen yields without mistaking emissions for income
-
-Skill: `galleon-defillama-yield-screen`. Task ID: `yield-screen`.
-
-Inputs: Chain, asset and minimum TVL; Base/reward APY preferences and result limit.
-
-Output: A reproducible shortlist separating base yield, rewards, missing fields and exit diligence.
-
-Access: Public DefiLlama yield data or existing official connection; listed APY is not a guaranteed return.
-
-## Check AgentKit wallet capabilities
-
-Skill: `galleon-coinbase-agentkit-readiness`. Task ID: `coinbase-readiness`.
-
-Inputs: Intended network and wallet custody model; Existing CDP/AgentKit configuration without secrets.
-
-Output: Capability and policy gaps, tested read access and the next required setup step.
-
-Access: Official CDP/AgentKit tools; Coinbase account MCP and Agentic Wallet are separate products.
-
-## Review a Hyperliquid account before trading
-
-Skill: `hyperliquid-monitor`. Task ID: `hyperliquid-risk`.
-
-Inputs: Public account address and venue/market; Exposure or funding question.
-
-Output: Account mode, margin exposure, funding and market evidence for a trade decision.
-
-Access: Official Hyperliquid public info API; no trading key required for public reads.
-
-## Cross-protocol tasks
-
-The primitive packs remain useful for multi-venue portfolio, governance, payments, security and tokenized-asset work. Load only the relevant references, and use the protocol-specific skill when a task reaches its venue.
+**63 jobs with actual installable skills.** Choose a protocol or task below. Each linked `SKILL.md` contains the procedure reviewed by Boomkin: required reads, decisions, calculations, failure handling and completion evidence.
+
+## Inspect before installing
+
+```bash
+boomkin workflows --protocol Aave
+boomkin workflows --workflow aave-health
+boomkin onboard --workflow aave-health --dry-run
+```
+
+Discovery and preview run locally. The single-workflow command shows its full inputs, expected output, access requirements, skill ID and starting prompt. Onboarding installs the selected skill's complete pack; use a separate `--directory` for an isolated profile. From source, use `bun run boomkin` in place of `boomkin`.
+
+The [interactive explorer](https://galleonlabs.github.io/boomkin/#workflows) searches protocol, task and exact skill names. It offers an individual skill install command for agents you already use, plus a link to share the selected workflow. Direct skill installs follow the library's current `main`; links in this table identify the immutable release reviewed by Boomkin.
+
+## Find the procedure
+
+| Protocol | Workflow and task ID | Installable skill |
+| --- | --- | --- |
+| Hyperliquid | <a id="find-fees-funding-costs-and-exposure-in-a-public-wallet"></a><a id="public-wallet-diagnostics"></a>Find fees, funding costs and exposure in a public wallet<br>[`hyperliquid-wallet-audit`](https://galleonlabs.github.io/boomkin/?workflow=hyperliquid-wallet-audit#workflows) | [`hyperliquid-wallet-audit`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/hyperliquid/skills/hyperliquid-wallet-audit/SKILL.md) |
+| Strategy research | <a id="validate-a-frozen-rule-with-higher-costs-and-a-held-out-period"></a><a id="frozen-strategy-validation"></a>Validate a frozen rule with higher costs and a held-out period<br>[`strategy-validation`](https://galleonlabs.github.io/boomkin/?workflow=strategy-validation#workflows) | [`galleon-defi-strategy-backtest`](https://github.com/galleonlabs/crypto-defi-skills/blob/3f91a955d59a55b9927403ddc3c2e26660d48bf8/packages/strategy/skills/galleon-defi-strategy-backtest/SKILL.md) |
+| Hyperliquid | <a id="research-a-hyperliquid-market-before-planning-a-trade"></a><a id="hyperliquid-research-and-trade-review"></a>Research a Hyperliquid market before planning a trade<br>[`hyperliquid-market`](https://galleonlabs.github.io/boomkin/?workflow=hyperliquid-market#workflows) | [`hyperliquid-analyze`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/hyperliquid/skills/hyperliquid-analyze/SKILL.md) |
+| Hyperliquid | <a id="review-a-completed-trade-against-its-original-intent"></a>Review a completed trade against its original intent<br>[`hyperliquid-review`](https://galleonlabs.github.io/boomkin/?workflow=hyperliquid-review#workflows) | [`hyperliquid-review`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/hyperliquid/skills/hyperliquid-review/SKILL.md) |
+| Market data | <a id="capture-a-bounded-market-snapshot-with-source-evidence"></a>Capture a bounded market snapshot with source evidence<br>[`market-snapshot`](https://galleonlabs.github.io/boomkin/?workflow=market-snapshot#workflows) | [`galleon-defi-market-snapshot`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/data/skills/galleon-defi-market-snapshot/SKILL.md) |
+| Strategy research | <a id="test-a-strategy-against-a-reproducible-daily-price-history"></a>Test a strategy against a reproducible daily price history<br>[`strategy-backtest`](https://galleonlabs.github.io/boomkin/?workflow=strategy-backtest#workflows) | [`galleon-defi-strategy-backtest`](https://github.com/galleonlabs/crypto-defi-skills/blob/3f91a955d59a55b9927403ddc3c2e26660d48bf8/packages/strategy/skills/galleon-defi-strategy-backtest/SKILL.md) |
+| Research | <a id="review-an-investment-thesis-against-explicit-invalidation-conditions"></a>Review an investment thesis against explicit invalidation conditions<br>[`thesis-review`](https://galleonlabs.github.io/boomkin/?workflow=thesis-review#workflows) | [`galleon-defi-data`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/data/skills/galleon-defi-data/SKILL.md) |
+| Aave | <a id="stress-test-an-aave-v3-position"></a>Stress-test an Aave V3 position<br>[`aave-health`](https://galleonlabs.github.io/boomkin/?workflow=aave-health#workflows) | [`galleon-aave-position`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-aave-position/SKILL.md) |
+| Morpho | <a id="inspect-a-morpho-market-or-vault"></a>Inspect a Morpho market or vault<br>[`morpho-market`](https://galleonlabs.github.io/boomkin/?workflow=morpho-market#workflows) | [`galleon-morpho-market`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-morpho-market/SKILL.md) |
+| Compound | <a id="check-compound-iii-borrowing-capacity"></a>Check Compound III borrowing capacity<br>[`compound-borrow`](https://galleonlabs.github.io/boomkin/?workflow=compound-borrow#workflows) | [`galleon-compound-borrow`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-compound-borrow/SKILL.md) |
+| Lido | <a id="track-a-lido-withdrawal-to-claimability"></a>Track a Lido withdrawal to claimability<br>[`lido-exit`](https://galleonlabs.github.io/boomkin/?workflow=lido-exit#workflows) | [`galleon-lido-withdrawals`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/staking/skills/galleon-lido-withdrawals/SKILL.md) |
+| Pendle | <a id="compare-holding-pt-to-maturity-with-exiting"></a>Compare holding PT to maturity with exiting<br>[`pendle-maturity`](https://galleonlabs.github.io/boomkin/?workflow=pendle-maturity#workflows) | [`galleon-pendle-maturity`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-pendle-maturity/SKILL.md) |
+| ERC-4626 | <a id="check-what-a-vault-withdrawal-can-return-now"></a>Check what a vault withdrawal can return now<br>[`vault-exit`](https://galleonlabs.github.io/boomkin/?workflow=vault-exit#workflows) | [`galleon-vault-exit`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-vault-exit/SKILL.md) |
+| Uniswap | <a id="inspect-a-uniswap-v3-liquidity-position"></a>Inspect a Uniswap V3 liquidity position<br>[`uniswap-position`](https://galleonlabs.github.io/boomkin/?workflow=uniswap-position#workflows) | [`uniswap-v3-liquidity`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/uniswap-v3-liquidity/SKILL.md) |
+| Aerodrome | <a id="inspect-slipstream-liquidity-and-gauge-rewards"></a>Inspect Slipstream liquidity and gauge rewards<br>[`aerodrome-position`](https://galleonlabs.github.io/boomkin/?workflow=aerodrome-position#workflows) | [`aerodrome-slipstream`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/aerodrome-slipstream/SKILL.md) |
+| Uniswap | <a id="prepare-a-uniswap-quote-for-review"></a>Prepare a Uniswap quote for review<br>[`uniswap-quote`](https://galleonlabs.github.io/boomkin/?workflow=uniswap-quote#workflows) | [`uniswap-swap`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/uniswap-swap/SKILL.md) |
+| LI.FI | <a id="compare-a-bridge-route-and-reconcile-arrival"></a>Compare a bridge route and reconcile arrival<br>[`bridge-status`](https://galleonlabs.github.io/boomkin/?workflow=bridge-status#workflows) | [`lifi-cross-chain`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/lifi-cross-chain/SKILL.md) |
+| CoinGecko | <a id="resolve-a-token-before-trusting-its-price"></a>Resolve a token before trusting its price<br>[`token-research`](https://galleonlabs.github.io/boomkin/?workflow=token-research#workflows) | [`galleon-coingecko-token-research`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/data/skills/galleon-coingecko-token-research/SKILL.md) |
+| DefiLlama | <a id="screen-yields-without-mistaking-emissions-for-income"></a>Screen yields without mistaking emissions for income<br>[`yield-screen`](https://galleonlabs.github.io/boomkin/?workflow=yield-screen#workflows) | [`galleon-defillama-yield-screen`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/data/skills/galleon-defillama-yield-screen/SKILL.md) |
+| Coinbase CDP | <a id="check-agentkit-wallet-capabilities"></a>Check AgentKit wallet capabilities<br>[`coinbase-readiness`](https://galleonlabs.github.io/boomkin/?workflow=coinbase-readiness#workflows) | [`galleon-coinbase-agentkit-readiness`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/infra/skills/galleon-coinbase-agentkit-readiness/SKILL.md) |
+| Hyperliquid | <a id="review-a-hyperliquid-account-before-trading"></a>Review a Hyperliquid account before trading<br>[`hyperliquid-risk`](https://galleonlabs.github.io/boomkin/?workflow=hyperliquid-risk#workflows) | [`hyperliquid-monitor`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/hyperliquid/skills/hyperliquid-monitor/SKILL.md) |
+| Agent tools | <a id="choose-a-tool-without-granting-excess-authority"></a>Choose a tool without granting excess authority<br>[`agent-capabilities`](https://galleonlabs.github.io/boomkin/?workflow=agent-capabilities#workflows) | [`galleon-defi-infra`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/infra/skills/galleon-defi-infra/SKILL.md) |
+| Agent transactions | <a id="build-a-deterministic-unsigned-transaction-plan"></a>Build a deterministic unsigned transaction plan<br>[`unsigned-plan`](https://galleonlabs.github.io/boomkin/?workflow=unsigned-plan#workflows) | [`galleon-defi-agent-plan`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/agent/skills/galleon-defi-agent-plan/SKILL.md) |
+| Simulation | <a id="simulate-the-exact-unsigned-payload-before-review"></a>Simulate the exact unsigned payload before review<br>[`transaction-simulation`](https://galleonlabs.github.io/boomkin/?workflow=transaction-simulation#workflows) | [`galleon-defi-agent-simulate`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/agent/skills/galleon-defi-agent-simulate/SKILL.md) |
+| Aave V4 | <a id="inspect-hub-and-spoke-risk-at-a-verified-aave-v4-deployment"></a>Inspect hub and spoke risk at a verified Aave V4 deployment<br>[`aave-v4-health`](https://galleonlabs.github.io/boomkin/?workflow=aave-v4-health#workflows) | [`galleon-aave-v4`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-aave-v4/SKILL.md) |
+| Sablier | <a id="review-a-vesting-or-payment-stream-and-its-exit-rights"></a>Review a vesting or payment stream and its exit rights<br>[`sablier-stream`](https://galleonlabs.github.io/boomkin/?workflow=sablier-stream#workflows) | [`galleon-sablier-streams`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/payments/skills/galleon-sablier-streams/SKILL.md) |
+| Superfluid | <a id="review-streaming-obligations-and-super-token-liquidity"></a>Review streaming obligations and Super Token liquidity<br>[`superfluid-stream`](https://galleonlabs.github.io/boomkin/?workflow=superfluid-stream#workflows) | [`galleon-superfluid-streams`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/payments/skills/galleon-superfluid-streams/SKILL.md) |
+| Across | <a id="review-a-cross-chain-quote-and-reconcile-deposit-delivery"></a>Review a cross-chain quote and reconcile deposit delivery<br>[`across-route`](https://galleonlabs.github.io/boomkin/?workflow=across-route#workflows) | [`across-bridge`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/across-bridge/SKILL.md) |
+| Blockscout | <a id="inspect-token-controls-and-transaction-evidence-through-a-read-only-explorer"></a>Inspect token controls and transaction evidence through a read-only explorer<br>[`explorer-diligence`](https://galleonlabs.github.io/boomkin/?workflow=explorer-diligence#workflows) | [`galleon-defi-security-token-diligence`](https://github.com/galleonlabs/crypto-defi-skills/blob/86130b45757a53dad00fd8a4701750baf3528674/packages/security/skills/galleon-defi-security-token-diligence/SKILL.md) |
+| Polymarket | <a id="research-prediction-markets-with-bounded-public-evidence"></a>Research prediction markets with bounded public evidence<br>[`prediction-research`](https://galleonlabs.github.io/boomkin/?workflow=prediction-research#workflows) | [`galleon-prediction-market-research`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/prediction/skills/galleon-prediction-market-research/SKILL.md) |
+| Polymarket | <a id="reconcile-prediction-market-resolution-and-payout-evidence"></a>Reconcile prediction market resolution and payout evidence<br>[`prediction-resolution`](https://galleonlabs.github.io/boomkin/?workflow=prediction-resolution#workflows) | [`galleon-prediction-market-resolution`](https://github.com/galleonlabs/crypto-defi-skills/blob/9fe67c24efc0fd5796066605b29576f3b8f2de94/packages/prediction/skills/galleon-prediction-market-resolution/SKILL.md) |
+| Euler | <a id="inspect-euler-collateral-debt-and-account-liquidity"></a>Inspect Euler collateral, debt and account liquidity<br>[`euler-lending`](https://galleonlabs.github.io/boomkin/?workflow=euler-lending#workflows) | [`galleon-euler-lending`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-euler-lending/SKILL.md) |
+| Spark | <a id="inspect-a-sparklend-position-and-reserve-limits"></a>Inspect a SparkLend position and reserve limits<br>[`sparklend-position`](https://galleonlabs.github.io/boomkin/?workflow=sparklend-position#workflows) | [`galleon-sparklend-position`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-sparklend-position/SKILL.md) |
+| Kamino | <a id="inspect-a-kamino-lending-obligation"></a>Inspect a Kamino lending obligation<br>[`kamino-lending`](https://galleonlabs.github.io/boomkin/?workflow=kamino-lending#workflows) | [`galleon-kamino-lending`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-kamino-lending/SKILL.md) |
+| Save / Solend | <a id="inspect-a-save-or-legacy-solend-lending-position"></a>Inspect a Save or legacy Solend lending position<br>[`save-lending`](https://galleonlabs.github.io/boomkin/?workflow=save-lending#workflows) | [`galleon-save-lending`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lending/skills/galleon-save-lending/SKILL.md) |
+| Rocket Pool | <a id="compare-reth-redemption-with-a-market-exit"></a>Compare rETH redemption with a market exit<br>[`rocket-pool-reth`](https://galleonlabs.github.io/boomkin/?workflow=rocket-pool-reth#workflows) | [`galleon-rocket-pool-reth`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/staking/skills/galleon-rocket-pool-reth/SKILL.md) |
+| EigenLayer | <a id="inspect-delegated-restaking-and-queued-withdrawals"></a>Inspect delegated restaking and queued withdrawals<br>[`eigenlayer-restaking`](https://galleonlabs.github.io/boomkin/?workflow=eigenlayer-restaking#workflows) | [`galleon-eigenlayer-restaking`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/staking/skills/galleon-eigenlayer-restaking/SKILL.md) |
+| Symbiotic | <a id="track-a-symbiotic-withdrawal-through-its-epoch"></a>Track a Symbiotic withdrawal through its epoch<br>[`symbiotic-withdrawals`](https://galleonlabs.github.io/boomkin/?workflow=symbiotic-withdrawals#workflows) | [`galleon-symbiotic-withdrawals`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/staking/skills/galleon-symbiotic-withdrawals/SKILL.md) |
+| Yearn | <a id="inspect-a-yearn-vault-and-owner-exit-limits"></a>Inspect a Yearn vault and owner exit limits<br>[`yearn-vault`](https://galleonlabs.github.io/boomkin/?workflow=yearn-vault#workflows) | [`galleon-yearn-vault`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-yearn-vault/SKILL.md) |
+| Spark / Sky | <a id="compare-spark-or-sky-savings-conversion-and-exit"></a>Compare Spark or Sky savings conversion and exit<br>[`spark-savings`](https://galleonlabs.github.io/boomkin/?workflow=spark-savings#workflows) | [`galleon-spark-savings`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-spark-savings/SKILL.md) |
+| Euler | <a id="inspect-eulerearn-allocation-and-withdrawal-capacity"></a>Inspect EulerEarn allocation and withdrawal capacity<br>[`euler-earn`](https://galleonlabs.github.io/boomkin/?workflow=euler-earn#workflows) | [`galleon-euler-earn`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-euler-earn/SKILL.md) |
+| Ethena | <a id="check-susde-cooldown-and-unstaking-eligibility"></a>Check sUSDe cooldown and unstaking eligibility<br>[`ethena-susde`](https://galleonlabs.github.io/boomkin/?workflow=ethena-susde#workflows) | [`galleon-ethena-susde`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/yield/skills/galleon-ethena-susde/SKILL.md) |
+| Ondo | <a id="review-an-ondo-products-eligibility-and-settlement"></a>Review an Ondo product's eligibility and settlement<br>[`ondo-assets`](https://galleonlabs.github.io/boomkin/?workflow=ondo-assets#workflows) | [`galleon-ondo-assets`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/tokenized-assets/skills/galleon-ondo-assets/SKILL.md) |
+| OpenEden | <a id="inspect-tbill-eligibility-and-redemption-terms"></a>Inspect TBILL eligibility and redemption terms<br>[`openeden-tbill`](https://galleonlabs.github.io/boomkin/?workflow=openeden-tbill#workflows) | [`galleon-openeden-tbill`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/tokenized-assets/skills/galleon-openeden-tbill/SKILL.md) |
+| Curve | <a id="inspect-curve-pool-accounting-and-an-lp-exit"></a>Inspect Curve pool accounting and an LP exit<br>[`curve-liquidity`](https://galleonlabs.github.io/boomkin/?workflow=curve-liquidity#workflows) | [`curve-liquidity`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/curve-liquidity/SKILL.md) |
+| Balancer | <a id="inspect-balancer-liquidity-and-pool-exit-limits"></a>Inspect Balancer liquidity and pool exit limits<br>[`balancer-liquidity`](https://galleonlabs.github.io/boomkin/?workflow=balancer-liquidity#workflows) | [`balancer-liquidity`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/balancer-liquidity/SKILL.md) |
+| Revert | <a id="inspect-a-revert-managed-liquidity-position"></a>Inspect a Revert-managed liquidity position<br>[`revert-position`](https://galleonlabs.github.io/boomkin/?workflow=revert-position#workflows) | [`revert-position`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/revert-position/SKILL.md) |
+| VFAT | <a id="inspect-a-vfat-sickle-position-and-exit-dependencies"></a>Inspect a VFAT Sickle position and exit dependencies<br>[`vfat-sickle`](https://galleonlabs.github.io/boomkin/?workflow=vfat-sickle#workflows) | [`vfat-sickle`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/lp/skills/vfat-sickle/SKILL.md) |
+| 0x | <a id="review-a-0x-quote-and-exact-allowance-target"></a>Review a 0x quote and exact allowance target<br>[`zerox-swap`](https://galleonlabs.github.io/boomkin/?workflow=zerox-swap#workflows) | [`zerox-swap`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/zerox-swap/SKILL.md) |
+| 1inch | <a id="review-a-1inch-swap-quote-and-execution-mode"></a>Review a 1inch swap quote and execution mode<br>[`oneinch-swap`](https://galleonlabs.github.io/boomkin/?workflow=oneinch-swap#workflows) | [`oneinch-swap`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/oneinch-swap/SKILL.md) |
+| CoW | <a id="review-a-cow-order-and-settlement-evidence"></a>Review a CoW order and settlement evidence<br>[`cow-order`](https://galleonlabs.github.io/boomkin/?workflow=cow-order#workflows) | [`cow-order`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/cow-order/SKILL.md) |
+| Jupiter | <a id="review-a-jupiter-swap-v2-route"></a>Review a Jupiter Swap v2 route<br>[`jupiter-swap`](https://galleonlabs.github.io/boomkin/?workflow=jupiter-swap#workflows) | [`jupiter-swap`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/jupiter-swap/SKILL.md) |
+| Relay | <a id="reconcile-a-relay-cross-chain-route"></a>Reconcile a Relay cross-chain route<br>[`relay-bridge`](https://galleonlabs.github.io/boomkin/?workflow=relay-bridge#workflows) | [`relay-bridge`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/relay-bridge/SKILL.md) |
+| Across | <a id="review-an-across-route-and-destination-fill"></a>Review an Across route and destination fill<br>[`across-bridge`](https://galleonlabs.github.io/boomkin/?workflow=across-bridge#workflows) | [`across-bridge`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/across-bridge/SKILL.md) |
+| Circle CCTP | <a id="track-a-cctp-message-through-attestation-and-mint"></a>Track a CCTP message through attestation and mint<br>[`circle-cctp`](https://galleonlabs.github.io/boomkin/?workflow=circle-cctp#workflows) | [`circle-cctp`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/routing/skills/circle-cctp/SKILL.md) |
+| GMX | <a id="inspect-gmx-v2-positions-and-pending-requests"></a>Inspect GMX V2 positions and pending requests<br>[`gmx-position`](https://galleonlabs.github.io/boomkin/?workflow=gmx-position#workflows) | [`gmx-position`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/derivatives/skills/gmx-position/SKILL.md) |
+| Derive | <a id="review-derive-options-risk-and-margin"></a>Review Derive options risk and margin<br>[`derive-options`](https://galleonlabs.github.io/boomkin/?workflow=derive-options#workflows) | [`derive-options`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/derivatives/skills/derive-options/SKILL.md) |
+| Velocity / Drift | <a id="check-velocity-or-legacy-drift-position-support"></a>Check Velocity or legacy Drift position support<br>[`velocity-position`](https://galleonlabs.github.io/boomkin/?workflow=velocity-position#workflows) | [`velocity-position`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/derivatives/skills/velocity-position/SKILL.md) |
+| Pendle Boros | <a id="inspect-boros-margin-and-rate-exposure"></a>Inspect Boros margin and rate exposure<br>[`pendle-boros`](https://galleonlabs.github.io/boomkin/?workflow=pendle-boros#workflows) | [`pendle-boros`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/derivatives/skills/pendle-boros/SKILL.md) |
+| Jupiter | <a id="inspect-a-jupiter-perps-position-and-exit-request"></a>Inspect a Jupiter Perps position and exit request<br>[`jupiter-perps`](https://galleonlabs.github.io/boomkin/?workflow=jupiter-perps#workflows) | [`jupiter-perps`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/derivatives/skills/jupiter-perps/SKILL.md) |
+| Snapshot | <a id="review-snapshot-proposal-rules-and-voting-evidence"></a>Review Snapshot proposal rules and voting evidence<br>[`snapshot-proposal`](https://galleonlabs.github.io/boomkin/?workflow=snapshot-proposal#workflows) | [`snapshot-proposal`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/governance/skills/snapshot-proposal/SKILL.md) |
+| Governor / Cactus | <a id="inspect-a-governor-proposal-and-timelock-state"></a>Inspect a Governor proposal and timelock state<br>[`governor-proposal`](https://galleonlabs.github.io/boomkin/?workflow=governor-proposal#workflows) | [`governor-proposal`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/governance/skills/governor-proposal/SKILL.md) |
+| Safe | <a id="review-a-safe-transaction-and-confirmation-state"></a>Review a Safe transaction and confirmation state<br>[`safe-transaction`](https://galleonlabs.github.io/boomkin/?workflow=safe-transaction#workflows) | [`safe-transaction`](https://github.com/galleonlabs/crypto-defi-skills/blob/0fb6faf0369951b628c6b146f055f3d5c8c5e6cb/packages/governance/skills/safe-transaction/SKILL.md) |
 
 ## Agent tools and unsigned transactions
 
-### Choose a tool without granting excess authority
+Use `boomkin workflows --workflow unsigned-plan` for deterministic unsigned payload construction and `boomkin workflows --workflow transaction-simulation` for exact-payload simulation evidence. Neither grants signing, submission or spending authority. Provider access and the actual deployment must match the task.
 
-Skill: `galleon-defi-infra`. Task ID: `agent-capabilities`.
+## Cross-protocol tasks
 
-Inputs: Research question, chain and available official tools; Required reads or unsigned outputs; Existing account/cost limits without secrets.
+Broad primitive skills remain useful for comparison, portfolio reconciliation, security and work spanning venues. For a named protocol, start with its specific skill. The [skill library](https://github.com/galleonlabs/crypto-defi-skills) lists all packs and procedures; Boomkin's catalog installs only reviewed releases.
 
-Output: A dated capability/access matrix separating public reads, unsigned preparation, simulation, account writes, signing and paid requests; a concrete unsupported-capability result.
+Use [saved projects](PROJECTS.md) to retain inputs, source evidence and successive reports. Creating a project or preview makes no model call. A live project run explicitly uses native Hermes and the selected model/tools; provider usage may incur costs. Installation, data access, simulation and verified settlement remain distinct outcomes.
 
-Access: Existing official tools and primary docs; discovery does not create wallets, accept delegated permissions or purchase data.
-
-### Build a deterministic unsigned transaction plan
-
-Skill: `galleon-defi-agent-plan`. Task ID: `unsigned-plan`.
-
-Inputs: Chain, protocol/version and verified deployment; Sender, recipient, token identities and raw-unit amounts; Action parameters, finite approval limits and current state block.
-
-Output: Ordered unsigned prerequisites and payloads, target/value/calldata identity, capability evidence, exact units, continuing permission review and construction limits.
-
-Access: Official protocol builders or version-matched Nethermind playbooks; local construction has no signer and makes no broadcast.
-
-### Simulate the exact unsigned payload before review
-
-Skill: `galleon-defi-agent-simulate`. Task ID: `transaction-simulation`.
-
-Inputs: Chain, sender, target, value and unsigned calldata; State block and preceding approval/action sequence; Expected balance/allowance changes and permitted provider costs.
-
-Output: Exact payload/state identity, simulated balance/allowance changes, decoded errors and trace evidence, artificial overrides and unresolved coverage; no execution guarantee.
-
-Access: Existing official simulation provider or disposable local fork; Tenderly project access, Alchemy quotas or Portals x402 cost remain explicit opt-ins.
-
-### Inspect hub and spoke risk at a verified Aave V4 deployment
-
-Skill: `galleon-aave-v4`. Task ID: `aave-v4-health`.
-
-Inputs: Chain, verified V4 hub/spoke and deployment maturity; Wallet, position/reserve state and oracle block; Proposed supply, borrow, repay or withdrawal.
-
-Output: Hub/spoke identity, collateral/debt and liquidity, health/capacity and configuration constraints with an unsigned plan; unsupported or preview deployments remain explicit.
-
-Access: Official Aave docs/MCP and read-only chain RPC; no V3 assumptions transferred to V4 and no wallet approval.
-
-### Review a vesting or payment stream and its exit rights
-
-Skill: `galleon-sablier-streams`. Task ID: `sablier-stream`.
-
-Inputs: Chain, deployment/module and stream ID or proposed terms; Token, sender, recipient, funding and schedule; Cancellation/transfer rights and the current observation time.
-
-Output: Module-specific funding, vested/withdrawable amounts, ownership and cancellation rights, schedule/rounding checks and an unsigned plan or existing-stream reconciliation.
-
-Access: Official Sablier deployments, SDK/indexer and public chain reads; setup and analysis neither fund nor create a stream.
-
-### Review streaming obligations and Super Token liquidity
-
-Skill: `galleon-superfluid-streams`. Task ID: `superfluid-stream`.
-
-Inputs: Chain, verified Super Token and stream/agreement identity; Sender, recipient, signed flow rate and funding horizon; Current balance, deposit and operator permissions.
-
-Output: Current flow, claimable/liquid balance, deposit/runway and operator authority; wrapping, cancellation and liquidation constraints with an unsigned plan.
-
-Access: Official Superfluid contracts/SDK and public reads; no wrapping, stream creation or delegated operator grant.
-
-### Review a cross-chain quote and reconcile deposit delivery
-
-Skill: `galleon-defi-routing`. Task ID: `across-route`.
-
-Inputs: Source/destination chains and exact token contracts; Amount, sender, recipient and slippage/fee ceiling; Quote intent or existing Across deposit/transaction identity.
-
-Output: Dated route/quote, fees and destination minimum, exact unsigned target/calldata, deposit identity and separate fill/refund reconciliation with unresolved outcomes.
-
-Access: Official Across API/MCP reads; embedded actions, quote expiry and destination execution need separate review; no source approval or bridge submission.
-
-### Inspect token controls and transaction evidence through a read-only explorer
-
-Skill: `galleon-defi-security-token-diligence`. Task ID: `explorer-diligence`.
-
-Inputs: Chain ID and exact contract/wallet/transaction identity; Pinned state block and the economic claim to examine; Required code, proxy, balance/flow and exit evidence.
-
-Output: Verified source/implementation correspondence, visible controls and transaction/balance evidence with coverage and freshness limits; no unconditional safety score.
-
-Access: Optional keyless Blockscout named reads or existing explorer/RPC; shared gateway limits and indexer lag remain explicit.
-
-### Research prediction markets with bounded public evidence
-
-Skill: `galleon-prediction-market-research`. Task ID: `prediction-research`.
-
-Inputs: Exact event/market/condition identity and outcome; Observation window, source limit and liquidity question; Resolution terms and comparison requirements.
-
-Output: Cited event/market identity, outcome order, bounded orderbook/activity evidence, pricing/liquidity limitations and explicit resolution uncertainty.
-
-Access: Official Polymarket public APIs or official CLI read commands; no private key, order placement, funding or redemption.
-
-### Reconcile prediction market resolution and payout evidence
-
-Skill: `galleon-prediction-market-resolution`. Task ID: `prediction-resolution`.
-
-Inputs: Exact market/condition and outcome token identities; Resolution rules, disputed outcome or observed status; Optional public holder/transaction identity.
-
-Output: Current resolution state, oracle/dispute/finality evidence and payout/redemption constraints; data evidence is distinct from any actual redemption.
-
-Access: Official public Polymarket data and onchain reads; no claim/redeem transaction, approval or signing.
-
-## Public wallet diagnostics
-
-Skill: `hyperliquid-wallet-audit`. Task ID: `hyperliquid-wallet-audit`.
-
-Capture a public account and explicit UTC activity window, with bounded pages from the official Hyperliquid info API. Review observed realized PnL, signed fees/rebates, funding, maker/taker costs and current default-perpetual exposure. Preserve raw evidence hashes and explain partial history, unsupported assets/account modes and unproven stop coverage. Use `boomkin templates --template wallet-audit` for required inputs. No key or wallet connection is needed.
-
-## Frozen strategy validation
-
-Skill: `galleon-defi-strategy-backtest`. Task ID: `strategy-validation`.
-
-Supply absolute daily dataset and frozen rule paths, with an optional first held-out observation index. Compare the unchanged rule with its same-cost benchmark under baseline and higher fees/slippage in two chronological periods. Each period restarts from initial cash with a fresh warmup and its own contributions; results are separate simulations. The helper performs no optimization or network calls. Try the same tests in the [browser lab](https://galleonlabs.github.io/boomkin/lab/).
-
-## Hyperliquid research and trade review
-
-`hyperliquid-market` routes to `hyperliquid-analyze` for exact market/DEX identity, funding/liquidity evidence, thesis and invalidation research. `hyperliquid-review` routes to `hyperliquid-review` for completed-trade accounting against the original ticket, risk unit and exchange history. Review grades process separately from profit. Both workflows remain read-only.
+This guide is generated from [catalog/workflows.json](../catalog/workflows.json) and [catalog/skills.json](../catalog/skills.json). After editing a catalog, run `bun scripts/workflow-docs.ts --write`; the website build rejects stale documentation.

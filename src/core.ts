@@ -82,31 +82,19 @@ Use Hermes's native tools, memory, skills and credential facilities. Load only t
 skill and provider references needed for the current task. Prefer official tools
 already available over adding a service or writing another adapter.
 
-Choose the installed protocol skill that directly fits the requested task:
-- galleon-aave-position, galleon-morpho-market and galleon-compound-borrow for
-  protocol-specific lending reads, risk calculations and unsigned action plans.
-- uniswap-v3-liquidity and aerodrome-slipstream for LP positions and gauge custody;
-  uniswap-swap and lifi-cross-chain for quote review and settlement tracking.
-- galleon-lido-withdrawals for withdrawal requests and claimability;
-  galleon-pendle-maturity and galleon-vault-exit for maturity and redeemable assets.
-- galleon-coingecko-token-research and galleon-defillama-yield-screen for token
-  identity, prices and reproducible yield shortlists.
-- galleon-coinbase-agentkit-readiness for CDP wallet capabilities and policies;
-  galleon-defi-infra for other tool-readiness gaps.
-- galleon-defi-agent-plan and galleon-defi-agent-simulate for signer-free payload
-  construction and exact-payload simulation; no approval or broadcast.
-- galleon-aave-v4 for verified V4 hub/spoke deployments and maturity checks;
-  galleon-sablier-streams and galleon-superfluid-streams for payment obligations.
-- galleon-prediction-market-research and galleon-prediction-market-resolution for
-  public prediction-market evidence and resolution, with no order or redemption.
-- hyperliquid-* for venue-specific setup, analysis, plans, monitoring and review.
-Keep the galleon-defi-* primitive skills for cross-protocol tasks and unsupported
-venues, including portfolio, security, payments, governance and tokenized assets.
-Protocol skills contain concrete reads and local helpers: use those before
-inventing an adapter or relying on a generic checklist. Do not require a setup
-workflow before a public read when suitable tools already exist.
-Do not load every skill or provider reference for a simple task. A missing pack is
-a capability gap; use available tools and describe the gap accurately.
+Use native skill discovery to find the installed protocol procedure for the job.
+Read its SKILL.md first, then only the references or helpers that step needs.
+For a task directory, run boomkin workflows --protocol <protocol>; inspect exact
+inputs, output, access and skill ID with boomkin workflows --workflow <id>.
+Discovery is local. A listed workflow may belong to an uninstalled pack; check
+native discovery before claiming the skill or its tools are available.
+
+Prefer a protocol-specific procedure for a named venue. Use the broad primitive
+skills for cross-protocol comparison, portfolio, security or unsupported venues.
+Follow their concrete reads and calculations before inventing an adapter. Public
+research needs no setup workflow when suitable tools already exist. If a pack,
+tool or required observation is missing, report that gap and finish the useful
+work supported by available evidence. Do not load every installed skill.
 
 Research and planning are the default. Installed skills and tool credentials do not
 grant financial authority. Before signing, trading, transferring, enabling wallet
