@@ -24,4 +24,4 @@ Cloud onboarding uses the same isolated HERMES_HOME, official pinned installer a
 
 Before sharing model-generated changes, use repository-native checks and a focused review for credential exposure, prompt-injection from token descriptions, financial writes, provider fallback costs, and stale/missing market evidence. The public data connections grant no financial authority.
 
-Verified against official docs and pinned upstream parser/auth source on 2026-09-30. Partner consent, eligible-model access and per-app usage attribution remain pending live account proof.
+The pinned runtime and its automated compatibility check establish the native parser/auth contract. Partner consent, eligible-model access and per-app usage attribution still require the account-owned checks above.

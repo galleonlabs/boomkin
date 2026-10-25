@@ -457,40 +457,6 @@
       "documentedEndpoint": "https://mcp.morpho.org/"
     },
     {
-      "id": "fluid",
-      "name": "Fluid Skill",
-      "provider": "Fluid",
-      "listedInDirectory": true,
-      "listedCapabilities": [
-        "DeFi"
-      ],
-      "listedInterfaces": [
-        "Skill"
-      ],
-      "summary": "Keep unavailable status; use official Fluid resolver docs only after current deployment/ABI verification.",
-      "sources": [
-        "https://fluid.io/skill.md"
-      ],
-      "review": {
-        "status": "directory-listed",
-        "checkedOn": "2026-10-08",
-        "notes": "Fluid linked skill returns HTTP200 Page not found, including alternate uppercase URL. No reliable skill body retrieved; directory claim cannot establish RPC resolver contracts."
-      },
-      "access": {
-        "kind": "unknown",
-        "requirements": "Fluid linked skill returns HTTP200 Page not found, including alternate uppercase URL. No reliable skill body retrieved; directory claim cannot establish RPC resolver contracts."
-      },
-      "cost": "unknown",
-      "authority": "unknown",
-      "integration": {
-        "kind": "reference",
-        "defaultEnabled": false,
-        "policy": "no-connection"
-      },
-      "provenance": "unverified",
-      "directoryId": 13
-    },
-    {
       "id": "pendle",
       "name": "Pendle AI",
       "provider": "Pendle",

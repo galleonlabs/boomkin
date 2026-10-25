@@ -24,7 +24,7 @@ bun run build
 
 | Change | Additional validation |
 | --- | --- |
-| Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates and independent pack selection. Pull requests that touch those paths run the same Harness compatibility job |
+| Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates and independent pack selection. CI runs the same smoke check on trusted pull requests |
 | Catalog pin authenticity | `bun scripts/catalog-freshness.ts --verify` checks each pin against upstream `galleon-*-skills@*` release tags. Pull requests that touch `catalog/**` run this job |
 | Native Hermes integration | `python3 scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes`; CI exercises the reviewed runtime |
 | Local desk | `bun run build`; `bun run boomkin desk --no-open --directory /absolute/test/profile`; inspect first use, all three jobs, sources, exports, cancel/restart and desktop/mobile behavior |
@@ -37,7 +37,7 @@ The native smoke uses a temporary profile and local mock MCP. Its optional `--pu
 
 Update [catalog/skills.json](catalog/skills.json) with the published npm identity and version, immutable monorepo source revision, package path and expected skills. Follow the existing entries, including the foundation packs' distinct package and skill names.
 
-A catalog pin change is verified by two pull-request checks. Harness compatibility runs `bun run smoke` against the proposed catalog; a mis-pinned version, nonexistent revision, or skill list that does not match the installed set fails the pull request rather than a consumer's `boomkin update`. Catalog freshness `--verify` additionally requires each pinned `(package, version)` to be a published upstream release tag whose commit equals the pinned revision. Confirm the public release exists. A newer upstream tag is reported by the scheduled freshness job; it does not rewrite the catalog. Repinning remains a reviewed change. Packs need an open-source license, valid Agent Skills files, self-contained references, documented prerequisites and explicit limits on financial actions. Keep each pack independently selectable.
+A catalog pin change is verified by two pull-request checks. CI runs `bun run smoke` against the proposed catalog; a mis-pinned version, nonexistent revision, or skill list that does not match the installed set fails the pull request rather than a consumer's `boomkin update`. Catalog freshness `--verify` additionally requires each pinned `(package, version)` to be a published upstream release tag whose commit equals the pinned revision. Confirm the public release exists. A newer upstream tag is reported by the scheduled freshness job; it does not rewrite the catalog. Repinning remains a reviewed change. Packs need an open-source license, valid Agent Skills files, self-contained references, documented prerequisites and explicit limits on financial actions. Keep each pack independently selectable.
 
 ## Add a provider or harness
 
