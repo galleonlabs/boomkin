@@ -57,6 +57,9 @@ jobs:
         id: python
         with:
           python-version: "3.14"
+      - uses: astral-sh/setup-uv@v10.3.2
+        with:
+          version: "0.13.4"
       - name: Install pinned upstream in an isolated temporary directory
         env:
           PYTHON: ${{ steps.python.outputs.python-path }}
@@ -70,8 +73,7 @@ jobs:
           test -n "$hermes_commit"
           git -C "$native_dir/upstream" fetch --depth=1 origin "$hermes_commit"
           git -C "$native_dir/upstream" checkout --detach FETCH_HEAD
-          "$PYTHON" -m venv "$native_dir/venv"
-          "$native_dir/venv/bin/pip" install --disable-pip-version-check -e "$native_dir/upstream[mcp]"
+          UV_PROJECT_ENVIRONMENT="$native_dir/venv" uv sync --project "$native_dir/upstream" --frozen --extra mcp --no-dev --python "$PYTHON"
           "$native_dir/venv/bin/python" scripts/hermes-native-smoke.py --hermes "$native_dir/venv/bin/hermes"
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}

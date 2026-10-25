@@ -59,7 +59,7 @@ await createProject(root, { name: "native-review", workflow: "aave-health", inpu
 const preview = await runProject(root, "native-review", { dryRun: true });
 if (!preview.prompt.includes("Use galleon-aave-position") || preview.run) throw new Error("Project dry run contract failed");'''], cwd=repo)
     # Exercise the real published corpus through native progressive disclosure.
-    run([bun, "src/cli.ts", "setup", "--harness", "hermes", "--directory", str(root)], cwd=repo)
+    run([bun, "src/cli.ts", "setup", "--harness", "hermes", "--directory", str(root), "--offline-catalog"], cwd=repo)
     expected = [skill for pack in json.loads((repo / "catalog/skills.json").read_text())["packs"] for skill in pack["skills"]]
     (root / "expected-skills.json").write_text(json.dumps(expected))
     run([str(python), "-c", '''
