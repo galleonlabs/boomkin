@@ -142,5 +142,11 @@ test("core CI covers catalog installation while native compatibility follows int
   expect(workflow.on.pull_request_target?.paths).toContain("scripts/hermes-native-smoke.py");
   const ci = parseYaml(await readFile(new URL("../.github/workflows/ci.yml", import.meta.url), "utf8"));
   expect(ci.on.pull_request_target).toBeNull();
-  expect(ci.jobs.check.steps.some((step: { run?: string }) => step.run === "bun run smoke")).toBe(true);
+  const runs = ci.jobs.check.steps.map((step: { run?: string }) => step.run);
+  for (const journey of ["bun run check", "bun run build", "bun run smoke", "bun run build:site", "bun run check:site"]) expect(runs).toContain(journey);
+  const scripts = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8")).scripts;
+  expect(scripts.check).toBe("bun run typecheck && bun run test:gate");
+  for (const path of scripts["test:gate"].split(" ").filter((part: string) => part.endsWith(".test.ts"))) {
+    expect(await Bun.file(new URL(`../${path}`, import.meta.url)).exists()).toBe(true);
+  }
 });

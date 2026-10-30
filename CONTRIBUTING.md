@@ -18,9 +18,12 @@ Use Bun 1.3.12 and Git:
 git clone https://github.com/galleonlabs/boomkin.git
 cd boomkin
 bun install --frozen-lockfile
-bun run check
-bun run build
+bun run gate
 ```
+
+`bun run gate` is the required CI gate: typecheck, the boundary tests in `test:gate`, build, the clean-install smoke, and the website build and link check. `test:gate` holds only tests for catalog validation, source pins, copied-file integrity, network and interrupted-install failure paths, credential and financial-authority boundaries, the local desk API and the CI workflow. `bun run test` runs every file in `test/` and is optional.
+
+Cover new behaviour with the user journey it changes: extend `scripts/smoke.ts` for install, update and selection, or `scripts/check-site.ts` for the website. Add a contract test to `test:gate` only for a new trust, integrity or failure boundary, and include its failure path. Avoid unit tests for internal details.
 
 | Change | Additional validation |
 | --- | --- |
@@ -49,7 +52,7 @@ Use fixtures or temporary profiles to exercise failures without real credentials
 
 ## Send a pull request
 
-Describe the user-visible change, why it is needed and the checks you ran. For a bug, include a small reproduction and expected behavior. Add regression coverage when behavior or a failure boundary changes; documentation fixes need proportionate checks.
+Describe the user-visible change, why it is needed and the checks you ran. For a bug, include a small reproduction and expected behavior. Add journey or contract coverage when behavior or a failure boundary changes; documentation fixes need proportionate checks.
 
 Keep secrets, private profiles and generated artifacts out of commits. Report vulnerabilities through the [security policy](SECURITY.md), rather than a public issue.
 

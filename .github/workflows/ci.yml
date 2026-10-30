@@ -40,6 +40,8 @@ jobs:
       - run: bun run check
       - run: bun run build
       - run: bun run smoke
+      - run: bun run build:site
+      - run: bun run check:site
     if: github.event_name != 'pull_request_target' || github.event.pull_request.head.repo.full_name == github.repository
     timeout-minutes: 15
 concurrency:

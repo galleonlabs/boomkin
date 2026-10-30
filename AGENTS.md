@@ -1,7 +1,7 @@
 # Boomkin
 
 Boomkin is a Hermes-first DeFi agent onboarding product with independently published Galleon skill packs across DeFi primitives. Other harness adapters preserve existing skill-only installations.
-Use TypeScript and Bun. Run `bun run check` and `bun run build` before shipping.
+Use TypeScript and Bun. Run `bun run gate` before shipping: typecheck, the boundary tests, build, the clean-install smoke and the website build and check. CI's required `check` job runs the same steps.
 
 For product usage or an agent task, start with [README.md](README.md) and [docs/AGENT-INDEX.md](docs/AGENT-INDEX.md). The index routes setup, workflows, providers, evidence and recovery to their focused guides. `llms.txt` provides repository-wide discovery; this file owns contributor instructions.
 
@@ -9,7 +9,7 @@ For product usage or an agent task, start with [README.md](README.md) and [docs/
 
 | Task | Start here |
 | --- | --- |
-| CLI arguments and command dispatch | `src/cli.ts`; focused regressions in `test/` |
+| CLI arguments and command dispatch | `src/cli.ts`; cover new behaviour through `scripts/smoke.ts` or a contract test in `test/`, not another unit test |
 | Local desk UI, captures and native browser setup | `desk/`, `src/desk.ts`, `src/desk-launch.ts`, `src/desk-model.ts`; `docs/DESK.md` |
 | Profiles, model setup and provider connections | `src/onboarding.ts`, `src/hermes.ts`; `docs/CONNECTIONS.md` and `docs/CHATGPT.md` |
 | Provider discovery, cost/authority metadata and public MCP probes | `catalog/providers.json`, `src/provider-catalog.ts`, `src/mcp-discovery.ts`; `docs/PROVIDERS.md` |
@@ -29,7 +29,7 @@ For product usage or an agent task, start with [README.md](README.md) and [docs/
 - Preserve user instructions and harness configuration. Keep every command scoped to its selected workspace.
 - Harness support requires a documented upstream discovery path and a clean-directory installation smoke test.
 - Be precise: installing skills is not proof of a live model, connected wallet, or deployed service.
-- Test failure paths for network failures, malformed catalogs, and interrupted installs.
+- Test failure paths for network failures, malformed catalogs, and interrupted installs. These boundary tests stay in `test:gate`; other `test/` files run only in the optional `bun run test` suite.
 
 - Use native Hermes setup, profiles, SOUL, MCP, model authentication and agent loop. No runtime fork.
 - Keep default data connections keyless; optional provider OAuth, wallet credentials and spending choices stay explicit.
