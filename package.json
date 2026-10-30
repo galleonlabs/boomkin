@@ -8,8 +8,10 @@
   "scripts": {
     "boomkin": "bun src/cli.ts",
     "test": "bun test test",
+    "test:gate": "bun test ./test/core.test.ts ./test/source.test.ts ./test/integrity.test.ts ./test/state.test.ts ./test/catalog-freshness.test.ts ./test/hermes.test.ts ./test/chatgpt.test.ts ./test/providers.test.ts ./test/mcp-discovery.test.ts ./test/onboarding.test.ts ./test/templates.test.ts ./test/desk.test.ts ./test/docs-code.test.ts ./test/distribution.test.ts",
     "typecheck": "tsc --noEmit",
-    "check": "bun run typecheck && bun run test",
+    "check": "bun run typecheck && bun run test:gate",
+    "gate": "bun run check && bun run build && bun run smoke && bun run build:site && bun run check:site",
     "build": "bun scripts/build.ts",
     "smoke": "bun scripts/smoke.ts",
     "build:site": "bun scripts/build-site.ts",
