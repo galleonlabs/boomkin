@@ -12,6 +12,8 @@ The browser demo needs no installation. Choose a research rule, compare held-out
 
 Only want the skills inside Claude Code, Codex, Cursor or another agent you already use? Install them from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
 
+[Prepare a first task for your agent](https://galleonlabs.github.io/boomkin/#agent-start): choose a workflow and client, add your public research inputs, then copy a source-pinned setup prompt or download the research brief. Your agent confirms skill discovery and returns the evidence; installation alone is not a completed result.
+
 **63 workflows · 59 providers in discovery · 17 independent packs · 81 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
