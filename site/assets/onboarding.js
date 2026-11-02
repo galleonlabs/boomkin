@@ -64,11 +64,18 @@ async function initOnboarding() {
     for (const workflow of data.workflows) reviewedPack(workflow, data.packs);
     if (!data.workflows.length) throw new Error('empty_catalog');
     const taskSelect = node('agent-workflow');
+    const groups = new Map();
     for (const workflow of data.workflows) {
+      if (!groups.has(workflow.protocol)) {
+        const group = document.createElement('optgroup');
+        group.label = workflow.protocol;
+        groups.set(workflow.protocol, group);
+        taskSelect.append(group);
+      }
       const option = document.createElement('option');
       option.value = workflow.id;
-      option.textContent = `${workflow.protocol} — ${workflow.title}`;
-      taskSelect.append(option);
+      option.textContent = workflow.title;
+      groups.get(workflow.protocol).append(option);
     }
     const requested = new URLSearchParams(location.search).get('workflow');
     taskSelect.value = data.workflows.find(item => item.id === requested)?.id
@@ -89,7 +96,7 @@ async function initOnboarding() {
       node('agent-command').textContent = brief.installCommand;
       node('agent-prompt').textContent = brief.onboardingPrompt;
       node('agent-source').href = brief.pack.source;
-      node('agent-pack').textContent = `Reviewed v${brief.pack.version}`;
+      node('agent-pack').textContent = `${brief.pack.name} v${brief.pack.version}`;
     }
     function chooseTask() {
       const workflow = selected();

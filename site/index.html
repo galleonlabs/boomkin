@@ -16,48 +16,43 @@
   <header class="header"><a class="wordmark" href="@@BASE@@" aria-label="Boomkin home">boomkin<span class="brand-mark" aria-hidden="true"></span></a><nav aria-label="Main navigation"><a href="#workflows">Workflows</a><a href="@@BASE@@lab/">Strategy lab</a><a href="@@BASE@@docs/">Docs</a><a class="nav-source" href="https://github.com/galleonlabs/boomkin">GitHub <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8"/></svg></a></nav></header>
   <main id="main">
     <section class="hero wrap">
-      <h1>DeFi research.<br><span>On your computer.</span></h1>
-      <p class="hero-copy">Research assets, review wallet costs and test strategies.<br>Sources and run history stay on your computer.</p>
+      <h1>A DeFi research desk<br><span>for your agent.</span></h1>
+      <p class="hero-copy">Reviewed skills for wallet costs, market evidence and strategy tests, in the agent you already use. Sources and run history stay on your computer.</p>
       <div class="hero-actions"><a class="button primary" href="#agent-start">Use with your agent <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a><a class="button secondary" href="#start">Get the local desk</a></div>
       <a class="hero-lab text-link" href="@@BASE@@lab/">Try the strategy lab in your browser <span aria-hidden="true">↗</span></a>
       <div class="desk" aria-label="Explore a Boomkin workflow">
         <div class="desk-bar"><span class="desk-title">boomkin / workbench</span><span class="desk-hint">Choose a job to see the workflow</span><a href="@@BASE@@docs/projects/" aria-label="Read about projects"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"/></svg></a></div>
         <div class="desk-body">
           <div class="desk-menu" role="tablist" aria-label="Workflow"><button role="tab" aria-selected="true" aria-controls="desk-panel" id="tab-research" data-demo="research">Research an asset</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-wallet" tabindex="-1" data-demo="wallet">Review a wallet</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-strategy" tabindex="-1" data-demo="strategy">Test a strategy</button><div class="desk-native"><span>Native research</span><strong>Hermes · optional</strong><span>Skills &amp; source</span><strong>Galleon · MIT</strong></div></div>
-          <div class="desk-content" id="desk-panel" role="tabpanel" aria-labelledby="tab-research" tabindex="0"><div class="prompt"><span>You</span><p id="demo-question">Resolve ETH, check the market and save the sources I can review.</p></div><div class="response"><div class="agent-label"><span class="brand-mark" aria-hidden="true"></span> Boomkin <span>Workflow preview</span></div><h2 id="demo-heading">Start with the asset. Keep the evidence.</h2><p id="demo-description">Resolve the CoinGecko ID, retrieve public prices and record source timestamps. Missing or stale fields stay visible.</p><div class="evidence-list" id="demo-evidence"><div><span>Identity</span><strong>ethereum · USD</strong></div><div><span>Market data</span><strong>CoinGecko public API</strong></div><div><span>Deliverable</span><strong>Timestamped evidence bundle</strong></div></div><div class="desk-command"><code id="demo-command">boomkin desk</code><button class="copy icon-button" aria-label="Copy workflow command" data-copy-target="demo-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div></div></div>
+          <div class="desk-content" id="desk-panel" role="tabpanel" aria-labelledby="tab-research" tabindex="0"><div class="prompt"><span>You</span><p id="demo-question">Resolve ETH, check the market and save the sources I can review.</p></div><div class="response"><div class="agent-label"><span class="brand-mark" aria-hidden="true"></span> Boomkin <span>Workflow preview</span></div><h2 id="demo-heading">Resolve the asset and save the evidence.</h2><p id="demo-description">Resolve the CoinGecko ID, retrieve public prices and record source timestamps. Missing or stale fields stay visible.</p><div class="evidence-list" id="demo-evidence"><div><span>Identity</span><strong>ethereum · USD</strong></div><div><span>Market data</span><strong>CoinGecko public API</strong></div><div><span>Deliverable</span><strong>Timestamped evidence bundle</strong></div></div><div class="desk-command"><code id="demo-command">boomkin desk</code><button class="copy icon-button" aria-label="Copy workflow command" data-copy-target="demo-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div></div></div>
         </div>
         <div class="desk-foot"><span>Research and review first. Financial actions use your provider and your authorization.</span><a href="@@BASE@@docs/connections/">How tools connect <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
     <section class="agent-section wrap" id="agent-start" aria-labelledby="agent-heading">
       <div class="agent-intro">
-        <p class="section-kicker">Bring the agent you already use</p>
-        <h2 id="agent-heading">One task.<br>Your agent.<br><span>The evidence.</span></h2>
-        <p>Choose a research job. Get the reviewed skill and a brief your agent can work from.</p>
-        <ol class="agent-steps"><li><span>01</span> Pick the question</li><li><span>02</span> Prepare your agent</li><li><span>03</span> Inspect the result</li></ol>
+        <h2 id="agent-heading">Give it one research task.</h2>
+        <p>Choose the question and your agent, then paste the prompt. Your agent installs the reviewed skill, confirms it can find it, and returns sources with their coverage limits.</p>
         <a class="text-link" href="@@BASE@@docs/harnesses/">How skills fit your agent <span aria-hidden="true">↗</span></a>
       </div>
       <div class="agent-builder" data-region="agent-builder">
         <p id="agent-builder-status" role="status">Loading reviewed workflow choices…</p>
         <div id="agent-builder-content" hidden>
           <div class="agent-choices">
-            <label for="agent-workflow">Your task<select id="agent-workflow"></select></label>
-            <label for="agent-client">Your agent<select id="agent-client"><option value="codex">Codex</option><option value="claude-code">Claude Code</option><option value="cursor">Cursor</option><option value="gemini-cli">Gemini CLI</option></select></label>
+            <label for="agent-workflow">Task<select id="agent-workflow"></select></label>
+            <label for="agent-client">Agent<select id="agent-client"><option value="codex">Codex</option><option value="claude-code">Claude Code</option><option value="cursor">Cursor</option><option value="gemini-cli">Gemini CLI</option></select></label>
           </div>
           <h3 id="agent-task-title" class="agent-task-title"></h3><p id="agent-outcome" class="agent-outcome"></p>
-          <details class="agent-input-details"><summary>Add your research details <span>Optional</span></summary><p>Public addresses and research questions only. Keep keys and private records out of this page.</p><div id="agent-inputs"></div></details>
-          <div class="agent-install">
-            <div class="agent-step-heading"><h3>Install the reviewed skill</h3><button class="copy text-button" data-copy-target="agent-command">Copy command</button></div>
-            <pre tabindex="0"><code id="agent-command"></code></pre>
-            <p>Run in the project where you use your agent. Review the source before adding the skill.</p>
-            <a id="agent-source" class="agent-source" href="https://github.com/galleonlabs/crypto-defi-skills">Read the exact skill source <span aria-hidden="true">↗</span></a>
-          </div>
-          <div class="agent-result">
-            <div class="agent-step-heading"><h3>Ask for the first result</h3><span id="agent-pack"></span></div>
-            <p id="agent-access" class="agent-access"></p>
-            <details class="agent-prompt-details"><summary>Read the setup prompt</summary><pre id="agent-prompt" tabindex="0"></pre></details>
-            <div class="agent-builder-actions"><button class="button primary copy" data-copy-target="agent-prompt" data-copy-kind="prompt">Copy setup prompt</button><button class="text-button" id="agent-download">Download research brief</button></div>
-            <p class="agent-finish">Your agent should confirm skill discovery, make the supported reads and return sources with coverage limits. Missing access stays explicit.</p>
+          <div class="agent-builder-actions"><button class="button primary copy" data-copy-target="agent-prompt" data-copy-kind="prompt">Copy setup prompt</button><button class="button secondary" id="agent-download">Download brief</button></div>
+          <p id="agent-access" class="agent-access"></p>
+          <div class="agent-disclosures">
+            <details class="agent-input-details"><summary>Add your research details</summary><p>Public addresses and research questions only. Keep keys and private records out of this page.</p><div id="agent-inputs"></div></details>
+            <details class="agent-prompt-details"><summary>Read the prompt</summary><pre id="agent-prompt" tabindex="0"></pre></details>
+            <details class="agent-install"><summary>Install the skill yourself</summary>
+              <pre tabindex="0"><code id="agent-command"></code></pre>
+              <div class="agent-install-actions"><button class="copy text-button" data-copy-target="agent-command">Copy command</button><a id="agent-source" class="agent-source" href="https://github.com/galleonlabs/crypto-defi-skills">Read the skill source <span aria-hidden="true">↗</span></a><span id="agent-pack"></span></div>
+              <p>Run it in the project where you use your agent.</p>
+            </details>
           </div>
         </div>
         <noscript><p>Read a workflow and its requirements in the <a href="@@BASE@@docs/workflows/">workflow guide</a>, then use the <a href="@@BASE@@docs/harnesses/">agent setup guide</a>.</p></noscript>
