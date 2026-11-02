@@ -22,3 +22,13 @@ Charts and metrics identify their asset, units, source, observation/retrieval ti
 Use labeled native controls, visible focus, landmarks and a coherent heading order. Preserve the workbench's keyboard tabs, workflow selection state, live progress and manual copy fallback. Respect reduced motion. Commands, tables and long source identities scroll or wrap inside their content area; mobile pages must not widen to fit them.
 
 After changing UI, inspect affected desktop and mobile views, keyboard travel and error/empty states. Run the native checks and verify the serving revision using [docs/WEBSITE.md](docs/WEBSITE.md). Current rendered behavior is the acceptance surface; old captures are not a separate design authority.
+
+## Existing-agent onboarding
+
+Refine the current identity in Persuade mode, with an Operate-style research brief. The visitor already has an agent and needs a single useful task, its exact reviewed skill, requirements and a first-result prompt.
+
+Use charcoal `#111214` as the canvas, panel `#191a1c`, pale paper `#f3f4ef`, foreground `#f4f5f1`, muted `#a5a8ac`, and acid yellow `#e7f06a` for the next action. Manrope remains the only text face; monospace is reserved for executable commands and the copied prompt. The one bold element is the task-to-evidence brief, not a new decorative illustration.
+
+Desktop: a short left-aligned introduction and three task steps sit beside the working brief. Mobile: the introduction leads into one full-width task/client form, then exact install, prompt and download. Native controls stay at least 16px. Task-specific details are optional and preserved when switching between workflows. No personal input leaves the browser; the downloaded JSON is an agent research brief, not a CLI job input schema.
+
+The source revision, skill version and public access requirements come from the same catalogue as the workflow explorer. First use means the agent discovers the skill and returns an evidenced result; copied instructions alone are not success. Reuse existing charcoal/paper contrast rather than introduce a second palette, font or component system.

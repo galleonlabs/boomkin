@@ -23,7 +23,10 @@ document.addEventListener('click', async event => {
     await navigator.clipboard.writeText(exact ? target.textContent : target.textContent.trim());
     toast('Copied to clipboard');
   } catch {
-    toast(`Could not copy. Select the ${exact ? 'code' : 'command'} and copy it from the page.`);
+    const disclosure = target.closest?.('details');
+    if (disclosure) disclosure.open = true;
+    const kind = button.dataset.copyKind ?? (exact ? 'code' : 'command');
+    toast(`Could not copy. Select the ${kind} and copy it from the page.`);
   } finally {
     button.disabled = false;
     if (label) label.textContent = 'Copy';
@@ -92,7 +95,7 @@ async function initCatalog() {
         <h4>What you bring</h4><ul>${workflow.inputs.map(input=>`<li>${escape(input)}</li>`).join('')}</ul>
         <h4>Prepare in Boomkin</h4><div class="desk-command"><code id="workflow-command">boomkin onboard --workflow ${escape(workflow.id)}</code><button class="copy icon-button" aria-label="Copy installation command" data-copy-target="workflow-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div>
         <details class="skill-install"><summary>Use in an agent you already have</summary><div class="desk-command"><code id="skill-command">npx skills add galleonlabs/crypto-defi-skills --skill ${escape(workflow.skill)}</code><button class="copy icon-button" aria-label="Copy skill install command" data-copy-target="skill-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div><p>Installs from the skill library’s current main branch. The skill link above shows the exact release reviewed by Boomkin.</p></details>
-        <p class="detail-access">${escape(workflow.access)}</p><div class="detail-links"><a href="${new URL('docs/workflows/',base)}">Workflow guide</a><a href="${escape(permalink.href)}">Link to this workflow</a></div>`;
+        <p class="detail-access">${escape(workflow.access)}</p><a class="agent-workflow-link" href="#agent-start" data-agent-workflow="${escape(workflow.id)}">Prepare this task with your agent ${arrow}</a><div class="detail-links"><a href="${new URL('docs/workflows/',base)}">Workflow guide</a><a href="${escape(permalink.href)}">Link to this workflow</a></div>`;
     }
     function renderWorkflows() {
       const matches=filterWorkflows(data.workflows,byId('workflow-search')?.value??'');
