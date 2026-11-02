@@ -9,6 +9,8 @@ Boomkin is a local DeFi research desk. Keep the question, inputs, evidence and n
 - Documentation layout and code controls: `scripts/build-site.ts` and `scripts/docs-code.ts`.
 - Workflow and pack content: `catalog/`; regenerate [the workflow guide](docs/WORKFLOWS.md) after catalog changes.
 
+Nothing renders under 12px. Headings state the job plainly; no kicker labels, numbered step decoration or staged fragment headlines.
+
 Use the existing charcoal, pale paper, acid-yellow actions, Manrope typography and ruled rows. Reuse nearby CSS variables and layout primitives; concrete values live in the stylesheets. Preserve the self-hosted font's SIL license. Use spacing and alignment before adding containers or decoration.
 
 ## Interaction and evidence
@@ -29,6 +31,6 @@ Refine the current identity in Persuade mode, with an Operate-style research bri
 
 Use charcoal `#111214` as the canvas, panel `#191a1c`, pale paper `#f3f4ef`, foreground `#f4f5f1`, muted `#a5a8ac`, and acid yellow `#e7f06a` for the next action. Manrope remains the only text face; monospace is reserved for executable commands and the copied prompt. The one bold element is the task-to-evidence brief, not a new decorative illustration.
 
-Desktop: a short left-aligned introduction and three task steps sit beside the working brief. Mobile: the introduction leads into one full-width task/client form, then exact install, prompt and download. Native controls stay at least 16px. Task-specific details are optional and preserved when switching between workflows. No personal input leaves the browser; the downloaded JSON is an agent research brief, not a CLI job input schema.
+Desktop: a short left-aligned introduction sits beside the working brief. Mobile: the introduction leads into one full-width task/agent form. The copied prompt is the primary action directly under the task outcome; research details, the prompt text and the manual install command are disclosures below it. Commands scroll inside their block rather than breaking a URL. Native controls stay at least 16px. Task-specific details are optional and preserved when switching between workflows. No personal input leaves the browser; the downloaded JSON is an agent research brief, not a CLI job input schema.
 
 The source revision, skill version and public access requirements come from the same catalogue as the workflow explorer. First use means the agent discovers the skill and returns an evidenced result; copied instructions alone are not success. Reuse existing charcoal/paper contrast rather than introduce a second palette, font or component system.
