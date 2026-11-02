@@ -95,3 +95,18 @@ button,[role=button],summary{user-select:none;-webkit-user-select:none}
   .footer>div a,.footer .wordmark,.section-bottom a,.start-section .text-link{display:inline-flex;align-items:center;min-height:44px}
   .install-block .copy{min-height:44px}
 }
+.hero-agent{display:grid;grid-template-columns:minmax(0,.86fr) minmax(0,1fr);gap:64px;align-items:start;text-align:left;margin-bottom:88px}
+.hero-intro{padding-top:12px}
+.hero-intro h1{font-size:clamp(44px,5vw,68px);line-height:1.04;text-wrap:balance}
+.hero-agent .hero-copy{margin:24px 0 0;max-width:30em;font-size:17px;line-height:1.65;text-wrap:pretty}
+.hero-links{display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;margin-top:32px}
+.hero-links .hero-lab{margin-top:0}
+.hero-note{margin-top:24px;font-size:13px;line-height:1.6;color:var(--muted);text-wrap:pretty}
+.hero-note a{color:var(--fg);text-decoration:underline;white-space:nowrap}
+.agent-builder{scroll-margin-top:24px}
+.agent-choices{grid-template-columns:minmax(0,1fr)}
+.agent-outcome{margin-top:20px}
+#workflow-search{font-size:16px}
+@media(max-width:1050px){.hero-agent{gap:32px}.agent-choices{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:900px){.hero-agent{grid-template-columns:minmax(0,1fr);gap:32px;margin-bottom:56px}.hero-intro{padding-top:0}}
+@media(max-width:760px){.hero-intro h1{font-size:40px}.hero-agent .hero-copy{font-size:15px}.agent-builder{margin-top:0}}
