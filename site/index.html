@@ -16,33 +16,21 @@
   <header class="header"><a class="wordmark" href="@@BASE@@" aria-label="Boomkin home">boomkin<span class="brand-mark" aria-hidden="true"></span></a><nav aria-label="Main navigation"><a href="#workflows">Workflows</a><a href="@@BASE@@lab/">Strategy lab</a><a href="@@BASE@@docs/">Docs</a><a class="nav-source" href="https://github.com/galleonlabs/boomkin">GitHub <svg aria-hidden="true" viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8"/></svg></a></nav></header>
   <main id="main">
     <section class="hero wrap">
-      <h1>A DeFi research desk<br><span>for your agent.</span></h1>
-      <p class="hero-copy">Reviewed skills for wallet costs, market evidence and strategy tests, in the agent you already use. Sources and run history stay on your computer.</p>
-      <div class="hero-actions"><a class="button primary" href="#agent-start">Use with your agent <svg aria-hidden="true" viewBox="0 0 20 20"><path d="M4 10h12m-5-5 5 5-5 5"/></svg></a><a class="button secondary" href="#start">Get the local desk</a></div>
-      <a class="hero-lab text-link" href="@@BASE@@lab/">Try the strategy lab in your browser <span aria-hidden="true">↗</span></a>
-      <div class="desk" aria-label="Explore a Boomkin workflow">
-        <div class="desk-bar"><span class="desk-title">boomkin / workbench</span><span class="desk-hint">Choose a job to see the workflow</span><a href="@@BASE@@docs/projects/" aria-label="Read about projects"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"/></svg></a></div>
-        <div class="desk-body">
-          <div class="desk-menu" role="tablist" aria-label="Workflow"><button role="tab" aria-selected="true" aria-controls="desk-panel" id="tab-research" data-demo="research">Research an asset</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-wallet" tabindex="-1" data-demo="wallet">Review a wallet</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-strategy" tabindex="-1" data-demo="strategy">Test a strategy</button><div class="desk-native"><span>Native research</span><strong>Hermes · optional</strong><span>Skills &amp; source</span><strong>Galleon · MIT</strong></div></div>
-          <div class="desk-content" id="desk-panel" role="tabpanel" aria-labelledby="tab-research" tabindex="0"><div class="prompt"><span>You</span><p id="demo-question">Resolve ETH, check the market and save the sources I can review.</p></div><div class="response"><div class="agent-label"><span class="brand-mark" aria-hidden="true"></span> Boomkin <span>Workflow preview</span></div><h2 id="demo-heading">Resolve the asset and save the evidence.</h2><p id="demo-description">Resolve the CoinGecko ID, retrieve public prices and record source timestamps. Missing or stale fields stay visible.</p><div class="evidence-list" id="demo-evidence"><div><span>Identity</span><strong>ethereum · USD</strong></div><div><span>Market data</span><strong>CoinGecko public API</strong></div><div><span>Deliverable</span><strong>Timestamped evidence bundle</strong></div></div><div class="desk-command"><code id="demo-command">boomkin desk</code><button class="copy icon-button" aria-label="Copy workflow command" data-copy-target="demo-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div></div></div>
+      <div class="hero-agent">
+        <div class="hero-intro">
+          <h1>A DeFi research desk for your agent.</h1>
+          <p class="hero-copy">Reviewed skills for wallet costs, market evidence and strategy tests, in the agent you already use. Pick a task, paste the prompt and get back sources with their coverage limits.</p>
+          <div class="hero-links"><a class="button secondary" href="#start">Get the local desk</a><a class="hero-lab text-link" href="@@BASE@@lab/">Try the strategy lab <span aria-hidden="true">↗</span></a></div>
+          <p class="hero-note">The desk keeps sources and run history on your computer. <a href="@@BASE@@docs/harnesses/">How skills fit your agent</a></p>
         </div>
-        <div class="desk-foot"><span>Research and review first. Financial actions use your provider and your authorization.</span><a href="@@BASE@@docs/connections/">How tools connect <span aria-hidden="true">↗</span></a></div>
-      </div>
-    </section>
-    <section class="agent-section wrap" id="agent-start" aria-labelledby="agent-heading">
-      <div class="agent-intro">
-        <h2 id="agent-heading">Give it one research task.</h2>
-        <p>Choose the question and your agent, then paste the prompt. Your agent installs the reviewed skill, confirms it can find it, and returns sources with their coverage limits.</p>
-        <a class="text-link" href="@@BASE@@docs/harnesses/">How skills fit your agent <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="agent-builder" data-region="agent-builder">
+      <div class="agent-builder" id="agent-start" data-region="agent-builder">
         <p id="agent-builder-status" role="status">Loading reviewed workflow choices…</p>
         <div id="agent-builder-content" hidden>
           <div class="agent-choices">
             <label for="agent-workflow">Task<select id="agent-workflow"></select></label>
             <label for="agent-client">Agent<select id="agent-client"><option value="codex">Codex</option><option value="claude-code">Claude Code</option><option value="cursor">Cursor</option><option value="gemini-cli">Gemini CLI</option></select></label>
           </div>
-          <h3 id="agent-task-title" class="agent-task-title"></h3><p id="agent-outcome" class="agent-outcome"></p>
+          <p id="agent-outcome" class="agent-outcome"></p>
           <div class="agent-builder-actions"><button class="button primary copy" data-copy-target="agent-prompt" data-copy-kind="prompt">Copy setup prompt</button><button class="button secondary" id="agent-download">Download brief</button></div>
           <p id="agent-access" class="agent-access"></p>
           <div class="agent-disclosures">
@@ -56,6 +44,15 @@
           </div>
         </div>
         <noscript><p>Read a workflow and its requirements in the <a href="@@BASE@@docs/workflows/">workflow guide</a>, then use the <a href="@@BASE@@docs/harnesses/">agent setup guide</a>.</p></noscript>
+      </div>
+      </div>
+      <div class="desk" aria-label="Explore a Boomkin workflow">
+        <div class="desk-bar"><span class="desk-title">boomkin / workbench</span><span class="desk-hint">Choose a job to see the workflow</span><a href="@@BASE@@docs/projects/" aria-label="Read about projects"><svg aria-hidden="true" viewBox="0 0 20 20"><path d="M5 15 15 5M5 5h10v10"/></svg></a></div>
+        <div class="desk-body">
+          <div class="desk-menu" role="tablist" aria-label="Workflow"><button role="tab" aria-selected="true" aria-controls="desk-panel" id="tab-research" data-demo="research">Research an asset</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-wallet" tabindex="-1" data-demo="wallet">Review a wallet</button><button role="tab" aria-selected="false" aria-controls="desk-panel" id="tab-strategy" tabindex="-1" data-demo="strategy">Test a strategy</button><div class="desk-native"><span>Native research</span><strong>Hermes · optional</strong><span>Skills &amp; source</span><strong>Galleon · MIT</strong></div></div>
+          <div class="desk-content" id="desk-panel" role="tabpanel" aria-labelledby="tab-research" tabindex="0"><div class="prompt"><span>You</span><p id="demo-question">Resolve ETH, check the market and save the sources I can review.</p></div><div class="response"><div class="agent-label"><span class="brand-mark" aria-hidden="true"></span> Boomkin <span>Workflow preview</span></div><h2 id="demo-heading">Resolve the asset and save the evidence.</h2><p id="demo-description">Resolve the CoinGecko ID, retrieve public prices and record source timestamps. Missing or stale fields stay visible.</p><div class="evidence-list" id="demo-evidence"><div><span>Identity</span><strong>ethereum · USD</strong></div><div><span>Market data</span><strong>CoinGecko public API</strong></div><div><span>Deliverable</span><strong>Timestamped evidence bundle</strong></div></div><div class="desk-command"><code id="demo-command">boomkin desk</code><button class="copy icon-button" aria-label="Copy workflow command" data-copy-target="demo-command"><svg aria-hidden="true" viewBox="0 0 20 20"><rect x="7" y="7" width="9" height="10" rx="1.5"/><path d="M12 7V3H3v9h4"/></svg></button></div></div></div>
+        </div>
+        <div class="desk-foot"><span>Research and review first. Financial actions use your provider and your authorization.</span><a href="@@BASE@@docs/connections/">How tools connect <span aria-hidden="true">↗</span></a></div>
       </div>
     </section>
     <section class="light-section" id="workflows"><div class="wrap">

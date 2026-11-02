@@ -68,8 +68,8 @@
         "Snapshot or daily-history request, with explicit observation limit",
         "Maximum acceptable age and any comparison provider"
       ],
-      "output": "Timestamped source observations and raw response hashes, stale/partial coverage, aligned discrepancies and a daily-history envelope when requested.",
-      "access": "Bounded public CoinGecko and documented public comparison reads; limits and outages remain explicit. Contract identities need the contract-aware token workflow."
+      "output": "Timestamped prices with raw response hashes, anything stale or missing, and where sources disagree. Daily history on request.",
+      "access": "Uses public CoinGecko and documented public comparison reads, and reports limits and outages. Token contracts need the contract-aware token workflow."
     },
     {
       "id": "strategy-backtest",

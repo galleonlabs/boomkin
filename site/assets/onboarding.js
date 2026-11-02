@@ -90,7 +90,6 @@ async function initOnboarding() {
     function updateOutput() {
       const workflow = selected();
       brief = researchBrief(workflow, data.packs, node('agent-client').value, valuesByWorkflow.get(workflow.id));
-      node('agent-task-title').textContent = workflow.title;
       node('agent-outcome').textContent = workflow.output;
       node('agent-access').textContent = workflow.access;
       node('agent-command').textContent = brief.installCommand;
