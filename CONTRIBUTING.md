@@ -50,6 +50,27 @@ Provider discovery can describe a sourced tool without making it a native connec
 
 Use fixtures or temporary profiles to exercise failures without real credentials. Preserve user instructions and unrelated settings. File installation, tool discovery, authenticated access and transaction execution are different outcomes; report only what the checks establish.
 
+## Publish to npm
+
+Source-only changes release by merge. A CLI, catalog, guide, desk or copied-resource change also needs a new `boomkin` version: bump `package.json` and every `boomkin@X.Y.Z` reference, date the changelog heading, merge to `main` and wait for CI on that commit. Then publish through the `publish.yml` workflow, which authenticates with npm trusted publishing and uses no npm token. It runs only from `main`, requires successful CI on the exact commit and refuses an existing version. Check first with the default dry run:
+
+```bash
+gh workflow run publish.yml -R galleonlabs/boomkin
+gh workflow run publish.yml -R galleonlabs/boomkin -f dry_run=false
+```
+
+Verify the registry `gitHead`, archive integrity and resources independently, then publish the GitHub release tag `v<version>` on that commit. npm can return 404 for about a minute after a publish.
+
+**First release under trusted publishing:** the owner creates the trusted publisher with 2FA, then the release must follow within 2 days, because npm expires a configuration that has not completed a publish by then. A 2FA-bypass token cannot do this. From the home directory, not the personal workspace, whose `.npmrc` would override the login:
+
+```bash
+U=$(mktemp); npm login --userconfig "$U" --auth-type=web && npm trust github boomkin --userconfig "$U" --repo galleonlabs/boomkin --file publish.yml --env npm-release --allow-publish --yes; rm -f "$U"
+```
+
+Once that release has landed, set the package's npm **Settings → Publishing access** to "Require two-factor authentication and disallow tokens".
+
+If Actions is unavailable, stage from a clean dappnode clone after `bun run build` with `npx -y npm@11.21.1 stage publish --access public --ignore-scripts`; it goes live only when the owner approves it with 2FA on npmjs.com. npm removes direct publishing by 2FA-bypass tokens around January 2027.
+
 ## Send a pull request
 
 Describe the user-visible change, why it is needed and the checks you ran. For a bug, include a small reproduction and expected behavior. Add journey or contract coverage when behavior or a failure boundary changes; documentation fixes need proportionate checks.
