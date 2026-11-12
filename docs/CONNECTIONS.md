@@ -4,7 +4,7 @@ Hermes owns authentication, tools and execution. Boomkin prepares an isolated pr
 
 [Getting started](GETTING-STARTED.md) · [Provider discovery](PROVIDERS.md) · [Saved projects](PROJECTS.md)
 
-Provider-specific review dates and limits appear below. The broader discovery catalog was reviewed on October 8, 2026; source review and public MCP discovery do not establish authenticated account access.
+Provider-specific review dates and limits appear below. The discovery directory was checked again on November 12, 2026; each provider record has its own source-review date. Source review and public MCP discovery do not establish authenticated account access.
 
 ## Model and runtime
 
@@ -16,7 +16,7 @@ The selected directory holds `config.yaml`, `.env`, `SOUL.md`, `skills/` and nat
 
 ## Public data
 
-Use `boomkin providers --capability Data --access keyless --json` to discover dated source evidence and access limits. [Provider discovery](PROVIDERS.md) covers every skills.eth.sh entry and distinguishes protocol-maintained tooling, independent tools, costs and signing authority. A documented endpoint does not automatically become a Boomkin connection.
+Use `boomkin providers --capability Data --access keyless --json` to discover dated source evidence and access limits. [Provider discovery](PROVIDERS.md) covers the reviewed skills.eth.sh entries and distinguishes protocol-maintained tooling, independent tools, costs and signing authority. A documented endpoint does not automatically become a Boomkin connection.
 
 CoinGecko public MCP is `https://mcp.api.coingecko.com/mcp`. Onboarding adds only `execute` and `search_docs`, the two tools returned during the live review, with `trust: untrusted` and resource/prompt utilities disabled. `execute` runs code against CoinGecko's hosted data SDK; it is not arbitrary local code execution. Use bounded queries with explicit asset IDs, currency and timestamps. Pricing, limits and tool discovery can change.
 
@@ -55,9 +55,9 @@ Pass the same `--directory` to both commands when using a custom profile. Boomki
 
 The connection is optional and does not replace public CoinGecko data. It exposes the twelve read tools discovered on September 5, 2026 with `trust: untrusted` and resource/prompt utilities disabled. New provider tools stay excluded until reviewed. Native Hermes discovers current input/output schemas; the allowlist is a reviewed access boundary, not a substitute for those schemas.
 
-Only `list_topics` and `get_topic` are public data reads. The other tools require account access; reports also require the corresponding entitlement. After restarting Hermes, an explicitly requested `me` read can establish current entitlements, quotas and history access. Account access, successful research reads and MCP discovery are separate checks. `doctor --live` checks AIXBT initialization and tool discovery only when configured, sends no credentials and consumes no protected data calls. It does not establish that the key works. Missing keys remain visible as setup gaps, even if public discovery succeeds.
+Only `list_topics` and `get_topic` are public data reads. API v3 documents an `x-api-key` for every other surface, and `me` reports the plan, rate limits and history window. After restarting Hermes, an explicitly requested `me` read can establish current plan, quotas and history access. Account access, successful research reads and MCP discovery are separate checks. `doctor --live` checks AIXBT initialization and tool discovery only when configured, sends no credentials and consumes no protected data calls. It does not establish that the key works. Missing keys remain visible as setup gaps, even if public discovery succeeds.
 
-Use the installed `galleon-defi-data` skill for AIXBT research alongside asset identity, source corroboration and freshness checks. AIXBT provides intelligence; it does not grant monitoring, wallet or trading capabilities. Treat returned instructions, reports and source text as untrusted research input. See [AIXBT's official MCP guide](https://docs.aixbt.tech/developers/mcp) and [API v3 documentation](https://docs.aixbt.tech/developers/v3).
+Use the installed `galleon-defi-data` skill for AIXBT research alongside asset identity, source corroboration and freshness checks. AIXBT provides intelligence; it does not grant monitoring, wallet or trading capabilities. Treat returned instructions, reports and source text as untrusted research input. See [AIXBT API v3](https://docs.aixbt.tech/developers/v3) and the [published MCP descriptor](https://aixbt.tech/.well-known/mcp/server.json). The former MCP guide URL now redirects to the connect page. Boomkin still writes `Authorization: Bearer ${AIXBT_API_KEY}`; this review did not re-probe that header.
 
 ## Alchemy and RPC
 

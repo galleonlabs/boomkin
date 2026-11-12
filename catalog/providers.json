@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "directory": "https://skills.eth.sh/",
-  "checkedOn": "2026-10-08",
+  "checkedOn": "2026-11-12",
   "providers": [
     {
       "id": "polymarket",
@@ -41,7 +41,7 @@
     {
       "id": "hyperliquid-cli",
       "name": "Hyperliquid CLI",
-      "provider": "hypurrclaw",
+      "provider": "hypurr-inc",
       "listedInDirectory": true,
       "listedCapabilities": [
         "Trading",
@@ -53,16 +53,16 @@
       ],
       "summary": "Keep official SDK preferred; document optional version-pinned CLI plus schema and API-wallet boundary.",
       "sources": [
-        "https://github.com/hypurrclaw/hyperliquid-cli"
+        "https://github.com/hypurr-inc/hyperliquid-cli"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "hypurrclaw is independent of Hyperliquid. OWS encrypted keystore, schemas, dry-run, agent mode; setup can persist builder fee/referral defaults. No default adoption of fees or master signer."
+        "checkedOn": "2026-11-12",
+        "notes": "hypurr-inc, formerly hypurrclaw, is independent of Hyperliquid. The old GitHub organization redirects. OWS encrypted keystore, schemas, dry-run, agent mode; setup can persist builder fee/referral defaults. No default adoption of fees or master signer."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "hypurrclaw is independent of Hyperliquid. OWS encrypted keystore, schemas, dry-run, agent mode; setup can persist builder fee/referral defaults. No default adoption of fees or master signer."
+        "requirements": "hypurr-inc, formerly hypurrclaw, is independent of Hyperliquid. The old GitHub organization redirects. OWS encrypted keystore, schemas, dry-run, agent mode; setup can persist builder fee/referral defaults. No default adoption of fees or master signer."
       },
       "cost": "mixed",
       "authority": "mixed",
@@ -204,17 +204,17 @@
       ],
       "summary": "Use migrated name/endpoint, preserve explicit wallet connection and signing boundaries.",
       "sources": [
-        "https://docs.base.org/agents/quickstart",
-        "https://docs.cdp.coinbase.com/ai-agents/coinbase-for-agents/wallet-mcp"
+        "https://docs.cdp.coinbase.com/ai-agents/coinbase-for-agents/wallet-mcp",
+        "https://github.com/coinbase/agents/tree/main/skills/wallet-mcp"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Base docs migrated to Coinbase Wallet MCP. Current endpoint wallet-mcp.coinbase.com uses OAuth and every write approval. Own/in-session wallet history only. Skill remains base/skills base-mcp."
+        "checkedOn": "2026-11-12",
+        "notes": "Coinbase Wallet MCP at wallet-mcp.coinbase.com uses OAuth, and every write needs approval. Own/in-session wallet history only. The canonical skill is coinbase/agents wallet-mcp. docs.base.org/agents/quickstart now redirects to Base documentation resources, not this wallet server. A base/skills base-mcp zip is still offered."
       },
       "access": {
         "kind": "credentials",
-        "requirements": "Base docs migrated to Coinbase Wallet MCP. Current endpoint wallet-mcp.coinbase.com uses OAuth and every write approval. Own/in-session wallet history only. Skill remains base/skills base-mcp."
+        "requirements": "Coinbase Wallet MCP at wallet-mcp.coinbase.com uses OAuth, and every write needs approval. Own/in-session wallet history only. The canonical skill is coinbase/agents wallet-mcp. docs.base.org/agents/quickstart now redirects to Base documentation resources, not this wallet server. A base/skills base-mcp zip is still offered."
       },
       "cost": "mixed",
       "authority": "signing",
@@ -286,7 +286,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "0x API v2 API-key path vs x402/MPP paid gateway. Docs MCP serves docs, not swaps. AllowanceHolder/Permit2 flow selection; Never approve Settler. Keyless HTTP402 requests spend stablecoins."
       },
       "access": {
@@ -325,7 +325,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "Sugar CLI rejects private keys and yields approvals plus unsigned calls; pool/position raw balances use token base units. Linked v0.4.2 differs from existing v0.4.1 pin. Crosschain superswap may need relayer orchestration."
       },
       "access": {
@@ -400,7 +400,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "CTRL anonymous REST vs authenticated MCP; activation encodes wallet-signed batch and recurring keeper authority under caps. Seven tools. Live URL fetch GET fails; repo docs available."
       },
       "access": {
@@ -438,7 +438,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "Morpho current docs: experimental pre-v1 hosted keyless mcp.morpho.org, discover deployed chains live. Builder skills Earn/Borrow differ from user MCP. Nothing signs or broadcasts. Public initialize/tools-list discovery observed 18 tool names on 2026-10-08; no data, build, simulation or financial tool was called. This endpoint remains outside Boomkin connection setup."
       },
       "access": {
@@ -660,17 +660,16 @@
       ],
       "summary": "Prefer official builder to adapter; ABI/deployment/playbook provenance plus exact approval ordering and external simulation.",
       "sources": [
-        "https://defi-skills.nethermind.io/",
         "https://github.com/NethermindEth/defi-skills"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Nethermind deterministic JSON playbooks yield raw_tx chain_id/to/value/data. Never signs/broadcasts; signer owns gas/nonce. Resolver API keys optional by feature, hosted API bearer/free limits."
+        "checkedOn": "2026-11-12",
+        "notes": "Nethermind playbooks emit unsigned raw_tx chain_id/to/value/data and never sign or broadcast. Optional Alchemy, 1inch and Anthropic keys cover quotes, L2 token discovery and chat. https://defi-skills.nethermind.io/ returned HTTP 404 on 2026-11-12; the README still links it. The current README describes no hosted bearer API."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Nethermind deterministic JSON playbooks yield raw_tx chain_id/to/value/data. Never signs/broadcasts; signer owns gas/nonce. Resolver API keys optional by feature, hosted API bearer/free limits."
+        "requirements": "Nethermind playbooks emit unsigned raw_tx chain_id/to/value/data and never sign or broadcast. Optional Alchemy, 1inch and Anthropic keys cover quotes, L2 token discovery and chat. https://defi-skills.nethermind.io/ returned HTTP 404 on 2026-11-12; the README still links it. The current README describes no hosted bearer API."
       },
       "cost": "mixed",
       "authority": "unsigned",
@@ -929,18 +928,19 @@
       "summary": "Bound SQL scans/query cost; provenance execution id/timestamp/schema/coverage and parameterized wallet input.",
       "sources": [
         "https://dune.com/agents",
-        "https://docs.dune.com/api-reference/agents/mcp",
-        "https://docs.dune.com/api-reference/agents/cli-and-skills",
+        "https://docs.dune.com/docs/agents/mcp",
+        "https://docs.dune.com/docs/agents/cli-and-skills",
+        "https://docs.dune.com/docs/agents/mpp",
         "https://github.com/duneanalytics/skills"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Dune MCP/CLI OAuth and credits; SQL execution/persisted queries/dashboard writes differ. HTTP402 Tempo agent queries are paid without signup."
+        "checkedOn": "2026-11-12",
+        "notes": "Dune MCP/CLI OAuth and credits; SQL execution/persisted queries/dashboard writes differ. The MPP page documents HTTP 402 Tempo payment channels with no Dune account. Former /api-reference/agents paths redirect to /docs/agents."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Dune MCP/CLI OAuth and credits; SQL execution/persisted queries/dashboard writes differ. HTTP402 Tempo agent queries are paid without signup."
+        "requirements": "Dune MCP/CLI OAuth and credits; SQL execution/persisted queries/dashboard writes differ. The MPP page documents HTTP 402 Tempo payment channels with no Dune account. Former /api-reference/agents paths redirect to /docs/agents."
       },
       "cost": "mixed",
       "authority": "mixed",
@@ -970,7 +970,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "CoinGecko shared MCP is keyless; rate-limited market/onchain data. Current Boomkin reviewed execute/search_docs discovery is narrow by name but generic operation semantics require research boundaries. Official CoinGecko public MCP docs and the reviewed execute/search_docs contract. A discovered tool does not prove a successful market read."
       },
       "access": {
@@ -1132,17 +1132,16 @@
       "summary": "Schema-driven provider routing, explicit signer/payer selection, simulation/smart-wallet call-id-to-hash status verification.",
       "sources": [
         "https://www.alchemy.com/docs/alchemy-cli",
-        "https://www.alchemy.com/ai-agents",
-        "https://www.alchemy.com/docs/reference/simulation"
+        "https://www.alchemy.com/ai-agents"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Alchemy CLI JSON/no-interactive and agent-prompt schema; evm contract call mutates. Session signer can win over local. App/webhook commands are external admin writes; x402 estimate free then max-payment required. Official Alchemy agent and CLI documentation. RPC reads, simulation, wallet-signed transactions and app administration need distinct capability review. Alchemy Transaction Simulation APIs were deprecated 2026-09-30; CLI simulation listings alone do not establish a supported backend."
+        "checkedOn": "2026-11-12",
+        "notes": "Alchemy CLI JSON/no-interactive and agent-prompt schema; evm contract call mutates. Session signer can win over local. App/webhook commands are external admin writes; x402 estimate free then max-payment required. Official Alchemy agent and CLI documentation. RPC reads, simulation, wallet-signed transactions and app administration need distinct capability review. The former simulation reference now redirects to the Data APIs overview. The 2026-10-08 review recorded a 2026-09-30 Transaction Simulation API deprecation; current CLI docs still list simulation commands, so a listing alone does not establish a supported backend."
       },
       "access": {
         "kind": "credentials",
-        "requirements": "Alchemy CLI JSON/no-interactive and agent-prompt schema; evm contract call mutates. Session signer can win over local. App/webhook commands are external admin writes; x402 estimate free then max-payment required."
+        "requirements": "Alchemy CLI JSON/no-interactive and agent-prompt schema; evm contract call mutates. Session signer can win over local. App/webhook commands are external admin writes; x402 estimate free then max-payment required. The former simulation reference now redirects to the Data APIs overview."
       },
       "cost": "mixed",
       "authority": "mixed",
@@ -1419,17 +1418,16 @@
         "https://github.com/WalletConnect/agent-sdk",
         "https://www.npmjs.com/package/@walletconnect/cli-sdk",
         "https://www.npmjs.com/package/@walletconnect/staking-cli",
-        "https://www.npmjs.com/package/@walletconnect/pay-cli",
-        "https://walletconnect.network/"
+        "https://www.npmjs.com/package/@walletconnect/pay-cli"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "WalletConnect project ID; Beta tooling. send-transaction auto-bridges low ETH in pipe/agent mode, so send authority cannot imply bridge authority. Pay may require personal compliance data."
+        "checkedOn": "2026-11-12",
+        "notes": "WalletConnect project ID; Beta tooling. send-transaction auto-bridges low ETH in pipe/agent mode, so send authority cannot imply bridge authority. Pay may require personal compliance data. walletconnect.network now redirects to a generic Network page and does not document the agent SDK."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "WalletConnect project ID; Beta tooling. send-transaction auto-bridges low ETH in pipe/agent mode, so send authority cannot imply bridge authority. Pay may require personal compliance data."
+        "requirements": "WalletConnect project ID; Beta tooling. send-transaction auto-bridges low ETH in pipe/agent mode, so send authority cannot imply bridge authority. Pay may require personal compliance data. walletconnect.network now redirects to a generic Network page and does not document the agent SDK."
       },
       "cost": "mixed",
       "authority": "signing",
@@ -1495,12 +1493,12 @@
       "sources": [
         "https://jaw.id/",
         "https://docs.jaw.id",
-        "https://github.com/JustaName-id/jaw-mono",
-        "https://github.com/JustaName-id/jaw-skills"
+        "https://github.com/JustaLab-co/jaw-mono",
+        "https://github.com/JustaLab-co/jaw-skills"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "JAW canonical org now JustaLab-co, old org redirects. Passkey smart account, EIP7702 upgrades, ERC7715 grant/revoke permissions and session keys are separate authorities."
       },
       "access": {
@@ -1538,7 +1536,7 @@
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
+        "checkedOn": "2026-11-12",
         "notes": "Directory read-only claim is stale: @steerprotocol/cli latest 4.7.3 adds IPFS publication, unsigned pool/strategy/vault prepare and --web signer handoff. markets remains read-only."
       },
       "access": {
@@ -2128,16 +2126,16 @@
         "https://github.com/aeonfun/aeon/tree/main/skills/sc-audit",
         "https://github.com/aeonfun/aeon/tree/main/skills/deploy-uni-hook",
         "https://www.aeon.fun/hooks",
-        "https://www.aeon.fun/connect/mcp"
+        "https://www.aeon.fun/connect"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Aeon autonomous GitHub Actions agent has 85 consumer skill paths plus examples and malicious test fixtures. Deployed hooks include mandatory AeonFee buyback, so adoption adds economic assumptions."
+        "checkedOn": "2026-11-12",
+        "notes": "Aeon autonomous GitHub Actions agent has 92 SKILL.md files under skills/ on main, checked 2026-11-12, plus separate examples and malicious skill-scan fixtures. www.aeon.fun/connect/mcp now opens browser GitHub setup, not a hosted MCP endpoint, and the repo has no root README. Deployed hooks inherit a mandatory 10 bps AeonFee that derived hooks cannot skip."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Aeon autonomous GitHub Actions agent has 85 consumer skill paths plus examples and malicious test fixtures. Deployed hooks include mandatory AeonFee buyback, so adoption adds economic assumptions."
+        "requirements": "Aeon autonomous GitHub Actions agent has 92 SKILL.md files under skills/ on main, checked 2026-11-12, plus separate examples and malicious skill-scan fixtures. www.aeon.fun/connect/mcp now opens browser GitHub setup, not a hosted MCP endpoint, and the repo has no root README. Deployed hooks inherit a mandatory 10 bps AeonFee that derived hooks cannot skip."
       },
       "cost": "mixed",
       "authority": "runtime",
@@ -2202,16 +2200,17 @@
       ],
       "summary": "Reviewed named read tools only; the doctor performs keyless discovery and never verifies protected account entitlements.",
       "sources": [
-        "https://docs.aixbt.tech/developers/mcp"
+        "https://docs.aixbt.tech/developers/v3",
+        "https://aixbt.tech/.well-known/mcp/server.json"
       ],
       "review": {
         "status": "primary-source-reviewed",
-        "checkedOn": "2026-10-08",
-        "notes": "Reviewed named read tools only; the doctor performs keyless discovery and never verifies protected account entitlements."
+        "checkedOn": "2026-11-12",
+        "notes": "API v3 documents public Topics and an x-api-key for every other surface. The published MCP remote remains https://api.aixbt.tech/mcp. The old developers/mcp page redirects to aixbt.tech/connect. Boomkin's reviewed connection still references Authorization Bearer ${AIXBT_API_KEY}; this review did not re-probe that header."
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Topic list/detail reads are public; protected intelligence requires AIXBT_API_KEY, quotas and report entitlements."
+        "requirements": "API v3 documents public Topics and an x-api-key for every other surface. The published MCP remote remains https://api.aixbt.tech/mcp. Boomkin's reviewed connection still references Authorization Bearer ${AIXBT_API_KEY}; this review did not re-probe that header."
       },
       "cost": "mixed",
       "authority": "read",

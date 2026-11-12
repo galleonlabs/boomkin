@@ -1,6 +1,6 @@
 # Find a provider by capability and authority
 
-Boomkin's local discovery catalog retains 57 reviewed entries from the 58 that [skills.eth.sh](https://skills.eth.sh/) listed on October 8, 2026, plus the existing AIXBT and Coinbase account connections. The unavailable Fluid pointer was removed. Each record carries its own source-review date; later directory additions are not yet reviewed. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
+Boomkin's local discovery catalog retains 57 reviewed entries from the 58 that [skills.eth.sh](https://skills.eth.sh/) listed on October 8, 2026, plus the existing AIXBT and Coinbase account connections. The directory was checked again on November 12, 2026. Fluid is still listed, and [its skill pointer](https://fluid.io/skill.md) still returns a not-found page, so that entry stays removed. Three later listings are not reviewed and are not in this catalog: Namespace Skills, VFAT MCP and Galleon DeFi Skills. Each record carries its own source-review date. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
 
 ```bash
 boomkin providers
@@ -16,7 +16,7 @@ boomkin providers --provider morpho --json
 
 `primary-source-reviewed` means the linked provider documentation, repository or package readme was checked. It does not prove that an endpoint is reachable, the current schemas match, a credential works, a wallet has funds or a request settled. Review metadata describes the checked source, rather than promising current service availability.
 
-`protocol-official` distinguishes the protocol's own tooling from `tool-provider-official`, `third-party`, `community` and `unverified` entries. A project name, npm package or directory listing is not evidence that a protocol maintains it. In particular, hypurrclaw's Hyperliquid CLI is an independent tool; its builder-fee/referral and key-storage choices need separate review.
+`protocol-official` distinguishes the protocol's own tooling from `tool-provider-official`, `third-party`, `community` and `unverified` entries. A project name, npm package or directory listing is not evidence that a protocol maintains it. In particular, the Hyperliquid CLI published by hypurr-inc (formerly hypurrclaw) is an independent tool; its builder-fee/referral and key-storage choices need separate review.
 
 Categories and interfaces describe the directory listing; the dated review notes and source links qualify those claims. Some important changes are already reflected: Base MCP is now Coinbase Wallet MCP, Morpho chain coverage comes from current discovery, Panoptic's published MCP is read-only, and Steer's current CLI includes external artifact publication and wallet handoff. Consult the entry's notes before using its original installation instructions.
 
