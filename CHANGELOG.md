@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.2 · 2026-11-12
+
+- Correct the published provider discovery count to 59 after the Fluid entry was removed.
+- State which commands accept `--directory`, and list `project show`, `status`, `--protocol` and the ChatGPT refresh and model actions in `--help`.
+- Reject profile, harness, pack and `--offline-catalog` flags on commands that do not use them.
+- Fail closed on non-string harness names, oversized or redirected catalog fetches, provider URLs with embedded credentials or paths, and a missing desk response body; match workflow protocol names exactly.
+- Correct nine provider catalog records whose official sources moved or changed, with review dates refreshed only where the source was re-read.
+- Website: fix contrast failures, keyboard access to scrolling tables, the mobile docs landmark and missing Open Graph tags.
+
 ## 0.13.1
 
 - Prune obsolete research drafts/screenshots, superseded artwork, unused CSS and unused desk bindings; keep the current UI, incoming routes and saved-profile contracts.

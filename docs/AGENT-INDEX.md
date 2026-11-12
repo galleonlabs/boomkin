@@ -26,7 +26,7 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 - [catalog/skills.json](../catalog/skills.json): 17 independently published packs, 81 expected skill IDs, immutable source pins and npm versions.
 - [catalog/workflows.json](../catalog/workflows.json): 63 workflow IDs, selected pack/skill, inputs, outputs and access requirements. [src/workflows.ts](../src/workflows.ts) validates and queries these contracts.
 - [catalog/templates.json](../catalog/templates.json): four reviewed starting points, explicit defaults, required inputs and replaceable examples.
-- [catalog/providers.json](../catalog/providers.json): 60 discovery entries, sources, review dates, authorship, cost and authority. Discovery entries do not all have native integrations.
+- [catalog/providers.json](../catalog/providers.json): 59 discovery entries, sources, review dates, authorship, cost and authority. Discovery entries do not all have native integrations.
 - [src/hermes.ts](../src/hermes.ts): native runtime/installer pin and launch/authentication contracts.
 - [src/projects.ts](../src/projects.ts): project and evidence schemas, run states and validation limits.
 - [src/desk.ts](../src/desk.ts): authenticated loopback API, fixed helper adapters and saved desk results. [src/desk-model.ts](../src/desk-model.ts) owns the isolated native dashboard launch.
