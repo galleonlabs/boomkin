@@ -359,8 +359,11 @@ export async function startDesk(options: DeskOptions) {
       // Persist each completed response before the next read. Cancelling a
       // later page must not discard already captured public evidence.
       {
-        const limit = run.kind === "wallet" ? 8_388_608 : 2_097_152, reader = response.body?.getReader();
-        if (!reader || Number(response.headers.get("content-length")) > limit) throw new DeskError("Public response exceeds the capture bound", 502);
+        const limit = run.kind === "wallet" ? 8_388_608 : 2_097_152;
+        const declared = Number(response.headers.get("content-length"));
+        if (Number.isFinite(declared) && declared > limit) throw new DeskError("Public response exceeds the capture bound", 502);
+        const reader = response.body?.getReader();
+        if (!reader) throw new DeskError("Public response had no body", 502);
         const chunks: Uint8Array[] = []; let length = 0;
         try { for (;;) { const { done, value } = await reader.read(); signal.throwIfAborted(); if (done) break; length += value.length; if (length > limit) throw new DeskError("Public response exceeds the capture bound", 502); chunks.push(value); } }
         finally { await reader.cancel().catch(() => {}); }

@@ -43,9 +43,25 @@ export function parseCatalog(value: unknown): Catalog {
   return c;
 }
 export async function fetchCatalog(fetcher: (url: string, options?: RequestInit) => Promise<Response> = fetch): Promise<Catalog> {
-  const response = await fetcher("https://raw.githubusercontent.com/galleonlabs/boomkin/main/catalog/skills.json", { signal: AbortSignal.timeout(20_000) });
+  let response: Response;
+  try {
+    response = await fetcher("https://raw.githubusercontent.com/galleonlabs/boomkin/main/catalog/skills.json", { redirect: "error", signal: AbortSignal.timeout(20_000) });
+  } catch {
+    throw new Error("Catalog fetch failed; installed skills were not changed.");
+  }
   if (!response.ok) throw new Error(`Catalog fetch failed (${response.status}); installed skills were not changed.`);
-  return parseCatalog(await response.json());
+  const declared = Number(response.headers.get("content-length"));
+  if (Number.isFinite(declared) && declared > 1_048_576) throw new Error("Catalog fetch exceeded the size limit; installed skills were not changed.");
+  let text: string;
+  try { text = await response.text(); }
+  catch { throw new Error("Catalog fetch returned invalid data; installed skills were not changed."); }
+  if (Buffer.byteLength(text) > 1_048_576) throw new Error("Catalog fetch exceeded the size limit; installed skills were not changed.");
+  let payload: unknown;
+  try { payload = JSON.parse(text); }
+  catch { throw new Error("Catalog fetch returned invalid data; installed skills were not changed."); }
+  // Null, an array, or other non-catalog JSON is a bad response, not a newer CLI schema.
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw new Error("Catalog fetch returned an unrecognized catalog; installed skills were not changed.");
+  return parseCatalog(payload);
 }
 export function catalogChanges(current: Catalog, previous?: Catalog): string[] {
   const changes: string[] = [];
@@ -56,18 +72,19 @@ export function catalogChanges(current: Catalog, previous?: Catalog): string[] {
   for (const old of previous?.packs ?? []) if (!current.packs.some(p => p.id === old.id)) changes.push(`${old.id}: retired from catalog; installed files preserved`);
   return changes;
 }
-export function parseHarness(value: string | undefined): Harness {
-  if (!value || !Object.hasOwn(harnesses, value)) throw new Error(`Choose a harness: ${Object.keys(harnesses).join(", ")}`);
+export function parseHarness(value: unknown): Harness {
+  // Object keys coerce arrays and objects, so only a real string may name a harness.
+  if (typeof value !== "string" || !Object.hasOwn(harnesses, value)) throw new Error(`Choose a harness: ${Object.keys(harnesses).join(", ")}`);
   return value as Harness;
 }
 export function parseConfig(value: unknown, directory: string): Config {
   const c = value as Config;
-  if (!c || c.schemaVersion !== 1 || c.directory !== resolve(directory)) throw new Error("Invalid or moved Boomkin configuration. Run setup in the intended directory again.");
-  parseHarness(c.harness);
+  if (!c || typeof c !== "object" || Array.isArray(c) || c.schemaVersion !== 1 || c.directory !== resolve(directory)) throw new Error("Invalid or moved Boomkin configuration. Run setup in the intended directory again.");
+  const harness = parseHarness(c.harness);
   if (c.packs !== undefined && (!Array.isArray(c.packs) || !c.packs.length || c.packs.some(id => typeof id !== "string" || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) || new Set(c.packs).size !== c.packs.length)) throw new Error("Invalid configured pack selection");
   // Before pack selection existed, the only managed packs were LP and Hyperliquid.
   // Freeze that historical selection so future catalog additions remain opt-in.
-  return { ...c, packs: c.packs ?? ["lp-skills", "hyperliquid-skills"] };
+  return { ...c, harness, packs: c.packs ?? ["lp-skills", "hyperliquid-skills"] };
 }
 export function installArgs(source: string, harness: Harness, skills: string[]): string[] {
   return ["add", source, "--agent", harnesses[harness].agent, "--skill", ...skills, "--copy", "--yes", ...(harnesses[harness].global ? ["--global"] : [])];

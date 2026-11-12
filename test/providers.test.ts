@@ -40,6 +40,18 @@ test("discovery cannot enable an external server, repoint an official endpoint o
   expect(() => parseProviderCatalog(unconnected)).toThrow("unreviewed connections");
 });
 
+test("provider source URLs reject folded hosts and keep reviewed scoped package links", () => {
+  const sample = structuredClone(providerCatalog);
+  sample.providers = [structuredClone(selectProvider("blockscout"))];
+  for (const source of ["https://example.com\n.evil.com", "https://.", "https:///etc/passwd", "https://example.com.", "https://user@example.com", "http://example.com"]) {
+    const candidate = structuredClone(sample);
+    candidate.providers[0]!.sources = [source];
+    expect(() => parseProviderCatalog(candidate)).toThrow("Invalid or duplicate provider discovery entry");
+  }
+  expect(parseProviderCatalog(providerCatalog).providers).toHaveLength(providerCatalog.providers.length);
+  expect(selectProvider("walletchan").sources).toContain("https://www.npmjs.com/package/@walletchan/mcp");
+});
+
 test("search and access filters keep keyless discovery separate from cost and authority", () => {
   expect(filterProviders({ search: "BLOCKSCOUT" }).map(provider => provider.id)).toContain("blockscout");
   expect(filterProviders({ access: "keyless" }).map(provider => provider.id)).toContain("coingecko");

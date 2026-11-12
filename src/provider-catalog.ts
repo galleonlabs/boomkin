@@ -41,7 +41,16 @@ const connections: Record<string, { endpoint?: string; policy: string; defaultEn
 };
 const nonempty = (value: unknown): value is string => typeof value === "string" && !!value.trim();
 const list = (value: unknown): value is string[] => Array.isArray(value) && value.length > 0 && value.every(nonempty) && new Set(value).size === value.length;
-const https = (value: string) => { try { const url = new URL(value); return url.protocol === "https:" && !url.username && !url.password; } catch { return false; } };
+const https = (value: string) => {
+  // Reject control characters before URL parsing folds a newline into another host.
+  if (!/^https:\/\/[A-Za-z0-9._~:/?#\[\]@!$&'()*+,;=%-]+$/.test(value)) return false;
+  try {
+    const url = new URL(value);
+    const host = url.hostname;
+    if (url.protocol !== "https:" || url.username || url.password || !host || host === "." || host.endsWith(".") || host.includes("..")) return false;
+    return host.includes(".") || host.startsWith("[");
+  } catch { return false; }
+};
 const date = (value: unknown): value is string => typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value) && Number.isFinite(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
 
 /** Discovery never grants installation or connection authority. Connections stay a code-reviewed allowlist. */

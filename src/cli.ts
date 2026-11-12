@@ -13,7 +13,7 @@ import { defaultProfile, prepareHermes, connectProvider, doctor } from "./onboar
 import { providerCatalog, selectProvider, filterProviders, renderProvider } from "./provider-catalog.ts";
 import { runHermes, runChatGpt, type ChatGptAction } from "./hermes.ts";
 import { verifyCopiedSkill, verifyIntegrity, readIntegrity, type SkillIntegrity } from "./integrity.ts";
-import { workflows, selectWorkflow, workflowPacks, renderWorkflow } from "./workflows.ts";
+import { workflows, selectWorkflow, workflowPacks, renderWorkflow, workflowMatchesProtocol } from "./workflows.ts";
 import { createProject, listProjects, readProject, projectRuns, runProject, checkProjectRun } from "./projects.ts";
 import { templates, selectTemplate, templateInputs, renderTemplate } from "./templates.ts";
 import { startDesk } from "./desk.ts";
@@ -201,8 +201,7 @@ async function main() {
 
   if (command === "workflows") {
     if (values.pack || values.harness || values.directory) throw new Error("workflows accepts --workflow, --protocol and --json");
-    const protocol = values.protocol?.toLowerCase();
-    const selected = values.workflow !== undefined ? [selectWorkflow(values.workflow)] : workflows.filter(item => protocol === undefined || item.protocol.split(" / ").some(name => name.toLowerCase() === protocol));
+    const selected = values.workflow !== undefined ? [selectWorkflow(values.workflow)] : workflows.filter(item => values.protocol === undefined || workflowMatchesProtocol(item, values.protocol));
     if (!selected.length) throw new Error("No matching protocol. Run workflows to list supported protocols.");
     return console.log(values.json ? JSON.stringify({ schemaVersion: 1, workflows: selected }, null, 2) : selected.map(renderWorkflow).join("\n\n"));
   }

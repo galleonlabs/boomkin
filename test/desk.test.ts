@@ -58,13 +58,14 @@ async function fixtureProfile(root: string) {
   await chmod(join(runtime, "hermes"), 0o700);
   await writeFile(join(root, ".boomkin", "last-sync.json"), JSON.stringify({ catalog: { schemaVersion: 3, packs }, integrity }));
 }
-async function withDesk(action: (ctx: Context) => Promise<void>, options: Partial<DeskOptions> = {}) {
+async function withDesk(action: (ctx: Context) => Promise<void>, options: Partial<DeskOptions> = {}, prepare?: (root: string) => Promise<void>) {
   const base = await mkdtemp(join(tmpdir(), "boomkin-desk-")), root = join(base, "profile"), assets = join(base, "assets");
   await mkdir(root); await mkdir(assets); await mkdir(join(assets, "data")); await mkdir(join(assets, "assets"));
   await writeFile(join(assets, "index.html"), "<!doctype html><title>Boomkin fixture</title>");
   await writeFile(join(assets, "assets", "manrope.ttf"), new Uint8Array([0, 255, 127, 254]));
   await cp(join(source, "data", "bitcoin-180d.json"), join(assets, "data", "bitcoin-180d.json"));
   await fixtureProfile(root);
+  if (prepare) await prepare(root);
   let desk = await startDesk({ directory: root, assetsDirectory: assets, fetcher: (async () => Response.json({ fixture: true, price: 2500 })), ...options });
   const make = () => {
     const url = new URL(desk.url), token = new URLSearchParams(url.hash.slice(1)).get("token")!;
@@ -482,6 +483,45 @@ test("exact-run follow-up rejects invalid, foreign, incomplete and modified capt
   expect((await rejected.json()).error.message).toContain("verified evidence");
   expect((await readdir(join(ctx.root, ".boomkin/projects"))).sort()).toEqual([project.name, other.name].sort());
 }));
+
+test("public reads separate a missing body from an oversized response and refuse an unreviewed host before fetch", async () => {
+  const calls: RequestInit[] = [];
+  await withDesk(async ctx => {
+    const project = await create(ctx), run = await start(ctx, project.name), detail = await finish(ctx, project.name, run.id);
+    expect(detail.run.state).toBe("failed");
+    expect(detail.run.error).toContain("Public response had no body");
+    expect(detail.run.error).not.toContain("capture bound");
+    expect(calls).toHaveLength(1);
+    expect(calls[0]?.redirect).toBe("error");
+    expect(calls[0]?.credentials).toBe("omit");
+  }, { fetcher: async (_url, init) => { calls.push(init ?? {}); return new Response(null); } });
+  await withDesk(async ctx => {
+    const project = await create(ctx), run = await start(ctx, project.name), detail = await finish(ctx, project.name, run.id);
+    expect(detail.run.state).toBe("failed");
+    expect(detail.run.error).toContain("Public response exceeds the capture bound");
+  }, { fetcher: async () => new Response("{}", { headers: { "content-length": "3000000" } }) });
+  await withDesk(async ctx => {
+    const project = await create(ctx), run = await start(ctx, project.name), detail = await finish(ctx, project.name, run.id);
+    expect(detail.run.error).toBe("network unavailable");
+  }, { fetcher: async () => { throw new Error("network unavailable"); } });
+  for (const target of ["https://evil.example/steal", "http://api.coingecko.com/api", "https://user:pass@api.coingecko.com/api", "https://api.coingecko.com:444/api", "https://api.coingecko.com.evil.com/api"]) {
+    let called = false;
+    await withDesk(async ctx => {
+      const project = await create(ctx), run = await start(ctx, project.name), detail = await finish(ctx, project.name, run.id);
+      expect(detail.run.state).toBe("failed");
+      expect(detail.run.error).toContain("unreviewed endpoint");
+      expect(called).toBe(false);
+    }, { fetcher: async () => { called = true; return Response.json({ price: 1 }); } }, async root => {
+      const skill = "galleon-defi-market-snapshot";
+      const path = join(root, "skills", skill);
+      await writeFile(join(path, "scripts", "market-data.mjs"), `export async function marketSnapshot(_options, deps) { await deps.fetch(${JSON.stringify(target)}); return { ok: false }; }\n`);
+      const syncPath = join(root, ".boomkin", "last-sync.json");
+      const sync = JSON.parse(await readFile(syncPath, "utf8"));
+      sync.integrity[skill] = await skillFiles(path);
+      await writeFile(syncPath, JSON.stringify(sync));
+    });
+  }
+});
 
 test("malformed saved evidence and result JSON produce unavailable comparisons instead of server errors", async () => withDesk(async ctx => {
   const project = await create(ctx), before = await start(ctx, project.name); await finish(ctx, project.name, before.id);
