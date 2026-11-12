@@ -10,6 +10,15 @@ for(const page of pages){
   const html=await readFile(page,'utf8');
   if(html.includes('@@'))throw new Error(`Unresolved template in ${page}`);
   if(!html.includes('<title>')||!html.includes('name="viewport"')||!html.includes('lang="en"'))throw new Error(`Missing page metadata in ${page}`);
+  if(!page.endsWith('social.html')){
+    const origin=(process.env.SITE_ORIGIN??'https://galleonlabs.github.io/boomkin').replace(/\/$/,'');
+    const canonical=`${origin}/${page.slice(root.length+1).replace(/index\.html$/,'')}`;
+    const description=html.match(/name="description" content="([^"]+)"/)?.[1];
+    const ogTitle=html.match(/property="og:title" content="([^"]+)"/)?.[1];
+    const ogDescription=html.match(/property="og:description" content="([^"]+)"/)?.[1];
+    if(!description||!ogTitle||!ogDescription||!html.includes('property="og:type" content="website"'))throw new Error(`Missing page metadata in ${page}`);
+    if(!html.includes(`rel="canonical" href="${canonical}"`)||!html.includes(`property="og:url" content="${canonical}"`)||!html.includes(`property="og:image" content="${origin}/assets/social.png"`))throw new Error(`Canonical or Open Graph URL mismatch in ${page}`);
+  }
   const url=new URL('https://check.local'+base+page.slice(root.length+1).replace(/index\.html$/,''));
   for(const [,value] of html.matchAll(/(?:href|src)="([^"]+)"/g)){
     const target=new URL(value,url);
