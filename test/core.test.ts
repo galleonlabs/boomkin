@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { parse as parseYaml } from "yaml";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -82,6 +82,43 @@ test("checks report new revisions, new packs, and retirement without installing"
 test("catalog fetch fails closed on HTTP failure and invalid data", async () => {
   await expect(fetchCatalog((async () => new Response("down", { status: 503 })))).rejects.toThrow("503");
   await expect(fetchCatalog((async () => Response.json({ schemaVersion: 3, packs: [] })))).rejects.toThrow();
+});
+test("catalog fetch rejects transport failures, redirects, oversize bodies and non-catalog JSON", async () => {
+  let seen: { url?: string; redirect?: RequestRedirect } = {};
+  const loaded = await fetchCatalog(async (url, init) => {
+    seen = { url, redirect: init?.redirect };
+    return Response.json(catalog);
+  });
+  expect(loaded.packs).toHaveLength(catalog.packs.length);
+  expect(seen).toEqual({ url: "https://raw.githubusercontent.com/galleonlabs/boomkin/main/catalog/skills.json", redirect: "error" });
+  const unchanged = "installed skills were not changed.";
+  await expect(fetchCatalog(async () => { throw new Error("network down"); })).rejects.toThrow(unchanged);
+  await expect(fetchCatalog(async () => { throw new DOMException("The operation was aborted.", "AbortError"); })).rejects.toThrow(unchanged);
+  await expect(fetchCatalog(async () => new Response("not-json"))).rejects.toThrow("invalid data");
+  await expect(fetchCatalog(async () => new Response(""))).rejects.toThrow("invalid data");
+  await expect(fetchCatalog(async () => Response.json(null))).rejects.toThrow("unrecognized catalog");
+  await expect(fetchCatalog(async () => Response.json([]))).rejects.toThrow("unrecognized catalog");
+  await expect(fetchCatalog(async () => new Response("{}", { headers: { "content-length": "2000000" } }))).rejects.toThrow("size limit");
+  await expect(fetchCatalog(async () => Response.json({ schemaVersion: 2, packs: catalog.packs }))).rejects.toThrow("current Boomkin CLI");
+});
+test("harness detection accepts only an exact harness name", async () => {
+  for (const value of [["hermes"], { toString: () => "hermes" }, "Hermes", " hermes"]) {
+    expect(() => parseHarness(value)).toThrow("Choose a harness");
+    expect(() => parseConfig({ schemaVersion: 1, harness: value, directory: "/tmp/profile" }, "/tmp/profile")).toThrow("Choose a harness");
+  }
+  expect(parseConfig({ schemaVersion: 1, harness: "hermes", directory: "/tmp/profile" }, "/tmp/profile").harness).toBe("hermes");
+  expect(parseConfig({ schemaVersion: 1, harness: "eve", directory: "/tmp/profile" }, "/tmp/profile").harness).toBe("eve");
+  const root = await mkdtemp(join(tmpdir(), "boomkin-harness-"));
+  try {
+    const directory = await realpath(root);
+    await mkdir(join(directory, ".boomkin"));
+    await writeFile(join(directory, ".boomkin", "config.json"), JSON.stringify({ schemaVersion: 1, harness: ["hermes"], directory }));
+    const child = Bun.spawn([process.execPath, "src/cli.ts", "check", "--directory", directory, "--offline-catalog"], { stdout: "pipe", stderr: "pipe" });
+    const [stdout, stderr, code] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
+    expect(code).toBe(1);
+    expect(stderr).toContain("Choose a harness");
+    expect(stdout).toBe("");
+  } finally { await rm(root, { recursive: true, force: true }); }
 });
 
 

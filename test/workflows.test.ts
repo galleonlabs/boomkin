@@ -3,8 +3,9 @@ import { mkdtemp, access, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import catalog from "../catalog/skills.json";
+import registry from "../catalog/workflows.json";
 import { parseCatalog } from "../src/core.ts";
-import { workflows, selectWorkflow, workflowPacks } from "../src/workflows.ts";
+import { workflows, selectWorkflow, workflowPacks, parseWorkflowRegistry, workflowMatchesProtocol } from "../src/workflows.ts";
 
 test("every workflow resolves to a released skill in exactly one independent pack", () => {
   const parsed = parseCatalog(catalog);
@@ -60,6 +61,38 @@ test("task onboarding dry run selects only its pack and creates no profile", asy
     expect(result.stdout).not.toContain("packages/infra@");
     await expect(access(directory)).rejects.toThrow();
   } finally { await rm(root, { recursive: true, force: true }); }
+});
+
+test("workflow loading rejects a malformed registry and matches a published protocol string", async () => {
+  expect(parseWorkflowRegistry(registry).workflows).toHaveLength(workflows.length);
+  const broken = (mutate: (candidate: typeof registry) => void, message: string) => {
+    const candidate = structuredClone(registry);
+    mutate(candidate);
+    expect(() => parseWorkflowRegistry(candidate)).toThrow(message);
+  };
+  broken(candidate => { candidate.workflows[0]!.id = "Save / Solend"; }, "Invalid or duplicate workflow");
+  broken(candidate => { candidate.workflows[1]!.id = candidate.workflows[0]!.id; }, "Invalid or duplicate workflow");
+  broken(candidate => { candidate.workflows[0]!.inputs = []; }, "Invalid or duplicate workflow");
+  broken(candidate => { candidate.workflows[0]!.skill = "--profile"; }, "Invalid or duplicate workflow");
+  broken(candidate => { candidate.workflows[0]!.protocol = "Aave\nInjected"; }, "Invalid or duplicate workflow");
+  broken(candidate => { (candidate as { schemaVersion: number }).schemaVersion = 2; }, "Malformed workflow registry");
+  expect(workflowMatchesProtocol(selectWorkflow("save-lending"), "Save / Solend")).toBe(true);
+  expect(workflowMatchesProtocol(selectWorkflow("save-lending"), " solend ")).toBe(true);
+  expect(workflowMatchesProtocol(selectWorkflow("save-lending"), "Aave")).toBe(false);
+  expect(workflowMatchesProtocol(selectWorkflow("aave-v4-health"), " Aave V4 ")).toBe(true);
+  for (const id of ["", " aave-health", "Aave-Health"]) expect(() => selectWorkflow(id)).toThrow("Unknown workflow");
+  const combined = await cli(["workflows", "--protocol", "Save / Solend", "--json"]);
+  expect(combined.code).toBe(0);
+  expect(JSON.parse(combined.stdout).workflows.map((item: { id: string }) => item.id)).toEqual(["save-lending"]);
+  const alias = await cli(["workflows", "--protocol", " solend ", "--json"]);
+  expect(alias.code).toBe(0);
+  expect(JSON.parse(alias.stdout).workflows.map((item: { id: string }) => item.id)).toContain("save-lending");
+  const exact = await cli(["workflows", "--protocol", "Aave V4", "--json"]);
+  expect(exact.code).toBe(0);
+  expect(JSON.parse(exact.stdout).workflows.map((item: { id: string }) => item.id)).toEqual(["aave-v4-health"]);
+  const blank = await cli(["workflows", "--protocol", "   ", "--json"]);
+  expect(blank.code).toBe(1);
+  expect(blank.stderr).toContain("No matching protocol");
 });
 
 test("protocol discovery recognizes reviewed legacy and product aliases", async () => {
