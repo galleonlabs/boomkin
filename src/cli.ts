@@ -33,6 +33,7 @@ boomkin providers --search simulation --json
 boomkin providers --access keyless
 boomkin providers --provider blockscout
 boomkin workflows
+boomkin workflows --protocol Aave
 boomkin workflows --workflow aave-health
 boomkin templates
 boomkin templates --template wallet-audit --json
@@ -41,6 +42,7 @@ boomkin project create --name my-research --workflow yield-screen --input-file .
 boomkin project run --name my-research --dry-run
 boomkin project run --name my-research
 boomkin project check --name my-research
+boomkin project show --name my-research
 boomkin project list
 boomkin onboard --workflow yield-screen
 boomkin connect --provider alchemy
@@ -49,7 +51,10 @@ boomkin connect --provider blockscout
 boomkin model
 boomkin chatgpt --action login
 boomkin chatgpt --action status
+boomkin chatgpt --action refresh
+boomkin chatgpt --action model
 boomkin check --directory ~/.boomkin/hermes
+boomkin status --directory ~/.boomkin/hermes
 boomkin update --directory ~/.boomkin/hermes
 
 desk opens your local browser desk for public market data, wallet reviews and strategy tests.
@@ -58,12 +63,13 @@ Optional research uses native Hermes and your selected model. --port chooses a l
 --no-open prints the local address without opening a browser. Stop with Ctrl-C.
 onboard installs the official Hermes runtime if needed, prepares an isolated profile,
 installs the selected Galleon skill packs and public CoinGecko MCP, then runs native model setup.
---directory chooses the Hermes home (default ~/.boomkin/hermes for the commands above).
+--directory chooses the Hermes home (default ~/.boomkin/hermes) for desk, onboard, doctor, start, connect, model, chatgpt and project.
+setup, update, check and status require it. workflows, templates, providers, catalog and harnesses do not use a profile.
 --skip-model-setup prepares files without an interactive model login.
 --no-install uses an existing Hermes executable. --dry-run previews without writes.
 --all-packs opts an existing onboarding profile into every pack in the current catalog.
 --workflow chooses one task's pack for onboarding; updates keep that selection.
-workflows lists inputs, concrete results and access requirements; --json emits structured data.
+workflows lists inputs, concrete results and access requirements; --protocol filters by protocol name; --json emits structured data.
 templates lists reviewed starting points; --template inspects the required inputs and example.
 project create accepts either --template or --workflow with your --input-file.
 providers discovers sourced provider tools locally; --search, --capability and --access narrow results.
@@ -116,9 +122,11 @@ async function main() {
   if (values.live && command !== "doctor") throw new Error("--live is only available for doctor");
   if ((values["all-packs"] || values["skip-model-setup"] || values["no-install"]) && command !== "onboard") throw new Error("Onboarding options are only available for onboard");
   if (values["dry-run"] && !["desk", "onboard", "setup", "update", "connect", "start", "model", "chatgpt", "project"].includes(command)) throw new Error("--dry-run is unavailable for this read-only command");
+  if (values["offline-catalog"] && !["check", "update", "setup", "onboard"].includes(command)) throw new Error("--offline-catalog is available for setup, onboard, check and update");
+  if ((command === "harnesses" || command === "catalog") && (values.pack || values.harness || values.directory)) throw new Error(`${command} does not accept profile, harness or pack options`);
 
   if (command === "desk") {
-    if (values.pack || values.harness || values["offline-catalog"]) throw new Error("desk uses its selected Hermes profile; pack options belong to setup or onboard");
+    if (values.pack || values.harness) throw new Error("desk uses its selected Hermes profile; pack options belong to setup or onboard");
     const directory = await canonicalPath(resolve(values.directory ?? defaultProfile()));
     const port = deskPort(values.port);
     if (values["dry-run"]) return console.log(`Would serve the local desk on 127.0.0.1:${port || "an available port"} using ${directory}; no model, data read or setup starts in this preview.`);
@@ -161,7 +169,7 @@ async function main() {
   if (command === "project") {
     const action = positionals[1];
     if (!action || !["create", "list", "show", "run", "check"].includes(action)) throw new Error("Choose project create, list, show, run or check");
-    if (values.pack || values.harness || values["offline-catalog"]) throw new Error("Project commands use the selected Hermes profile; pack options belong to onboard");
+    if (values.pack || values.harness) throw new Error("Project commands use the selected Hermes profile; pack options belong to onboard");
     if (action !== "create" && [values.workflow, values.template, values["input-file"], values.objective].some(value => value !== undefined)) throw new Error("--workflow, --template, --input-file and --objective are only available for project create");
     if (action !== "run" && values["max-turns"] !== undefined) throw new Error("--max-turns is only available for project run");
     if (action !== "check" && values["run-id"] !== undefined) throw new Error("--run-id is only available for project check");
@@ -194,7 +202,7 @@ async function main() {
   }
 
   if (command === "templates") {
-    if (values.pack || values.harness || values.directory || values["offline-catalog"] || values.workflow) throw new Error("templates accepts --template and --json");
+    if (values.pack || values.harness || values.directory || values.workflow) throw new Error("templates accepts --template and --json");
     const selected = values.template !== undefined ? [selectTemplate(values.template)] : templates;
     return console.log(values.json ? JSON.stringify({ schemaVersion: 1, templates: selected }, null, 2) : selected.map(renderTemplate).join("\n\n"));
   }
@@ -206,7 +214,7 @@ async function main() {
     return console.log(values.json ? JSON.stringify({ schemaVersion: 1, workflows: selected }, null, 2) : selected.map(renderWorkflow).join("\n\n"));
   }
   if (command === "providers") {
-    if (values.pack || values.harness || values.directory || values["offline-catalog"]) throw new Error("providers accepts --provider, --search, --capability, --access and --json");
+    if (values.pack || values.harness || values.directory) throw new Error("providers accepts --provider, --search, --capability, --access and --json");
     if (values.provider !== undefined && [values.search, values.capability, values.access].some(value => value !== undefined)) throw new Error("Choose one --provider or discovery filters separately");
     const selected = values.provider !== undefined ? [selectProvider(values.provider)] : filterProviders({ search: values.search, capability: values.capability, access: values.access });
     return console.log(values.json ? JSON.stringify({ schemaVersion: providerCatalog.schemaVersion, directory: providerCatalog.directory, checkedOn: providerCatalog.checkedOn, providers: selected }, null, 2) : selected.length ? selected.map(provider => renderProvider(provider, values.provider !== undefined)).join("\n") : "No matching providers. Broaden the filters or run providers without filters.");
@@ -242,6 +250,7 @@ async function main() {
   }
   if (command === "catalog") return console.log(JSON.stringify(parseCatalog(catalogFile), null, 2));
   if (!["setup", "update", "check", "status"].includes(command)) throw new Error(`Unknown command: ${command}`);
+  if (values.harness && command !== "setup") throw new Error("--harness is available for setup");
   if (!values.directory) throw new Error("Pass --directory with your harness workspace (Hermes: its HERMES_HOME).");
   const directory = await canonicalPath(resolve(values.directory));
   const stateDir = join(directory, ".boomkin");

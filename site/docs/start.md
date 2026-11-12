@@ -9,7 +9,7 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.13.1
+bun install -g boomkin@0.13.2
 boomkin desk
 ```
 
@@ -31,7 +31,7 @@ boomkin workflows --workflow aave-health
 boomkin providers --search simulation --json
 ```
 
-[Browse workflows](workflows/) for position risk, yield screening, bridge settlement, payment streams and prediction-market research. The provider directory contains 60 source-reviewed entries with capability, access and cost metadata. Discovery runs locally; it lets you inspect a provider before connecting it.
+[Browse workflows](workflows/) for position risk, yield screening, bridge settlement, payment streams and prediction-market research. The provider directory contains 59 source-reviewed entries with capability, access and cost metadata. Discovery runs locally; it lets you inspect a provider before connecting it.
 
 To prepare one job's pack in a separate profile:
 

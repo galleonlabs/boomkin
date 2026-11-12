@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.2 · 2026-11-12
+
+- Correct the published provider discovery count to 59 after the Fluid entry was removed.
+- State which commands accept `--directory`, and list `project show`, `status`, `--protocol` and the ChatGPT refresh and model actions in `--help`.
+- Reject profile, harness, pack and `--offline-catalog` flags on commands that do not use them.
+
 ## 0.13.1
 
 - Prune obsolete research drafts/screenshots, superseded artwork, unused CSS and unused desk bindings; keep the current UI, incoming routes and saved-profile contracts.

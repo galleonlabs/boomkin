@@ -7,6 +7,8 @@ import skills from "../catalog/skills.json";
 import { parseCatalog } from "../src/core.ts";
 
 test("provider discovery retains primary reviews without expanding the installation trust boundary", () => {
+  expect(providerCatalog.providers).toHaveLength(59);
+  expect(providerCatalog.providers.filter(provider => provider.listedInDirectory)).toHaveLength(57);
   expect(providerCatalog.providers.every(provider => provider.review.status === "primary-source-reviewed")).toBe(true);
   expect(providerCatalog.providers.filter(provider => provider.integration.defaultEnabled).map(provider => provider.id)).toEqual(["coingecko"]);
   expect(parseCatalog(skills).packs.every(pack => pack.source === "galleonlabs/crypto-defi-skills")).toBe(true);
