@@ -69,7 +69,7 @@ U=$(mktemp); npm login --userconfig "$U" --auth-type=web && npm trust github boo
 
 Once that release has landed, set the package's npm **Settings → Publishing access** to "Require two-factor authentication and disallow tokens".
 
-If Actions is unavailable, stage from a clean dappnode clone after `bun run build` with `npx -y npm@11.21.1 stage publish --access public --ignore-scripts`; it goes live only when the owner approves it with 2FA on npmjs.com. npm removes direct publishing by 2FA-bypass tokens around January 2027.
+If Actions is unavailable, stage from a clean, trusted local clone after `bun run build` with `npx -y npm@11.21.1 stage publish --access public --ignore-scripts`; it goes live only when the owner approves it with 2FA on npmjs.com. npm removes direct publishing by 2FA-bypass tokens around January 2027.
 
 ## Send a pull request
 
