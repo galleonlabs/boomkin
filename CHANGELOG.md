@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.4 · 2026-11-15
+
+- Pin the latest released data 0.6.3, lending 0.4.5, staking 0.3.2, yield 0.4.3, routing 0.4.4, derivatives 0.2.3, portfolio 0.2.3, security 0.2.8, payments 0.2.3, agent 0.1.4 and LP 0.7.6 packs. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, every pin matches its package's latest published upstream release tag, and the workflow guide links the new revisions.
+
 ## 0.13.3 · 2026-11-15
 
 - Pin the independently released LP 0.7.5, Hyperliquid 0.4.6 and infra 0.4.5 packs. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
