@@ -19,7 +19,7 @@ export function researchBrief(workflow, packs, client, values = []) {
   const pack = reviewedPack(workflow, packs);
   const packageUrl = `https://github.com/${pack.source}/tree/${pack.revision}/${pack.path}`;
   const source = `https://github.com/${pack.source}/blob/${pack.revision}/${pack.path}/skills/${workflow.skill}/SKILL.md`;
-  const command = `DISABLE_TELEMETRY=1 npx skills@1.7.0 add ${packageUrl} --skill ${workflow.skill} --agent ${client} --copy`;
+  const command = `DISABLE_TELEMETRY=1 npx skills@1.8.1 add ${packageUrl} --skill ${workflow.skill} --agent ${client} --copy`;
   const inputs = workflow.inputs.map((name, index) => ({ name, value: String(values[index] ?? '').trim() }));
   const task = [
     `Use ${workflow.skill} for this research task: ${workflow.title}.`,

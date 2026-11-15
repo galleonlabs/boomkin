@@ -28,7 +28,7 @@ test('an onboarding brief pins the reviewed package and only selected skill/clie
   const pack = reviewedPack(workflow, catalogue.packs);
   expect(brief.installCommand).toContain(`tree/${pack.revision}/${pack.path}`);
   expect(brief.installCommand).toContain('--skill galleon-defi-market-snapshot --agent codex --copy');
-  expect(brief.installCommand).toStartWith('DISABLE_TELEMETRY=1 npx skills@1.7.0 add ');
+  expect(brief.installCommand).toStartWith('DISABLE_TELEMETRY=1 npx skills@1.8.1 add ');
   expect(brief.pack.version).toBe(pack.version);
   expect(brief.onboardingPrompt).toContain('Confirm this agent can discover the installed skill');
   expect(brief.onboardingPrompt).toContain('ethereum in USD');

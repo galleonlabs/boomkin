@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.3 · 2026-11-15
+
+- Pin the independently released LP 0.7.5, Hyperliquid 0.4.6 and infra 0.4.5 packs. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
+- Review native Hermes 0.23.1 and pin it for fresh installs with its official installer checksum. The native compatibility check, ChatGPT auth and browser model setup contracts pass against it.
+- Update the bundled `skills` installer to 1.8.1, and the website's single-skill install command with it. Install paths for Claude Code, Codex, Cursor, Gemini CLI, Hermes and OpenClaw are unchanged.
+
 ## 0.13.2 · 2026-11-12
 
 - Correct the published provider discovery count to 59 after the Fluid entry was removed.
