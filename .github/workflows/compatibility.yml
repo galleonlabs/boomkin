@@ -57,7 +57,7 @@ jobs:
         id: python
         with:
           python-version: "3.14"
-      - uses: astral-sh/setup-uv@v10.3.2
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           version: "0.13.4"
       - name: Install pinned upstream in an isolated temporary directory

@@ -5,8 +5,8 @@
       "id": "lp-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Agent skills and deterministic tools for liquidity research, planning, monitoring and approved execution.",
-      "version": "0.7.1",
-      "revision": "27b7cc4478f68dc988bb129a66f8a8f884b76aca",
+      "version": "0.7.5",
+      "revision": "ce7bbe01c4f7637e4b1e37174269590a50bc70e2",
       "skills": [
         "aerodrome-slipstream",
         "balancer-liquidity",
@@ -28,8 +28,8 @@
       "id": "hyperliquid-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Agent skills for Hyperliquid public wallet diagnostics, setup, market analysis, trade planning and execution, monitoring, and performance review.",
-      "version": "0.4.2",
-      "revision": "27b7cc4478f68dc988bb129a66f8a8f884b76aca",
+      "version": "0.4.6",
+      "revision": "ce7bbe01c4f7637e4b1e37174269590a50bc70e2",
       "skills": [
         "hyperliquid-analyze",
         "hyperliquid-engineer",
@@ -47,8 +47,8 @@
       "id": "defi-infra-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "RPC, wallet and Hermes infrastructure skills with read-only readiness diagnostics.",
-      "version": "0.4.3",
-      "revision": "27b7cc4478f68dc988bb129a66f8a8f884b76aca",
+      "version": "0.4.5",
+      "revision": "29b25ec29324d65222f892e9a52f39a42e812102",
       "skills": [
         "galleon-coinbase-agentkit-readiness",
         "galleon-defi-infra"
