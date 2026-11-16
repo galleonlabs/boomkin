@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.13.5 · 2026-11-16
+
+- Pin the released data 0.6.4 and infra 0.4.6 packs, which drop untested per-skill eval files. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
+- Point the Coinbase wallet guidance at the current Wallet MCP installation and approval references. The former Agentic Wallet guide returns 404 and Coinbase no longer documents the `awal` CLI, so existing `awal` installations are now treated as legacy. The Coinbase account note now records documented x402 payments from the retail USDC balance.
+- State the Nethermind provider's access requirements once; its hosted-page 404 stays in the review notes.
+- Remove the unused Vercel redirect (`vercel.json`, `redirect/`). The site is served from GitHub Pages, and no Vercel project serves the repository.
+
 ## 0.13.4 · 2026-11-15
 
 - Pin the latest released data 0.6.3, lending 0.4.5, staking 0.3.2, yield 0.4.3, routing 0.4.4, derivatives 0.2.3, portfolio 0.2.3, security 0.2.8, payments 0.2.3, agent 0.1.4 and LP 0.7.6 packs. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, every pin matches its package's latest published upstream release tag, and the workflow guide links the new revisions.

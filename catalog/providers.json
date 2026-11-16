@@ -669,7 +669,7 @@
       },
       "access": {
         "kind": "mixed",
-        "requirements": "Nethermind playbooks emit unsigned raw_tx chain_id/to/value/data and never sign or broadcast. Optional Alchemy, 1inch and Anthropic keys cover quotes, L2 token discovery and chat. https://defi-skills.nethermind.io/ returned HTTP 404 on 2026-11-12; the README still links it. The current README describes no hosted bearer API."
+        "requirements": "Optional Alchemy, 1inch and Anthropic keys cover quotes, L2 token discovery and chat; no signer or wallet key is involved."
       },
       "cost": "mixed",
       "authority": "unsigned",

@@ -47,8 +47,8 @@
       "id": "defi-infra-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "RPC, wallet and Hermes infrastructure skills with read-only readiness diagnostics.",
-      "version": "0.4.5",
-      "revision": "29b25ec29324d65222f892e9a52f39a42e812102",
+      "version": "0.4.6",
+      "revision": "558836fada8a90c5270433d44ee1c8e7c586d625",
       "skills": [
         "galleon-coinbase-agentkit-readiness",
         "galleon-defi-infra"
@@ -60,8 +60,8 @@
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Portable DeFi data skills for CoinGecko, DefiLlama, AIXBT, and source-aware research.",
-      "version": "0.6.3",
-      "revision": "091c0cc4a0f024f2c74bf73ca27caed7fd3280f6",
+      "version": "0.6.4",
+      "revision": "558836fada8a90c5270433d44ee1c8e7c586d625",
       "skills": [
         "galleon-coingecko-token-research",
         "galleon-defi-data",

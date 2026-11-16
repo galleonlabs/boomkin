@@ -90,20 +90,17 @@ Each profile receives both a distinct `COINBASE_CONFIG_DIR` and a unique `live-b
 
 Credential setup does not establish the permitted portfolio, actual funds or read success. Verify the selected portfolio and provider-enforced limits through the native tools before use. Hermes terminal access remains a separate capability and may run other CLI commands; MCP filtering alone does not enforce a financial policy. Never check in key files or copy secrets into a model prompt.
 
-See [Coinbase for Agents](https://docs.cdp.coinbase.com/x402/agentic-accounts/coinbase-for-agents). Its isolated Coinbase portfolio and Agentic Wallet below are different products. The reviewed Coinbase account guide labels x402 payments coming soon; do not advertise that capability as available through this connection.
+See [Coinbase for Agents](https://docs.cdp.coinbase.com/x402/agentic-accounts/coinbase-for-agents). Its isolated Coinbase portfolio and the Coinbase Wallet below are different products. Coinbase now documents x402 payments from the account's retail USDC balance on Base (checked 2026-11-16). Boomkin's read-only tool selection exposes no payment tool, so a paid request stays a separate, explicitly authorized choice.
 
 ## Agentic Wallet and x402
 
-The [Agentic Wallet guide](https://docs.cdp.coinbase.com/x402/agentic-accounts/agentic-wallet) provides the official `awal` CLI and separate payment MCP. The reviewed CLI is `awal@2.12.1`; current setup documentation requires Node.js 24+.
+Coinbase's current wallet path for agents is [Wallet MCP](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/skill.md), a hosted server at `https://wallet-mcp.coinbase.com` that the client connects to with OAuth. Follow the [installation reference](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/install.md) for the selected client. Under its [approval mode](https://docs.cdp.coinbase.com/coinbase-for-agents/wallet-mcp/references/approval-mode.md), every write returns an approval URL and request ID; only a matching successful status means the write completed. Connecting the wallet is an operator step, and Boomkin configures no wallet server.
 
-```bash
-npx --yes awal@2.12.1 --help
-npx --yes awal@2.12.1 status --json
-```
+The former Agentic Wallet guide and its CLI and payment MCP quickstarts now return 404 (checked 2026-11-16), and the current Coinbase documentation no longer covers the `awal` CLI. npm still lists `awal` (latest 2.12.2) without a deprecation notice. For an existing installation, inspect its installed version and help before any bounded read. Do not run login, create a replacement wallet or migrate funds because the documentation moved.
 
-Login can create a Coinbase-managed wallet and send an OTP. Do it only when deliberately choosing that wallet, using the native flow and approved contact/account. Funding, transfers, trading and x402 purchases require separate terms and spending limits. A paid HTTP request is a financial action, not a harmless data-read retry.
+Login, funding, transfers, trading and x402 purchases each need their own terms and spending limits. A paid HTTP request is a financial action, not a harmless data-read retry.
 
-No portable `AWAL_HOME` isolation setting was verified; its OS-level session may be shared. Do not assume that choosing a Boomkin directory isolates that wallet. The payments MCP npm package is an installer for another runtime bundle, not a command to register as a stdio server. Use its documented setup if choosing that distinct path; Boomkin does not invent a server command.
+No portable `AWAL_HOME` isolation setting was verified for a legacy `awal` installation; its OS-level session may be shared. Do not assume that choosing a Boomkin directory isolates that wallet. The legacy payments MCP npm package is an installer for another runtime bundle, not a command to register as a stdio server.
 
 ### Evaluating a paid data or MCP service
 
