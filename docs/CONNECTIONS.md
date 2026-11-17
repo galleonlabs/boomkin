@@ -26,7 +26,7 @@ CoinGecko public MCP is `https://mcp.api.coingecko.com/mcp`. Onboarding adds onl
 node "$HOME/.boomkin/hermes/skills/galleon-defi-data/scripts/price-check.mjs" --provider coingecko --id ethereum
 ```
 
-The helper accepts `--provider`, `--id` and `--max-age`; it always returns JSON. See its installed `references/diagnostic.md`. Public REST access and MCP access are different paths; one passing does not prove the other works. See [CoinGecko's official guide](https://docs.coingecko.com/docs/ai-agents-llm-apps).
+The helper accepts `--provider`, `--id` and `--max-age`; a read returns JSON whether it succeeds or fails. See its installed `references/diagnostic.md`. Public REST access and MCP access are different paths; one passing does not prove the other works. See [CoinGecko's official guide](https://docs.coingecko.com/docs/ai-agents-llm-apps).
 
 ### Optional Blockscout explorer reads
 
