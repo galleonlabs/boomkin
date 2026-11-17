@@ -129,7 +129,9 @@ with the same authority and data freshness checks on each run.
 export function installedVersion(text: string): string | undefined {
   const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!frontmatter?.[1]) return undefined;
-  const data = parse(frontmatter[1]) as { metadata?: { version?: unknown } };
+  // Unparseable frontmatter is an unknown version, so callers report their own recovery step.
+  let data: { metadata?: { version?: unknown } } | null;
+  try { data = parse(frontmatter[1]); } catch { return undefined; }
   return typeof data?.metadata?.version === "string" ? data.metadata.version : undefined;
 }
 
