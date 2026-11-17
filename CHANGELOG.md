@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.7 · 2026-11-17
+
+- Pin the released strategy 0.2.2 pack, from the same upstream revision as the ten packs repinned in 0.13.6. It states the retrieval-time rule as the engine enforces it: no observation may be later than the retrieval time. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
+
 ## 0.13.6 · 2026-11-17
 
 - Pin the released LP 0.7.7, Hyperliquid 0.4.7, routing 0.4.5, payments 0.2.4, agent 0.1.5, infra 0.4.7, lending 0.4.6, yield 0.4.4, staking 0.3.3 and data 0.6.5 packs, all from one upstream revision. They correct wrong provider facts and instructions that contradicted each other across skills, and the LP range helper now reports the exact current tick more than 20,000 ticks from zero. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, every repinned pack matches a published upstream release tag, and the workflow guide links the new revision.

@@ -235,8 +235,8 @@
       "id": "defi-strategy-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Frozen daily strategy validation with cost sensitivity, held-out periods and a reproducible benchmark.",
-      "version": "0.2.1",
-      "revision": "27b7cc4478f68dc988bb129a66f8a8f884b76aca",
+      "version": "0.2.2",
+      "revision": "b87c1a515ab46326dac5a24de3d794296aaf915d",
       "skills": [
         "galleon-defi-strategy-backtest"
       ],
