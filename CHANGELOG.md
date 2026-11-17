@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.6 · 2026-11-17
+
+- Pin the released LP 0.7.7, Hyperliquid 0.4.7, routing 0.4.5, payments 0.2.4, agent 0.1.5, infra 0.4.7, lending 0.4.6, yield 0.4.4, staking 0.3.3 and data 0.6.5 packs, all from one upstream revision. They correct wrong provider facts and instructions that contradicted each other across skills, and the LP range helper now reports the exact current tick more than 20,000 ticks from zero. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, every repinned pack matches a published upstream release tag, and the workflow guide links the new revision.
+- `boomkin check` reports an installed skill whose frontmatter does not parse as "version unknown" instead of failing with a YAML error.
+- Correct the connections guide: the CoinGecko price helper returns JSON whether a read succeeds or fails.
+
 ## 0.13.5 · 2026-11-16
 
 - Pin the released data 0.6.4 and infra 0.4.6 packs, which drop untested per-skill eval files. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
