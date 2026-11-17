@@ -21,17 +21,17 @@ bun install --frozen-lockfile
 bun run gate
 ```
 
-`bun run gate` is the required CI gate: typecheck, the boundary tests in `test:gate`, build, the clean-install smoke, and the website build and link check. `test:gate` holds only tests for catalog validation, source pins, copied-file integrity, network and interrupted-install failure paths, credential and financial-authority boundaries, the local desk API and the CI workflow. `bun run test` runs every file in `test/` and is optional.
+`bun run gate` is the required CI gate: typecheck, the boundary tests in `test:gate`, build, the clean-install smoke, and the website build and link check. `test:gate` holds only tests for catalog validation, source pins, copied-file integrity, network and interrupted-install failure paths, credential and financial-authority boundaries, the local desk API, the CI workflow and the agreement between shipped text and the code. `bun run test` runs every file in `test/` and is optional.
 
 Cover new behaviour with the user journey it changes: extend `scripts/smoke.ts` for install, update and selection, or `scripts/check-site.ts` for the website. Add a contract test to `test:gate` only for a new trust, integrity or failure boundary, and include its failure path. Avoid unit tests for internal details.
 
 | Change | Additional validation |
 | --- | --- |
-| Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates and independent pack selection. CI runs the same smoke check on trusted pull requests |
+| Installer, catalog or harness adapter | `bun run smoke` checks fresh installs, updates, independent pack selection and that each pinned helper offers the flags Boomkin's briefs and guides name. CI runs the same smoke check on trusted pull requests |
 | Catalog pin authenticity | `bun scripts/catalog-freshness.ts --verify` checks each pin against upstream `galleon-*-skills@*` release tags. Pull requests that touch `catalog/**` run this job |
 | Native Hermes integration | `python3 scripts/hermes-native-smoke.py --hermes /absolute/path/to/hermes`; CI exercises the reviewed runtime |
 | Local desk | `bun run build`; `bun run boomkin desk --no-open --directory /absolute/test/profile`; inspect first use, all three jobs, sources, exports, cancel/restart and desktop/mobile behavior |
-| Documentation or website | Check commands against `bun run boomkin --help`; regenerate the workflow guide after catalog changes with `bun scripts/workflow-docs.ts --write`, then run `bun run build:site` and `bun run check:site` for rendered guides and links |
+| Documentation or website | `bun run check` rejects a `boomkin` example the CLI would refuse, a count, version or commit that differs from the catalogs and code, and a skill, script, file, link or anchor that does not exist. Regenerate the workflow guide after catalog changes with `bun scripts/workflow-docs.ts --write`, then run `bun run build:site` and `bun run check:site` for rendered guides and links |
 | Public website interaction | Inspect affected desktop/mobile views, search or lab controls, browser errors and exact public serving revision; see [WEBSITE.md](docs/WEBSITE.md) |
 
 The native smoke uses a temporary profile and local mock MCP. Its optional `--public` flag adds keyless CoinGecko discovery. Validation must not authenticate paid services, call a model, create a wallet or submit a financial action.

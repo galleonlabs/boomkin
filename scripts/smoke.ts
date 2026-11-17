@@ -4,6 +4,7 @@ import { join, resolve } from "node:path";
 import { harnesses, parseCatalog } from "../src/core";
 
 import catalogFile from "../catalog/skills.json";
+import workflowRegistry from "../catalog/workflows.json";
 
 const root = await mkdtemp(join(tmpdir(), "boomkin-smoke-"));
 const cli = resolve(import.meta.dir, "../src/cli.ts");
@@ -38,7 +39,34 @@ async function harnessInstall(name: string, adapter: (typeof harnesses)[keyof ty
     if (await readFile(instruction, "utf8") !== "Keep my existing instructions.\n") throw new Error("User instructions overwritten");
     log.push(`${name} ${command}: ${entries.length} skills; existing instructions preserved`);
   }
+  if (name === "hermes") log.push(await helperContracts(join(directory, adapter.skillsPath)));
   return log;
+}
+
+// Boomkin's project briefs and connection guide tell an agent which pinned helper to run and with
+// which flags. Read those names from the shipped text and confirm the installed release offers them.
+async function helperContracts(skills: string) {
+  const text = [await readFile(resolve(import.meta.dir, "../src/projects.ts"), "utf8"), await readFile(resolve(import.meta.dir, "../docs/CONNECTIONS.md"), "utf8")].join("\n").split("\n");
+  const skillFor = (id: string) => workflowRegistry.workflows.find(workflow => workflow.id === id)!.skill;
+  const helpers = [
+    { script: join(skillFor("hyperliquid-wallet-audit"), "scripts/wallet-audit.mjs"), named: "scripts/wallet-audit.mjs" },
+    { script: join(skillFor("strategy-validation"), "scripts/validate-strategy.mjs"), named: "scripts/validate-strategy.mjs" },
+    { script: "galleon-defi-data/scripts/price-check.mjs", named: "price-check.mjs|The helper accepts" },
+  ];
+  let checked = 0;
+  for (const { script, named } of helpers) {
+    const flags = new Set(text.filter(line => new RegExp(named).test(line)).flatMap(line => line.match(/(?<![\w-])--[a-z][a-z-]*/g) ?? []));
+    if (!flags.size) throw new Error(`Shipped text no longer names flags for ${script}; update the helper contract check`);
+    const child = Bun.spawn([Bun.which("node") ?? process.execPath, join(skills, script), "--help"], { stdout: "pipe", stderr: "pipe" });
+    const [help, code] = await Promise.all([new Response(child.stdout).text(), child.exited]);
+    if (code !== 0) throw new Error(`Installed helper ${script} did not print help`);
+    for (const flag of flags) {
+      if (!new RegExp(`${flag}(?![a-z-])`).test(help)) throw new Error(`Shipped text names ${flag} for ${script}, which the pinned release does not offer`);
+      checked++;
+    }
+  }
+  if (!(await Bun.file(join(skills, "galleon-defi-data/references/diagnostic.md")).exists())) throw new Error("docs/CONNECTIONS.md names references/diagnostic.md, which the pinned data pack does not ship");
+  return `helper contracts: ${checked} documented flags offered by the pinned releases`;
 }
 
 async function selectedInstall(selected: ReturnType<typeof parseCatalog>["packs"][number]) {
