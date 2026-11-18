@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.8 · 2026-11-18
+
+- Review native Hermes 0.23.2 and pin it for fresh installs with its official installer checksum. Its installer no longer gives the builder's uid ownership of the uv it unpacks when run as root, and an exported `GIT_DIR` or a git-managed home directory can no longer redirect its rerun stash and reset to another repository. The native compatibility check passes against it, and its OpenAI Codex OAuth provider is unchanged.
+
 ## 0.13.7 · 2026-11-17
 
 - Pin the released strategy 0.2.2 pack, from the same upstream revision as the ten packs repinned in 0.13.6. It states the retrieval-time rule as the engine enforces it: no observation may be later than the retrieval time. The catalog keeps 17 packs, 81 skills and 63 workflow IDs, and every pin matches a published upstream release tag.
