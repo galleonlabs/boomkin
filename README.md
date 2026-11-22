@@ -14,7 +14,7 @@ Only want the skills inside Claude Code, Codex, Cursor or another agent you alre
 
 [Prepare a first task for your agent](https://galleonlabs.github.io/boomkin/#agent-start): choose a workflow and client, add your public research inputs, then copy a source-pinned setup prompt or download the research brief. Your agent confirms skill discovery and returns the evidence; installation alone is not a completed result.
 
-**63 workflows · 59 providers in discovery · 17 independent packs · 81 reviewed skills**
+**64 workflows · 59 providers in discovery · 17 independent packs · 82 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
@@ -25,7 +25,7 @@ Only want the skills inside Claude Code, Codex, Cursor or another agent you alre
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.13.8
+bun install -g boomkin@0.13.9
 boomkin desk
 ```
 
@@ -73,7 +73,7 @@ Workflow discovery runs locally. Each job names its inputs, expected result and 
 | Review an exact unsigned payload | `unsigned-plan`, `transaction-simulation` |
 | Research prediction markets | `prediction-research`, `prediction-resolution` |
 
-[All 63 workflows, inputs and outputs](docs/WORKFLOWS.md)
+[All 64 workflows, inputs and outputs](docs/WORKFLOWS.md)
 
 ### Read or install the protocol skill
 
@@ -147,7 +147,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.13.8
+bun install -g boomkin@0.13.9
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live
@@ -175,6 +175,6 @@ Run the [change-specific checks](CONTRIBUTING.md#work-locally) before a pull req
 
 ## License and credit
 
-[MIT licensed](LICENSE). Created by [Andrew Wilkinson](https://andrewwilkinson.io) and [Galleon Labs](https://github.com/galleonlabs). Preserve copyright and license notices when reusing the project; [attribution guidance](ATTRIBUTION.md) includes an optional credit line. A repository star is appreciated and entirely optional.
+[MIT licensed](LICENSE). Created by [Andrew Wilkinson](https://andrewwilkinson.io) and [Galleon Labs](https://github.com/galleonlabs). Preserve copyright and license notices when reusing the project; [attribution guidance](ATTRIBUTION.md) includes an optional credit line. Find Andrew on [GitHub](https://github.com/ADWilkinson) and [X](https://x.com/andrewwilkinson), or [sponsor his open-source work](https://github.com/sponsors/ADWilkinson).
 
 Documentation copy controls were inspired by [Rare UI](https://www.rareui.com/components/code-block) and implemented independently.

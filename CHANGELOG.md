@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.9 · 2026-11-22
+
+- Add the LCX Liberty DEX quote workflow and pin routing pack 0.5.0. The CLI and workflow explorer now expose its inputs, API key requirement and evidence before installation.
+- Link Andrew Wilkinson’s maintainer and sponsorship profiles from the package, repository and website.
+
 ## 0.13.8 · 2026-11-18
 
 - Review native Hermes 0.23.2 and pin it for fresh installs with its official installer checksum. Its installer no longer gives the builder's uid ownership of the uv it unpacks when run as root, and an exported `GIT_DIR` or a git-managed home directory can no longer redirect its rerun stash and reset to another repository. The native compatibility check passes against it, and its OpenAI Codex OAuth provider is unchanged.

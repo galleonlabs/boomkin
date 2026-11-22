@@ -659,6 +659,20 @@
       "access": "Official 0x Swap API with its configured API key; credentials and an executable payload grant no signing authority."
     },
     {
+      "id": "lcx-liberty-swap",
+      "protocol": "LCX Liberty DEX",
+      "title": "Compare a swap quote after gas",
+      "skill": "lcx-liberty-swap",
+      "pack": "defi-routing-skills",
+      "inputs": [
+        "EVM chain ID, token addresses and raw sell amount",
+        "Public taker and recipient addresses, slippage limit",
+        "LCX_API_KEY configured in the agent environment"
+      ],
+      "output": "An expiring quote with guaranteed minimum output, gas costs, source block and any pricing or liquidity gaps.",
+      "access": "Requires an LCX API key for quote reads. No signer or transaction submission."
+    },
+    {
       "id": "oneinch-swap",
       "protocol": "1inch",
       "title": "Review a 1inch swap quote and execution mode",

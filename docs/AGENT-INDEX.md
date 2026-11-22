@@ -23,8 +23,8 @@ Boomkin prepares a native Hermes DeFi research profile with reviewed Galleon ski
 
 ## Read the authoritative artifacts
 
-- [catalog/skills.json](../catalog/skills.json): 17 independently published packs, 81 expected skill IDs, immutable source pins and npm versions.
-- [catalog/workflows.json](../catalog/workflows.json): 63 workflow IDs, selected pack/skill, inputs, outputs and access requirements. [src/workflows.ts](../src/workflows.ts) validates and queries these contracts.
+- [catalog/skills.json](../catalog/skills.json): 17 independently published packs, 82 expected skill IDs, immutable source pins and npm versions.
+- [catalog/workflows.json](../catalog/workflows.json): 64 workflow IDs, selected pack/skill, inputs, outputs and access requirements. [src/workflows.ts](../src/workflows.ts) validates and queries these contracts.
 - [catalog/templates.json](../catalog/templates.json): four reviewed starting points, explicit defaults, required inputs and replaceable examples.
 - [catalog/providers.json](../catalog/providers.json): 59 discovery entries, sources, review dates, authorship, cost and authority. Discovery entries do not all have native integrations.
 - [src/hermes.ts](../src/hermes.ts): native runtime/installer pin and launch/authentication contracts.

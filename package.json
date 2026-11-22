@@ -1,6 +1,6 @@
 {
   "name": "boomkin",
-  "version": "0.13.8",
+  "version": "0.13.9",
   "description": "Your open-source DeFi desk: native Hermes research projects, verifiable evidence and independent financial skills.",
   "type": "module",
   "license": "MIT",
@@ -51,7 +51,7 @@
   "bugs": {
     "url": "https://github.com/galleonlabs/boomkin/issues"
   },
-  "author": "Galleon Labs",
+  "author": "Andrew Wilkinson (https://github.com/ADWilkinson)",
   "publishConfig": {
     "access": "public"
   },
@@ -66,5 +66,6 @@
     "research",
     "backtesting",
     "galleon"
-  ]
+  ],
+  "funding": "https://github.com/sponsors/ADWilkinson"
 }
