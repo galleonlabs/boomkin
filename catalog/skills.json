@@ -60,8 +60,8 @@
       "id": "defi-data-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Portable DeFi data skills for CoinGecko, DefiLlama, AIXBT, and source-aware research.",
-      "version": "0.7.0",
-      "revision": "86ef9046af855896574e0ff622e6e93e9a39d1a5",
+      "version": "0.8.0",
+      "revision": "74427f1a15000b0af16018c6e090fc306305d591",
       "skills": [
         "galleon-coingecko-token-research",
         "galleon-defi-data",
@@ -207,10 +207,11 @@
       "id": "defi-payments-skills",
       "source": "galleonlabs/crypto-defi-skills",
       "description": "Plan stablecoin payments, x402 purchases and token streams.",
-      "version": "0.2.4",
-      "revision": "b87c1a515ab46326dac5a24de3d794296aaf915d",
+      "version": "0.3.0",
+      "revision": "3ed8c98c38d4092839578a0a06cf1a495b3a4a0c",
       "skills": [
         "galleon-defi-payments",
+        "galleon-erc20-payment-receipt",
         "galleon-sablier-streams",
         "galleon-superfluid-streams"
       ],

@@ -3,7 +3,7 @@
 Open Boomkin in your browser, choose a question and keep the result with its sources. Market snapshots, public Hyperliquid wallet reviews and daily strategy tests work without a model account or funded wallet.
 
 ```bash
-bun install -g boomkin@0.13.9
+bun install -g boomkin@0.14.0
 boomkin desk
 ```
 
@@ -17,7 +17,7 @@ Choose **Review a wallet**, enter a public Hyperliquid account and a date range,
 
 The other two jobs are:
 
-- **Research an asset:** compare bounded public USD price marks using the exact CoinGecko identity. This captures market data; optional native research can explain a broader question.
+- **Research an asset:** compare bounded public USD price marks using the exact CoinGecko identity. Choose Coinbase Exchange to compare the CoinGecko aggregate with the venue’s last BTC-USD, ETH-USD or SOL-USD trade. The default comparison still uses DefiLlama. The desk API accepts `{"kind":"market","inputs":{"asset":"ethereum","provider":"coinbase-compare"}}`. This captures market data; optional native research can explain a broader question.
 - **Test a strategy:** choose buy-and-hold, funded weekly DCA, a 10-day moving average or a 30-day moving average. Test independently restarted reference and held-out periods at baseline and higher costs. Use a public daily history, the explicitly dated bundled Bitcoin series, or an uploaded dataset. An upload is sent only to the local desk and saved with its project.
 
 Wallet results cover observed default-perpetual activity. Provider retention, page budgets, unknown opening inventory and unsupported spot/HIP-3 activity prevent treating this as a complete portfolio return. Fee and funding signs remain explicit. Historical strategy simulations use stated daily execution assumptions and establish no future return. Missing or stale market reads remain visible.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.14.0 · 2026-11-22
+
+- Compare an aggregate USD price with a Coinbase Exchange last trade in the desk. Choose the source for Bitcoin, Ethereum or Solana to capture the venue product, trade ID and timestamp.
+- Verify an ERC-20 payment against its expected chain, token, sender, recipient and raw amount using the new payment receipt workflow.
+- Install and update reviewed packs directly in Cursor, Gemini CLI and GitHub Copilot projects. The web brief’s single-skill install command now completes in noninteractive terminals. Agents can discover installer IDs and skill paths with `boomkin harnesses --json`.
+- Find Jupiter and LCX Liberty DEX through provider discovery and inspect their access requirements before choosing a quote workflow.
+
 ## 0.13.9 · 2026-11-22
 
 - Pin data pack 0.7.0 for exact-mint Solana yield screens.

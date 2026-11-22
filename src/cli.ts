@@ -83,7 +83,7 @@ Wallet/account setup stays in its official CLI; see docs/CONNECTIONS.md.
 
 Advanced skill-only compatibility:
 boomkin setup --harness codex --directory ./agent --pack lp-skills
-boomkin harnesses
+boomkin harnesses --json
 boomkin catalog
 --pack selects a pack (repeat for several); updates preserve your saved selection.
 --offline-catalog uses this checkout's catalog. Runtime updates use native Hermes.
@@ -216,6 +216,10 @@ async function main() {
   }
 
   if (command === "harnesses") {
+    if (values.json) {
+      const adapters = Object.entries(harnesses).map(([id, adapter]) => ({ id, ...adapter }));
+      return console.log(JSON.stringify({ schemaVersion: 1, harnesses: adapters }, null, 2));
+    }
     for (const [name, h] of Object.entries(harnesses)) console.log(`${name}\n  ${h.setup}\n  ${h.docs}\n`);
     return;
   }

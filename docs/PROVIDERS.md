@@ -1,13 +1,13 @@
 # Find a provider by capability and authority
 
-Boomkin's local discovery catalog retains 57 reviewed entries from the 58 that [skills.eth.sh](https://skills.eth.sh/) listed on October 8, 2026, plus the existing AIXBT and Coinbase account connections. The directory was checked again on November 12, 2026. Fluid is still listed, and [its skill pointer](https://fluid.io/skill.md) still returns a not-found page, so that entry stays removed. Three later listings are not reviewed and are not in this catalog: Namespace Skills, VFAT MCP and Galleon DeFi Skills. Each record carries its own source-review date. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
+Boomkin's local discovery catalog retains 57 reviewed entries from the 58 that [skills.eth.sh](https://skills.eth.sh/) listed on October 8, 2026, alongside AIXBT, Coinbase account tools, Coinbase Exchange public market data, Jupiter and LCX Liberty DEX. The directory was checked again on November 12, 2026. Fluid is still listed, and [its skill pointer](https://fluid.io/skill.md) still returns a not-found page, so that entry stays removed. Three later listings are not reviewed and are not in this catalog: Namespace Skills, VFAT MCP and Galleon DeFi Skills. Each record carries its own source-review date. Discovery records a tool's capabilities, authorship, prerequisites, cost and financial authority separately. It makes no network call, installs no third-party skill and grants no account permissions.
 
 ```bash
 boomkin providers
 boomkin providers --search simulation --json
 boomkin providers --capability Data --access keyless
 boomkin providers --provider blockscout
-boomkin providers --provider morpho --json
+boomkin providers --provider jupiter --json
 ```
 
 `--provider` selects one catalog ID. `--search` matches names, interfaces, categories and the task summary; `--capability` matches one listed category, case-insensitively. `--access` accepts `keyless`, `credentials`, `mixed`, `local` or `unknown`. Combine filters to narrow a job. Empty JSON results are `providers: []`; unknown IDs, categories and access values fail with a recovery message.

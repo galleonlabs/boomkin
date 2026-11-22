@@ -74,6 +74,18 @@ boomkin setup --harness opencode --directory "$HOME/boomkin-opencode"
 Launch the corresponding agent from its directory. Codex and OpenCode use
 `.agents/skills/`; Claude Code uses `.claude/skills/`.
 
+## Cursor, Gemini CLI and GitHub Copilot
+
+From your project directory, choose your client and the pack you need:
+
+```bash
+boomkin setup --harness cursor --pack defi-data-skills --directory .
+boomkin setup --harness gemini-cli --pack defi-data-skills --directory .
+boomkin setup --harness github-copilot --pack defi-data-skills --directory .
+```
+
+Each client discovers project-local skills in `.agents/skills/`. Open **Customize > Skills** in Cursor, or run `/skills list` in Gemini CLI or Copilot CLI. Gemini requires a trusted workspace and supports `/skills reload`. The CLI lists all supported installer IDs and discovery paths with `boomkin harnesses --json`. [Cursor skill directories](https://cursor.com/docs/skills) · [Gemini CLI skills](https://geminicli.com/docs/cli/skills/) · [Copilot CLI skills](https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills)
+
 ## Support contract
 
 These adapters install the same upstream Agent Skills files in each harness's

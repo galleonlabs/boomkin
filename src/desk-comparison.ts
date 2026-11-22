@@ -1,4 +1,5 @@
 /** Comparisons are derived from verified saved captures, never from a live read. */
+export const coinbaseUsdProducts = new Map([["bitcoin", "BTC-USD"], ["ethereum", "ETH-USD"], ["solana", "SOL-USD"]]);
 export type ComparisonKind = "market" | "wallet" | "strategy";
 export interface ComparisonSnapshot {
   run: { id: string; project: string; kind: ComparisonKind; state: string; createdAt: string; finishedAt?: string; execution?: string };
@@ -115,28 +116,37 @@ function finish(output: DeskComparison) { output.notes = [...new Set(output.note
 
 function market(output: DeskComparison, before: ComparisonSnapshot, after: ComparisonSnapshot) {
   function observations(snapshot: ComparisonSnapshot) {
-    const rows = new Map<string, { value: number | null; observed: number; note: string }>();
+    const rows = new Map<string, { value: number | null; observed: number; note: string; tradeId?: number }>();
     const age = number(at(snapshot.result, "parameters", "maxAgeSeconds")) ?? 300;
+    const secondSource = snapshot.inputs.provider === "coinbase-compare" ? "coinbase" : "defillama";
+    const expectedProduct = coinbaseUsdProducts.get(String(snapshot.inputs.asset));
     for (const read of list(at(snapshot.result, "reads"))) for (const row of list(at(read, "observations"))) {
       const provider = at(read, "provider"), identity = at(row, "identity");
-      if (typeof provider !== "string" || !["coingecko", "defillama"].includes(provider) || at(row, "provider") !== provider || at(identity, "namespace") !== "coingecko" || at(identity, "id") !== snapshot.inputs.asset) { output.issues.push("A market observation has an unsupported provider or mismatched CoinGecko identity."); continue; }
+      const tradeId = number(at(row, "tradeId"));
+      if (provider === "coinbase" && at(row, "ok") === true && (at(row, "priceType") !== "last-trade" || !expectedProduct || at(row, "venueProduct") !== expectedProduct || tradeId === null || !Number.isSafeInteger(tradeId) || tradeId <= 0)) {
+        output.issues.push("Coinbase trade evidence does not match the selected USD market.");
+        continue;
+      }
+      if (typeof provider !== "string" || !["coingecko", secondSource].includes(provider) || at(row, "provider") !== provider || at(identity, "namespace") !== "coingecko" || at(identity, "id") !== snapshot.inputs.asset) { output.issues.push("A market observation has an unsupported provider or mismatched CoinGecko identity."); continue; }
       const key = String(provider), observed = time(at(row, "observedAt")), retrieved = time(at(row, "retrievedAt"));
       const price = number(at(row, "priceUsd")), delay = (retrieved - observed) / 1000;
       const valid = at(row, "ok") === true && at(row, "unit") === "USD" && price !== null && price >= 1e-12 && price <= 1e12 && delay >= -60 && delay <= age && age >= 1 && age <= 86400;
       const note = valid ? `Observed ${at(row, "observedAt")}; retrieved ${at(row, "retrievedAt")}.` : `Unavailable: ${typeof at(row, "error") === "string" ? at(row, "error") : "missing, stale or invalid observation"}.`;
       if (rows.has(key)) { output.issues.push(`Duplicate ${key} observations cannot be matched reliably.`); rows.set(key, { value: null, observed: NaN, note: "Duplicate source observations." }); }
-      else rows.set(key, { value: valid ? price : null, observed, note });
+      else rows.set(key, { value: valid ? price : null, observed, note, ...(provider === "coinbase" && tradeId !== null ? { tradeId } : {}) });
     }
     return rows;
   }
   const a = observations(before), b = observations(after);
   const rows = [...new Set([...a.keys(), ...b.keys()])].sort().map(provider => {
-    const old = a.get(provider), current = b.get(provider), newer = !!old && !!current && old.observed < current.observed;
-    const chronology = !old || !current ? "Source missing in one run." : !newer ? "Provider timestamp is cached, reversed or unavailable; no price movement is inferred." : "Change is between provider observations, not a portfolio return.";
-    return numericRow(provider, provider === "coingecko" ? "CoinGecko USD mark" : "DefiLlama USD mark", "USD", old?.value, current?.value, newer, `Baseline: ${old?.note ?? "unavailable"} Current: ${current?.note ?? "unavailable"} ${chronology}`, true);
+    const old = a.get(provider), current = b.get(provider);
+    const laterTrade = provider !== "coinbase" || (old?.tradeId !== undefined && current?.tradeId !== undefined && old.tradeId < current.tradeId);
+    const newer = !!old && !!current && old.observed < current.observed && laterTrade;
+    const chronology = !old || !current ? "Source missing in one run." : !newer ? "Provider timestamp or trade sequence is cached, reversed or unavailable; no price movement is inferred." : "Change is between provider observations, not a portfolio return.";
+    return numericRow(provider, provider === "coinbase" ? "Coinbase Exchange last trade" : provider === "coingecko" ? "CoinGecko USD mark" : "DefiLlama USD mark", "USD", old?.value, current?.value, newer, `Baseline: ${old?.note ?? "unavailable"} Current: ${current?.note ?? "unavailable"} ${chronology}`, true);
   });
   output.sections.push({ title: "Market observations", description: "Same provider and exact CoinGecko asset identity. Missing and stale marks remain unavailable.", rows });
-  output.notes.push("Aggregate marks are not executable quotes. Providers may share upstream data; agreement does not establish independent corroboration.");
+  output.notes.push(before.inputs.provider === "coinbase-compare" ? "Coinbase reports one venue’s last trade. Its difference from the CoinGecko aggregate is not an executable spread." : "Aggregate marks are not executable quotes. Providers may share upstream data; agreement does not establish independent corroboration.");
 }
 
 function wallet(output: DeskComparison, before: ComparisonSnapshot, after: ComparisonSnapshot) {

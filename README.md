@@ -10,11 +10,11 @@ Boomkin is a local DeFi research desk. Research an asset, review public wallet c
 
 The browser demo needs no installation. Choose a research rule, compare held-out periods and higher trading costs, and inspect simulated trades using a dated Bitcoin capture, synthetic prices or your own dataset. Uploaded data stays in your browser.
 
-Only want the skills inside Claude Code, Codex, Cursor or another agent you already use? Install them from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
+Already use Codex, Claude Code, Cursor, Gemini CLI or GitHub Copilot? [Install a reviewed pack in your existing project](docs/HARNESSES.md), or choose an individual skill from [crypto-defi-skills](https://github.com/galleonlabs/crypto-defi-skills).
 
 [Prepare a first task for your agent](https://galleonlabs.github.io/boomkin/#agent-start): choose a workflow and client, add your public research inputs, then copy a source-pinned setup prompt or download the research brief. Your agent confirms skill discovery and returns the evidence; installation alone is not a completed result.
 
-**64 workflows · 59 providers in discovery · 17 independent packs · 82 reviewed skills**
+**65 workflows · 62 providers in discovery · 17 independent packs · 83 reviewed skills**
 
 [![CI](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml/badge.svg)](https://github.com/galleonlabs/boomkin/actions/workflows/ci.yml)
 [![npm](https://img.shields.io/npm/v/boomkin)](https://www.npmjs.com/package/boomkin)
@@ -25,7 +25,7 @@ Only want the skills inside Claude Code, Codex, Cursor or another agent you alre
 Use macOS or Linux with [Bun](https://bun.sh) 1.3.12+ and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.13.9
+bun install -g boomkin@0.14.0
 boomkin desk
 ```
 
@@ -39,7 +39,7 @@ Optional model setup opens Hermes's own isolated browser dashboard. Hermes owns 
 
 Choose **Review a wallet**, supply a public Hyperliquid address and date range, or try the clearly labeled public vault example. Read fees, signed funding and current exposure; expand the source evidence, export the report, then reopen it from Recent research.
 
-**Research an asset** captures public USD marks and their age. **Test a strategy** compares a documented daily rule across independently restarted reference and held-out periods at baseline and higher costs. Wallet coverage and simulation assumptions remain visible. Refresh saves a new run without overwriting earlier work. Compare saved captures to see changed observations and coverage; follow-up questions stay tied to the report you selected.
+**Research an asset** captures public USD marks and their age. For Bitcoin, Ethereum or Solana, choose Coinbase Exchange to compare the aggregate with a timestamped trade from that venue. **Test a strategy** compares a documented daily rule across independently restarted reference and held-out periods at baseline and higher costs. Wallet coverage and simulation assumptions remain visible. Refresh saves a new run without overwriting earlier work. Compare saved captures to see changed observations and coverage; follow-up questions stay tied to the report you selected.
 
 ## Start from a research template
 
@@ -54,6 +54,8 @@ boomkin project run --name wallet-review --dry-run
 Four reviewed templates cover public wallet cost audits, frozen strategy validation, stablecoin income and thesis review. Supply your public account/window or local dataset/rule paths; required fields and defaults are visible before saving. Templates preserve the question and evidence in your own profile. [Inputs and run guide](docs/PROJECTS.md)
 
 ## Pick a job
+
+To check whether a token payment arrived, give your agent the expected transfer terms and its transaction hash. The [payment receipt workflow](https://galleonlabs.github.io/boomkin/?workflow=erc20-payment-receipt#agent-start) checks the token, parties, raw amount and block finality.
 
 ```bash
 boomkin workflows
@@ -73,7 +75,7 @@ Workflow discovery runs locally. Each job names its inputs, expected result and 
 | Review an exact unsigned payload | `unsigned-plan`, `transaction-simulation` |
 | Research prediction markets | `prediction-research`, `prediction-resolution` |
 
-[All 64 workflows, inputs and outputs](docs/WORKFLOWS.md)
+[All 65 workflows, inputs and outputs](docs/WORKFLOWS.md)
 
 ### Read or install the protocol skill
 
@@ -147,7 +149,7 @@ Fresh onboarding includes all 17 packs. Repeated `--pack` options choose fewer; 
 ## Updates and recovery
 
 ```bash
-bun install -g boomkin@0.13.9
+bun install -g boomkin@0.14.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live

@@ -1,3 +1,4 @@
+import providerRegistry from "../catalog/providers.json";
 import { describe, expect, test } from "bun:test";
 import { mkdir, mkdtemp, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { parse as parseYaml } from "yaml";
@@ -56,6 +57,10 @@ describe("trust and installation boundaries", () => {
       const listed = Bun.spawn([process.execPath, "src/cli.ts", "harnesses"], { stdout: "pipe", stderr: "pipe" });
       expect(await new Response(listed.stdout).text()).toContain(harnesses.hermes.setup);
       expect(await listed.exited).toBe(0);
+      const machine = Bun.spawn([process.execPath, "src/cli.ts", "harnesses", "--json"], { stdout: "pipe", stderr: "pipe" });
+      const adapters = await new Response(machine.stdout).json();
+      expect(await machine.exited).toBe(0);
+      expect(adapters).toEqual({ schemaVersion: 1, harnesses: Object.entries(harnesses).map(([id, adapter]) => ({ id, ...adapter })) });
     } finally { await rm(root, { recursive: true, force: true }); }
   });
   test("unknown flags and missing directories do not start installation", async () => {
@@ -267,8 +272,8 @@ test("core CI covers catalog installation while native compatibility follows int
   for (const path of ["README.md", "docs/GETTING-STARTED.md", "docs/DESK.md", "docs/UPDATES.md", "site/docs/start.md", "site/index.html"]) {
     expect(await readFile(new URL(`../${path}`, import.meta.url), "utf8")).toContain(version);
   }
-  expect(await readFile(new URL("../docs/AGENT-INDEX.md", import.meta.url), "utf8")).toContain("59 discovery entries");
-  expect(await readFile(new URL("../site/docs/start.md", import.meta.url), "utf8")).toContain("59 source-reviewed entries");
+  expect(await readFile(new URL("../docs/AGENT-INDEX.md", import.meta.url), "utf8")).toContain(`${providerRegistry.providers.length} discovery entries`);
+  expect(await readFile(new URL("../site/docs/start.md", import.meta.url), "utf8")).toContain(`${providerRegistry.providers.length} source-reviewed entries`);
   expect(scripts.check).toBe("bun run typecheck && bun run test:gate");
   for (const path of scripts["test:gate"].split(" ").filter((part: string) => part.endsWith(".test.ts"))) {
     expect(await Bun.file(new URL(`../${path}`, import.meta.url)).exists()).toBe(true);

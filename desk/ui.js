@@ -44,8 +44,8 @@ export function age(value, now=Date.now()) {
   return `${Math.floor(seconds/86400)} days ago`;
 }
 export function sourceName(value) {
-  if(['coingecko','defillama','hyperliquid'].includes(value))return {coingecko:'CoinGecko',defillama:'DefiLlama',hyperliquid:'Hyperliquid'}[value];
-  try {const host=new URL(value).hostname;return {'api.hyperliquid.xyz':'Hyperliquid','api.hyperliquid-testnet.xyz':'Hyperliquid testnet','api.coingecko.com':'CoinGecko','coins.llama.fi':'DefiLlama'}[host] ?? host.replace(/^www\./,'');}
+  if(['coingecko','defillama','hyperliquid','coinbase'].includes(value))return {coinbase:'Coinbase Exchange',coingecko:'CoinGecko',defillama:'DefiLlama',hyperliquid:'Hyperliquid'}[value];
+  try {const host=new URL(value).hostname;return {'api.exchange.coinbase.com':'Coinbase Exchange','api.hyperliquid.xyz':'Hyperliquid','api.hyperliquid-testnet.xyz':'Hyperliquid testnet','api.coingecko.com':'CoinGecko','coins.llama.fi':'DefiLlama'}[host] ?? host.replace(/^www\./,'');}
   catch {return String(value ?? 'Local artifact');}
 }
 export function safeExternalUrl(value) {
@@ -92,7 +92,7 @@ export function metricsFor(kind,result) {
   }
   const reads=result?.reads ?? [],valid=reads.flatMap(read=>(read.observations ?? []).filter(row=>row.ok));
   return [
-    ...valid.slice(0,2).map(row=>({label:`${sourceName(reads.find(read=>read.provider===row.provider)?.source ?? row.provider)} USD mark`,value:money(row.priceUsd),note:`Observed ${age(row.observedAt)}`})),
+    ...valid.slice(0,2).map(row=>({label:`${sourceName(reads.find(read=>read.provider===row.provider)?.source ?? row.provider)} ${row.priceType==='last-trade'?'last trade':'USD mark'}`,value:money(row.priceUsd),note:`Observed ${age(row.observedAt)}`})),
     ...(valid.length?[]:[{label:'USD price mark',value:'Unavailable',note:'No fresh valid observation'}]),
     {label:'Provider spread',value:percent(result?.comparisons?.[0]?.spreadPct,false),note:result?.comparisons?.[0]?.status==='aligned'?'Aligned fresh observations':'No aligned comparison'},
     {label:'Valid observations',value:`${valid.length} / ${reads.reduce((total,read)=>total+(read.observations?.length ?? 0),0)}`,note:'Missing or stale values stay explicit'},

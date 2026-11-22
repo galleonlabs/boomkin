@@ -154,8 +154,20 @@ function showTask(kind,prefill={}){
   if(capability(kind)?.ready===false){const note=el('div','info-note');append(note,el('p','',capability(kind).issues?.join(' ') || 'Prepare the public research tools to start this job.'),button('Prepare the tools','text-button',()=>renderSetup({focus:true})));form.append(note);}
   if(kind==='market'){
     const asset=assetField({value:prefill.asset ?? (pendingQuestion?'':'ethereum')});form.append(asset.wrapper);
-    const presets=el('div','preset-row');for(const item of ASSETS){const preset=button(`${item.name} · ${item.symbol}`,'preset',()=>{asset.input.value=item.id;for(const sibling of presets.children)sibling.setAttribute('aria-pressed',String(sibling===preset));});preset.setAttribute('aria-pressed',String(asset.input.value===item.id));presets.append(preset);}form.append(presets);
-    form.append(el('p','input-note','This first result is a market snapshot. Broader explanation can use the captured evidence through your native agent.'));
+    const presets=el('div','preset-row');for(const item of ASSETS){const preset=button(`${item.name} · ${item.symbol}`,'preset',()=>{asset.input.value=item.id;asset.input.dispatchEvent(new Event('input'));for(const sibling of presets.children)sibling.setAttribute('aria-pressed',String(sibling===preset));});preset.setAttribute('aria-pressed',String(asset.input.value===item.id));presets.append(preset);}form.append(presets);
+    const sources=field('Compare prices from',{
+      name:'provider',value:'both',
+      options:[{value:'both',label:'CoinGecko and DefiLlama'},{value:'coinbase-compare',label:'CoinGecko and Coinbase Exchange'}],
+      description:'Coinbase supplies the last USD trade on its own BTC, ETH or SOL market.',
+    });
+    function updateSources(){
+      const supported=ASSETS.some(item=>item.id===asset.input.value.trim());
+      sources.input.options[1].disabled=!supported;
+      if(!supported)sources.input.value='both';
+    }
+    asset.input.addEventListener('input',updateSources);
+    updateSources();
+    form.append(sources.wrapper);
   }else if(kind==='wallet'){
     const account=field('Public account address',{name:'account',value:prefill.account ?? '',required:true,placeholder:'0x…',description:'The account to inspect. This does not connect a wallet or establish ownership.'});account.input.pattern='0x[0-9a-fA-F]{40}';account.input.maxLength=42;account.input.autocomplete='off';form.append(account.wrapper);
     const now=new Date(),end=now.toISOString().slice(0,10),start=new Date(now.getTime()-7*86400000).toISOString().slice(0,10);
@@ -192,7 +204,10 @@ function showTask(kind,prefill={}){
   form.addEventListener('submit',async event=>{
     event.preventDefault();if(requestBusy)return;formError.replaceChildren();if(!form.reportValidity())return;
     const values=new FormData(form),inputs={};
-    if(kind==='market')inputs.asset=String(values.get('asset')).trim();
+    if(kind==='market'){
+      inputs.asset=String(values.get('asset')).trim();
+      if(values.get('provider')==='coinbase-compare')inputs.provider='coinbase-compare';
+    }
     else if(kind==='wallet'){
       const now=Date.now(),start=Date.parse(`${values.get('start')}T00:00:00.000Z`),end=Math.min(Date.parse(`${values.get('end')}T23:59:59.999Z`),now);
       if(start>=end){formError.append(errorBox('Choose a start date before the end of the capture window.'));return;}
@@ -236,7 +251,7 @@ function renderResult(force=false){
   const identity=el('p','result-identity');
   if(project.kind==='wallet')append(identity,el('code','',result?.scope?.address ?? project.inputs?.account),document.createTextNode(` · ${result?.scope?.network ?? project.inputs?.network ?? 'mainnet'} · ${dateOnly(project.inputs?.startTime)} to ${dateOnly(project.inputs?.endTime)} (UTC)`));
   else if(project.kind==='strategy')identity.textContent=`${result?.identity?.namespace ?? (project.inputs?.datasetSource==='upload'?'supplied':'coingecko')}:${result?.identity?.id ?? project.inputs?.asset} · ${TEMPLATES.find(item=>item.id===project.inputs?.template)?.label ?? project.inputs?.template} · daily USD spot simulation`;
-  else identity.textContent=`coingecko:${project.inputs?.asset} · USD aggregate marks · exact identity`;
+  else identity.textContent=`coingecko:${project.inputs?.asset} · USD market observations · exact identity`;
   view.append(identity);view.append(el('p','result-date',`${run.finishedAt?'Saved':'Started'} ${dateTime(run.finishedAt ?? run.createdAt)}`));
   if(project.parent)view.append(button('Open the capture behind this follow-up','text-button parent-capture',()=>openProject(project.parent.project,project.parent.runId)));
   const active=!TERMINAL_STATES.includes(run.state);
@@ -350,7 +365,7 @@ function walletAnswer(result){
 function marketAnswer(result){
   const valid=(result?.reads ?? []).flatMap(read=>(read.observations ?? []).filter(row=>row.ok));
   if(!valid.length)return 'No fresh valid USD mark was available. The failed or stale observations remain in the source record.';
-  const comparison=result.comparisons?.[0];return comparison?.status==='aligned'?`At capture, ${valid.length} fresh USD observations aligned within the declared timestamp limit. The provider spread was ${percent(comparison.spreadPct,false)}. These are aggregate marks; they are not executable quotes.`:`At capture, ${valid.length} valid USD observation${valid.length===1?' was':'s were'} available. The sources do not support an aligned price comparison. Missing, stale or differently timed observations stay explicit.`;
+  const comparison=result.comparisons?.[0];return comparison?.status==='aligned'?`At capture, ${valid.length} fresh USD observations aligned within the declared timestamp limit. The provider spread was ${percent(comparison.spreadPct,false)}. These observed prices do not establish an executable spread.`:`At capture, ${valid.length} valid USD observation${valid.length===1?' was':'s were'} available. The sources do not support an aligned price comparison. Missing, stale or differently timed observations stay explicit.`;
 }
 function strategyAnswer(result){
   const test=result?.periods?.heldOut?.baseline;if(!test)return 'The frozen-rule result is unavailable. Inspect the input and validation evidence.';
@@ -378,8 +393,8 @@ function renderMarket(view,result){
   if(result.status!=='complete'){const note=el('div','result-notice');append(note,el('strong','','Some source observations are unavailable.'),document.createTextNode(' Missing or stale prices are excluded; no consensus mark is invented.'));view.append(note);}
   renderMetrics(view,'market',result);
   const source=section('The source comparison','Prices are compared only when fresh observations are close enough in time.');
-  const rows=[];for(const read of result.reads ?? [])for(const observation of read.observations ?? [])rows.push([sourceName(read.source),observation.ok?money(observation.priceUsd):'Unavailable',observation.ok?dateTime(observation.observedAt):'Unavailable',observation.ok?`${count(observation.ageSeconds)} sec`:String(observation.error ?? 'Source read failed')]);source.append(table(['Source','USD mark','Price observed at','Age at capture / error'],rows));
-  source.append(el('p','table-note','The CoinGecko-ID observation from DefiLlama may share upstream data. Agreement does not establish independent oracle corroboration.'));view.append(source);
+  const rows=[];for(const read of result.reads ?? [])for(const observation of read.observations ?? [])rows.push([observation.priceType==='last-trade'?`Coinbase Exchange · ${observation.venueProduct} last trade #${observation.tradeId}`:sourceName(read.source),observation.ok?money(observation.priceUsd):'Unavailable',observation.ok?dateTime(observation.observedAt):'Unavailable',observation.ok?`${count(observation.ageSeconds)} sec`:String(observation.error ?? 'Source read failed')]);source.append(table(['Source','USD mark','Price observed at','Age at capture / error'],rows));
+  source.append(el('p','table-note',result.reads?.some(read=>read.provider==='coinbase')?'Coinbase reports its own venue’s last trade. CoinGecko aggregates prices across markets.':'The CoinGecko-ID observation from DefiLlama may share upstream data. Agreement does not establish independent oracle corroboration.'));view.append(source);
 }
 function renderStrategy(view,result){
   if(!result)return;

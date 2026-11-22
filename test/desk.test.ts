@@ -15,11 +15,12 @@ const source = join(import.meta.dir, "../site");
 const marketModule = `
 export async function marketSnapshot(options, deps) {
   const reads = [];
-  for (const provider of ['coingecko','defillama']) {
-    const source = provider === 'coingecko' ? 'https://api.coingecko.com/api/v3/simple/price' : 'https://coins.llama.fi/prices/current/';
+  const secondSource = options.provider === 'coinbase-compare' ? 'coinbase' : 'defillama';
+  for (const provider of ['coingecko', secondSource]) {
+    const source = provider === 'coingecko' ? 'https://api.coingecko.com/api/v3/simple/price' : provider === 'coinbase' ? 'https://api.exchange.coinbase.com/products/ETH-USD/ticker' : 'https://coins.llama.fi/prices/current/';
     const response = await deps.fetch(source);
     const raw = await response.json();
-    reads.push({provider,source,observations:[raw.unavailable ? {ok:false,provider,error:'fixture_unavailable',identity:{namespace:'coingecko',id:options.ids[0]}} : {ok:true,provider,unit:'USD',priceUsd:raw.price,observedAt:raw.observedAt ?? new Date().toISOString(),retrievedAt:new Date().toISOString(),identity:{namespace:'coingecko',id:options.ids[0]}}]});
+    reads.push({provider,source,observations:[raw.unavailable ? {ok:false,provider,error:'fixture_unavailable',identity:{namespace:'coingecko',id:options.ids[0]}} : {ok:true,provider,unit:'USD',priceUsd:raw.price,...(provider === 'coinbase' ? {priceType:'last-trade', venueProduct:'ETH-USD', tradeId:123} : {}),observedAt:raw.observedAt ?? new Date().toISOString(),retrievedAt:new Date().toISOString(),identity:{namespace:'coingecko',id:options.ids[0]}}]});
   }
   const count = reads.flatMap(x=>x.observations).filter(x=>x.ok).length;
   return {ok:count===2,status:count===2?'complete':count?'partial':'unavailable',parameters:{maxAgeSeconds:300},reads,comparisons:[],limitations:['Synthetic fixture: not a live quote.']};
@@ -106,6 +107,20 @@ test("desk loopback API authenticates every route, refuses hostile origins and b
   expect(html.headers.get("referrer-policy")).toBe("no-referrer");
   expect(html.headers.get("content-security-policy")).toContain("frame-ancestors 'none'");
   expect(new Uint8Array(await (await fetch(ctx.origin + "/assets/manrope.ttf")).arrayBuffer())).toEqual(new Uint8Array([0, 255, 127, 254]));
+}));
+
+test("an optional Coinbase comparison saves the exact venue trade and reopens with the same source selection", async () => withDesk(async ctx => {
+  const invalid = await ctx.call("/api/projects", "POST", { kind: "market", inputs: { asset: "wrapped-bitcoin", provider: "coinbase-compare" } });
+  expect(invalid.status).toBe(400);
+  const project = await create(ctx, "market", { asset: "ethereum", provider: "coinbase-compare" });
+  const run = await start(ctx, project.name), details = await finish(ctx, project.name, run.id);
+  expect(details.run.state).toBe("complete");
+  expect(details.result.reads.map((read: any) => read.provider)).toEqual(["coingecko", "coinbase"]);
+  expect(details.report).toContain("ETH-USD last trade #123");
+  expect(details.evidence.observations.map((item: any) => item.source)).toContain("https://api.exchange.coinbase.com/products/ETH-USD/ticker");
+  const reopened = await ctx.restart();
+  const saved = await (await reopened.call(`/api/projects/${project.name}/runs/${run.id}`)).json();
+  expect(saved.result).toEqual(details.result);
 }));
 
 test("market capture saves real raw response bytes, supports reopening, refresh and evidence downloads", async () => withDesk(async ctx => {

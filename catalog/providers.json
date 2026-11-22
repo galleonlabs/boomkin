@@ -2259,6 +2259,109 @@
         "policy": "reviewed-read-tools"
       },
       "provenance": "protocol-official"
+    },
+    {
+      "id": "jupiter",
+      "name": "Jupiter",
+      "provider": "Jupiter",
+      "listedInDirectory": false,
+      "listedCapabilities": [
+        "Data",
+        "Trading"
+      ],
+      "listedInterfaces": [
+        "API"
+      ],
+      "summary": "Read Solana token prices by exact mint or inspect a quote-only route with the jupiter-swap workflow.",
+      "sources": [
+        "https://developers.jup.ag/docs/price",
+        "https://developers.jup.ag/docs/portal/setup",
+        "https://developers.jup.ag/docs/api-reference/swap/order"
+      ],
+      "review": {
+        "status": "primary-source-reviewed",
+        "checkedOn": "2026-11-22",
+        "notes": "Price v3 returns USD marks with a block ID. A swap order without a taker is a quote only. An API key raises rate limits."
+      },
+      "access": {
+        "kind": "keyless",
+        "requirements": "Public price reads and quote-only requests need no key. Keyless access is rate-limited."
+      },
+      "cost": "mixed",
+      "authority": "mixed",
+      "integration": {
+        "kind": "reference",
+        "defaultEnabled": false,
+        "policy": "no-connection"
+      },
+      "provenance": "protocol-official"
+    },
+    {
+      "id": "lcx-liberty",
+      "name": "LCX Liberty DEX",
+      "provider": "LCX",
+      "listedInDirectory": false,
+      "listedCapabilities": [
+        "Trading"
+      ],
+      "listedInterfaces": [
+        "API"
+      ],
+      "summary": "Compare EVM swap quotes after gas using the lcx-liberty-swap workflow.",
+      "sources": [
+        "https://dex.lcx.com/business",
+        "https://dex.lcx.com/dashboard"
+      ],
+      "review": {
+        "status": "primary-source-reviewed",
+        "checkedOn": "2026-11-22",
+        "notes": "A quote returns the route and minimum output. Building a transaction and signing it are distinct actions."
+      },
+      "access": {
+        "kind": "credentials",
+        "requirements": "Quote reads require a personal LCX API key. Configure LCX_API_KEY in the calling environment."
+      },
+      "cost": "mixed",
+      "authority": "unsigned",
+      "integration": {
+        "kind": "reference",
+        "defaultEnabled": false,
+        "policy": "no-connection"
+      },
+      "provenance": "protocol-official"
+    },
+    {
+      "id": "coinbase-exchange",
+      "name": "Coinbase Exchange public market data",
+      "provider": "Coinbase",
+      "listedInDirectory": false,
+      "listedCapabilities": [
+        "Data"
+      ],
+      "listedInterfaces": [
+        "API"
+      ],
+      "summary": "Compare a CoinGecko aggregate with a last USD trade on Coinbase Exchange in the market-snapshot workflow or local desk.",
+      "sources": [
+        "https://docs.cdp.coinbase.com/api-reference/exchange-api/rest-api/products/get-product-ticker"
+      ],
+      "review": {
+        "status": "primary-source-reviewed",
+        "checkedOn": "2026-11-22",
+        "notes": "Public Exchange ticker returns last trade price, trade ID and observation time for an exact product. The desk supports BTC-USD, ETH-USD and SOL-USD."
+      },
+      "access": {
+        "kind": "keyless",
+        "requirements": "Select Coinbase Exchange as the comparison source for Bitcoin, Ethereum or Solana. This public ticker requires no account."
+      },
+      "cost": "free-limited",
+      "authority": "read",
+      "integration": {
+        "kind": "reference",
+        "defaultEnabled": false,
+        "policy": "no-connection"
+      },
+      "provenance": "tool-provider-official"
     }
   ]
 }

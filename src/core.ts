@@ -8,6 +8,9 @@ export const harnesses = {
   openclaw: { agent: "openclaw", skillsPath: "skills", global: false, docs: "https://docs.openclaw.ai/start/getting-started", setup: "Install OpenClaw from https://openclaw.ai/ and run openclaw onboard. Use the workspace selected during onboarding as <directory>." },
   codex: { agent: "codex", skillsPath: ".agents/skills", global: false, docs: "https://developers.openai.com/codex/cli", setup: "Install Codex with npm install -g @openai/codex. Run codex from <directory> and complete sign-in." },
   claude: { agent: "claude-code", skillsPath: ".claude/skills", global: false, docs: "https://code.claude.com/docs/en/setup", setup: "Install Claude Code using its official setup guide, then run claude from <directory> and complete sign-in." },
+  cursor: { agent: "cursor", skillsPath: ".agents/skills", global: false, docs: "https://cursor.com/docs/skills", setup: "Open the selected project in Cursor. Find the installed skills in Customize > Skills or invoke one by name in Agent chat." },
+  "gemini-cli": { agent: "gemini-cli", skillsPath: ".agents/skills", global: false, docs: "https://geminicli.com/docs/cli/skills/", setup: "Launch Gemini CLI from the selected workspace. In a trusted workspace, use /skills reload and /skills list to verify discovery." },
+  "github-copilot": { agent: "github-copilot", skillsPath: ".agents/skills", global: false, docs: "https://docs.github.com/en/copilot/how-tos/copilot-cli/customize-copilot/add-skills", setup: "Launch GitHub Copilot CLI from the selected repository. Use /skills list to confirm the installed skills." },
   opencode: { agent: "opencode", skillsPath: ".agents/skills", global: false, docs: "https://opencode.ai/docs/", setup: "Install OpenCode using its official guide, then run opencode from <directory> and connect a provider." },
 } as const;
 export type Harness = keyof typeof harnesses;

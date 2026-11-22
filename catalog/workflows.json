@@ -66,7 +66,7 @@
       "inputs": [
         "Resolved CoinGecko IDs and quote currency",
         "Snapshot or daily-history request, with explicit observation limit",
-        "Maximum acceptable age and any comparison provider"
+        "Maximum acceptable age and comparison source: DefiLlama or Coinbase Exchange for bitcoin, ethereum or solana"
       ],
       "output": "Timestamped prices with raw response hashes, anything stale or missing, and where sources disagree. Daily history on request.",
       "access": "Uses public CoinGecko and documented public comparison reads, and reports limits and outages. Token contracts need the contract-aware token workflow."
@@ -339,6 +339,20 @@
       ],
       "output": "Hub/spoke identity, collateral/debt and liquidity, health/capacity and configuration constraints with an unsigned plan; unsupported or preview deployments remain explicit.",
       "access": "Official Aave docs/MCP and read-only chain RPC; no V3 assumptions transferred to V4 and no wallet approval."
+    },
+    {
+      "id": "erc20-payment-receipt",
+      "protocol": "ERC-20 payments",
+      "title": "Verify a token payment receipt",
+      "skill": "galleon-erc20-payment-receipt",
+      "pack": "defi-payments-skills",
+      "inputs": [
+        "EVM chain ID, transaction hash and token contract",
+        "Expected sender, recipient and exact amount in token base units",
+        "RPC source for the expected chain and the required finality policy"
+      ],
+      "output": "Receipt status, matching transfer logs and finality evidence, with any mismatches or unresolved checks.",
+      "access": "Read-only EVM JSON-RPC. Uses a public or existing RPC endpoint; no wallet or signer required."
     },
     {
       "id": "sablier-stream",

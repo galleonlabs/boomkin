@@ -22,7 +22,7 @@ export function checkUsage(values: CliValues, positionals: string[]): void {
   if (values.action && command !== "chatgpt") throw new Error("--action is only available for chatgpt");
   if (positionals.length > (command === "project" ? 2 : 1)) throw new Error("Unexpected positional arguments");
   if (values.workflow !== undefined && !["workflows", "onboard", "project"].includes(command)) throw new Error("--workflow is available for workflows, onboard and project create");
-  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project", "providers", "templates"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows, providers, templates and project");
+  if (values.protocol !== undefined && command !== "workflows" || values.json && !["workflows", "project", "providers", "templates", "harnesses"].includes(command)) throw new Error("--protocol is available for workflows; --json for workflows, providers, templates, harnesses and project");
   if (values.template !== undefined && !["templates", "project"].includes(command)) throw new Error("--template is available for templates and project create");
   if (values.template !== undefined && values.workflow !== undefined) throw new Error("Choose --template or --workflow separately");
   if ([values.search, values.capability, values.access].some(value => value !== undefined) && command !== "providers") throw new Error("--search, --capability and --access are only available for providers");

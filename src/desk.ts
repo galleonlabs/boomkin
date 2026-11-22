@@ -7,7 +7,7 @@ import packageFile from "../package.json";
 import { installedVersion, parseCatalog, type Catalog, type Pack } from "./core.ts";
 import { hermesModelConfigured, localProfileStatus, readHermesConfig } from "./hermes.ts";
 import { verifyIntegrity } from "./integrity.ts";
-import { compareDeskRuns, type ComparisonSnapshot } from "./desk-comparison.ts";
+import { coinbaseUsdProducts, compareDeskRuns, type ComparisonSnapshot } from "./desk-comparison.ts";
 import { checkProjectRun, createProject, listProjects, projectRuns, readProject, renderProjectPrompt, runProject, type Evidence, type Project, type ProjectRun } from "./projects.ts";
 
 export type DeskKind = "wallet" | "market" | "strategy";
@@ -81,7 +81,7 @@ function parseMetadata(value: unknown): DeskProject {
 }
 function normalizeInput(kind: DeskKind, input: unknown) {
   if (!object(input)) throw new DeskError("Inputs must be an object");
-  const allowed = kind === "wallet" ? ["account", "startTime", "endTime", "network", "maxPages"] : kind === "market" ? ["asset"] : ["asset", "days", "template", "initialCashUsd", "feeBps", "slippageBps", "amountUsd", "datasetSource", "dataset"];
+  const allowed = kind === "wallet" ? ["account", "startTime", "endTime", "network", "maxPages"] : kind === "market" ? ["asset", "provider"] : ["asset", "days", "template", "initialCashUsd", "feeBps", "slippageBps", "amountUsd", "datasetSource", "dataset"];
   if (Object.keys(input).some(key => !allowed.includes(key))) throw new DeskError("Unknown task input");
   if (kind === "wallet") {
     const network = input.network ?? "mainnet", maxPages = input.maxPages ?? 10;
@@ -93,7 +93,11 @@ function normalizeInput(kind: DeskKind, input: unknown) {
   }
   const asset = input.asset ?? "bitcoin";
   if (typeof asset !== "string" || !/^[a-z0-9][a-z0-9-]{0,99}$/.test(asset)) throw new DeskError("Use the exact CoinGecko asset ID, for example ethereum");
-  if (kind === "market") return { asset };
+  if (kind === "market") {
+    if (input.provider === undefined || input.provider === "both") return { asset };
+    if (input.provider !== "coinbase-compare" || !coinbaseUsdProducts.has(asset)) throw new DeskError("The Coinbase comparison supports bitcoin, ethereum and solana");
+    return { asset, provider: "coinbase-compare" };
+  }
   const result = { asset, days: input.days ?? 180, template: input.template ?? "sma-10", initialCashUsd: input.initialCashUsd ?? 10000, feeBps: input.feeBps ?? 10, slippageBps: input.slippageBps ?? 5, ...(input.amountUsd !== undefined ? { amountUsd: input.amountUsd } : {}), datasetSource: input.datasetSource ?? "live", ...(input.dataset !== undefined ? { dataset: input.dataset } : {}) };
   if (!Number.isInteger(result.days) || result.days < 91 || result.days > 365 || !["buy-and-hold", "weekly-dca", "sma-10", "sma-30"].includes(result.template)) throw new DeskError("Choose a documented rule and 91–365 days");
   for (const key of ["initialCashUsd", "feeBps", "slippageBps", "amountUsd"] as const) if (result[key] !== undefined && (typeof result[key] !== "number" || !Number.isFinite(result[key]) || result[key] < (key === "initialCashUsd" || key === "amountUsd" ? 0.01 : 0) || result[key] > (key === "feeBps" || key === "slippageBps" ? 1000 : 1e9))) throw new DeskError("Invalid cash or cost assumptions");
@@ -350,7 +354,10 @@ export async function startDesk(options: DeskOptions) {
     const fetcher = async (resource: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
       signal.throwIfAborted();
       const url = String(resource), parsed = new URL(url);
-      if (!(["api.hyperliquid.xyz", "api.hyperliquid-testnet.xyz", "api.coingecko.com", "coins.llama.fi"].includes(parsed.hostname)) || parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port) throw new DeskError("Helper requested an unreviewed endpoint", 409);
+      const venueProduct = coinbaseUsdProducts.get(String(project.inputs.asset));
+      const coinbaseTicker = run.kind === "market" && project.inputs.provider === "coinbase-compare" && venueProduct
+        && url === `https://api.exchange.coinbase.com/products/${venueProduct}/ticker` && (init?.method ?? "GET") === "GET" && !init?.body;
+      if ((!coinbaseTicker && !["api.hyperliquid.xyz", "api.hyperliquid-testnet.xyz", "api.coingecko.com", "coins.llama.fi"].includes(parsed.hostname)) || parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.port) throw new DeskError("Helper requested an unreviewed endpoint", 409);
       let label = parsed.hostname.includes("hyperliquid") ? "Fetching account history" : "Fetching public market data";
       if (typeof init?.body === "string") { const type = JSON.parse(init.body).type; label = ({ userRole: "Checking public account identity", userAbstraction: "Checking account balance mode", clearinghouseState: "Fetching current perpetual exposure", spotClearinghouseState: "Fetching spot balances", frontendOpenOrders: "Fetching visible open orders", userFillsByTime: "Fetching fill history", userFunding: "Fetching funding cashflows" } as Record<string, string>)[type] ?? label; }
       await progress(label);
@@ -369,7 +376,7 @@ export async function startDesk(options: DeskOptions) {
         finally { await reader.cancel().catch(() => {}); }
         const bytes = Buffer.concat(chunks);
         new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-        await artifact(`read-${String(sequence).padStart(3, "0")}.${run.kind === "wallet" ? "txt" : "json"}`, bytes, url, `Raw public response: HTTP ${response.status}; historical timestamps are contained in the response`, [run.kind === "wallet" ? "Sequential exchange snapshot; full-window completeness is unverified." : "Aggregate observations are not executable quotes."]);
+        await artifact(`read-${String(sequence).padStart(3, "0")}.${run.kind === "wallet" ? "txt" : "json"}`, bytes, url, `Raw public response: HTTP ${response.status}; historical timestamps are contained in the response`, [run.kind === "wallet" ? "Sequential exchange snapshot; full-window completeness is unverified." : coinbaseTicker ? "Last trade on this USD market. It is not an executable quote." : "Aggregate observations are not executable quotes."]);
         return new Response(bytes, { status: response.status, headers: response.headers });
       }
     };
@@ -391,11 +398,11 @@ export async function startDesk(options: DeskOptions) {
         result = module.analyzeCapture(capture);
         report = module.renderReport(result); partial = result.coverage.status === "partial";
       } else if (run.kind === "market") {
-        result = await module.marketSnapshot({ ids: [project.inputs.asset], provider: "both" }, { fetch: fetcher, timeoutMs: 15000 });
+        result = await module.marketSnapshot({ ids: [project.inputs.asset], provider: project.inputs.provider ?? "both" }, { fetch: fetcher, timeoutMs: 15000 });
         signal.throwIfAborted();
         if (result.status === "unavailable" || result.error) { await atomic(root, [...parts, "result.json"], json(result)); throw new DeskError("Market data is unavailable. Inspect provider errors and retry later.", 502); }
         const rows = result.reads.flatMap((read: any) => read.observations);
-        report = `# ${project.inputs.asset} market snapshot\n\nExact identity: CoinGecko ID ${project.inputs.asset}. Public USD aggregate observations.\n\n` + rows.map((row: any) => row.ok ? `${row.provider}: ${row.priceUsd} USD, observed ${row.observedAt}, retrieved ${row.retrievedAt}.` : `${row.provider}: unavailable (${row.error}).`).join("\n\n") + `\n\n${result.limitations.join("\n\n")}\n\nA price snapshot alone cannot establish valuation, investment quality or a complete asset thesis.\n`;
+        report = `# ${project.inputs.asset} market snapshot\n\nExact identity: CoinGecko ID ${project.inputs.asset}. Public USD market observations.\n\n` + rows.map((row: any) => row.ok ? `${row.provider}${row.priceType === "last-trade" ? ` ${row.venueProduct} last trade #${row.tradeId}` : ""}: ${row.priceUsd} USD, observed ${row.observedAt}, retrieved ${row.retrievedAt}.` : `${row.provider}: unavailable (${row.error}).`).join("\n\n") + `\n\n${result.limitations.join("\n\n")}\n\nA price snapshot alone cannot establish valuation, investment quality or a complete asset thesis.\n`;
         partial = result.status !== "complete";
       } else {
         const input = project.inputs as any;

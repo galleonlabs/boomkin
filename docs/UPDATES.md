@@ -9,7 +9,7 @@ Maintain Boomkin, its selected skill packs and the Hermes runtime separately. Us
 For the installed CLI and default profile:
 
 ```bash
-bun install -g boomkin@0.13.9
+bun install -g boomkin@0.14.0
 boomkin check --directory "$HOME/.boomkin/hermes"
 boomkin update --directory "$HOME/.boomkin/hermes"
 boomkin doctor --directory "$HOME/.boomkin/hermes" --live
@@ -38,7 +38,7 @@ bun run boomkin update --directory "$HOME/.boomkin/hermes"
 
 ## Select your packs
 
-The catalog contains 17 independently selected packs and 82 skills. New skills in a selected pack arrive when that pack updates; newly added packs remain opt-in. Discover task names with `boomkin workflows`.
+The catalog contains 17 independently selected packs and 83 skills. New skills in a selected pack arrive when that pack updates; newly added packs remain opt-in. Discover task names with `boomkin workflows`.
 
 For a dedicated Aave profile:
 

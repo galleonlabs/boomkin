@@ -48,6 +48,25 @@ test("market matches by provider despite source ordering, preserving exact ident
   expect(value.notes.join(" ")).toContain("Aggregate marks"); expect(value.notes.join(" ")).toContain("Captured source scope");
 });
 
+test("Coinbase comparisons require the frozen USD product and distinguish a venue trade from an aggregate", () => {
+  const before = snapshot("market"), after = snapshot("market", true);
+  for (const item of [before, after]) {
+    item.inputs.provider = "coinbase-compare";
+    const venue = (item.result as any).reads[1];
+    venue.provider = "coinbase";
+    Object.assign(venue.observations[0], { provider: "coinbase", priceType: "last-trade", venueProduct: "ETH-USD", tradeId: item === before ? 123 : 124 });
+  }
+  const venue = rows(compareDeskRuns("market", before, after)).find(row => row.id === "coinbase");
+  expect(venue?.label).toBe("Coinbase Exchange last trade");
+  expect(venue?.delta).toBe("250");
+  (after.result as any).reads[1].observations[0].tradeId = 123;
+  expect(rows(compareDeskRuns("market", before, after)).find(row => row.id === "coinbase")?.delta).toBeNull();
+  (after.result as any).reads[1].observations[0].venueProduct = "BTC-USD";
+  const mismatch = compareDeskRuns("market", before, after);
+  expect(mismatch.status).toBe("limited");
+  expect(rows(mismatch).find(row => row.id === "coinbase")?.delta).toBeNull();
+});
+
 test("source comparison canonicalizes URLs and ordering, detects changed bytes and keeps distinct artifacts", () => {
   const before = snapshot("market"), after = snapshot("market", true);
   before.evidence.push({ id: "read-002", source: "https://other.example/info", sha256: digest, limitations: [] });

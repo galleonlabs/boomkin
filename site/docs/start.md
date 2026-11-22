@@ -9,7 +9,7 @@ Want to explore first? [Open the strategy lab](../lab/) in your browser. Compare
 Use macOS or Linux with [Bun](https://bun.sh) and Git. Windows users can use WSL2.
 
 ```bash
-bun install -g boomkin@0.13.9
+bun install -g boomkin@0.14.0
 boomkin desk
 ```
 
@@ -21,7 +21,7 @@ Public desk jobs need no model account or funded wallet. Native model setup is o
 
 Choose **Review a wallet**, enter a public Hyperliquid address and date range, or choose the labeled public vault example. Inspect observed fees, signed funding and current exposure. Expand the sources, export your report and reopen it from Recent research. Limited history stays visible; this is not a complete portfolio return.
 
-Or choose **Research an asset** for a sourced market snapshot, or **Test a strategy** for a documented daily-rule comparison. The result shows source age and missing information. Refresh captures new evidence in a separate run.
+Choose **Research an asset** for a sourced market snapshot. For Bitcoin, Ethereum or Solana, select Coinbase Exchange to compare a CoinGecko aggregate with the venue’s last USD trade. **Test a strategy** runs a documented daily-rule comparison. The result shows source age and missing information. Refresh captures new evidence in a separate run.
 
 ## Choose the next job
 
@@ -31,7 +31,7 @@ boomkin workflows --workflow aave-health
 boomkin providers --search simulation --json
 ```
 
-[Browse workflows](workflows/) for position risk, yield screening, bridge settlement, payment streams and prediction-market research. The provider directory contains 59 source-reviewed entries with capability, access and cost metadata. Discovery runs locally; it lets you inspect a provider before connecting it.
+[Browse workflows](workflows/) for position risk, yield screening, bridge settlement, payment streams and prediction-market research. The provider directory contains 62 source-reviewed entries with capability, access and cost metadata. Discovery runs locally; it lets you inspect a provider before connecting it.
 
 To prepare one job's pack in a separate profile:
 

@@ -27,8 +27,8 @@ test('an onboarding brief pins the reviewed package and only selected skill/clie
   const brief = researchBrief(workflow, catalogue.packs, 'codex', ['ethereum in USD', 'One snapshot', '15 minutes']);
   const pack = reviewedPack(workflow, catalogue.packs);
   expect(brief.installCommand).toContain(`tree/${pack.revision}/${pack.path}`);
-  expect(brief.installCommand).toContain('--skill galleon-defi-market-snapshot --agent codex --copy');
-  expect(brief.installCommand).toStartWith('DISABLE_TELEMETRY=1 npx skills@1.8.1 add ');
+  expect(brief.installCommand).toContain('--skill galleon-defi-market-snapshot --agent codex --copy --yes');
+  expect(brief.installCommand).toStartWith('DISABLE_TELEMETRY=1 npx --yes skills@1.8.1 add ');
   expect(brief.pack.version).toBe(pack.version);
   expect(brief.onboardingPrompt).toContain('Confirm this agent can discover the installed skill');
   expect(brief.onboardingPrompt).toContain('ethereum in USD');
@@ -37,7 +37,7 @@ test('an onboarding brief pins the reviewed package and only selected skill/clie
 
 test('every published workflow produces a source-pinned brief for each offered client', () => {
   for (const item of registry.workflows) {
-    for (const client of ['codex', 'claude-code', 'cursor', 'gemini-cli']) {
+    for (const client of ['codex', 'claude-code', 'cursor', 'gemini-cli', 'github-copilot']) {
       const brief = researchBrief(item, catalogue.packs, client);
       expect(brief.workflow).toBe(item.id);
       expect(brief.inputs.length).toBe(item.inputs.length);
