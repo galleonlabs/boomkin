@@ -252,7 +252,7 @@
       "skill": "galleon-defillama-yield-screen",
       "pack": "defi-data-skills",
       "inputs": [
-        "Chain, asset and minimum TVL",
+        "Chain, asset and minimum TVL; on Solana, supply the exact token mint to filter by identity",
         "Base/reward APY preferences and result limit"
       ],
       "output": "A reproducible shortlist separating base yield, rewards, missing fields and exit diligence.",

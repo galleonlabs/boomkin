@@ -2,6 +2,8 @@
 
 ## 0.13.9 · 2026-11-22
 
+- Pin data pack 0.7.0 for exact-mint Solana yield screens.
+- Pin Hermes 0.23.3 for new installations. The upstream installer checksum is unchanged.
 - Add the LCX Liberty DEX quote workflow and pin routing pack 0.5.0. The CLI and workflow explorer now expose its inputs, API key requirement and evidence before installation.
 - Link Andrew Wilkinson’s maintainer and sponsorship profiles from the package, repository and website.
 
